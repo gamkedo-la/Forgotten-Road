@@ -1,4 +1,5 @@
 var wizardPic = document.createElement("img");
+var warriorPic = document.createElement("img");
 var townMapPic = document.createElement("img");
 var blacksmithShopPic = document.createElement("img");
 var alchemistShopPic = document.createElement("img");
@@ -31,6 +32,7 @@ function loadImages() {
     var imageList = [
         {varName: townMapPic, theFile: "townMap.png"},
         {varName: wizardPic, theFile: "wizard.png"},
+        {varName: warriorPic, theFile: "warrior.png"},
         {varName: blacksmithShopPic, theFile: "BlackSmithShop.png"},
         {varName: alchemistShopPic, theFile: "BlackSmithShop.png"},
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},

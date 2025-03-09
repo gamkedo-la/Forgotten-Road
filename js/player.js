@@ -4,7 +4,7 @@ class Player extends Entity {
         this._level = level;
         this._gold = gold;
         this.color = "blue";
-        this.image = wizardPic;
+        this.image = warriorPic;
         this.sX = 32*0; //sprite sheet X pos
         this.sY = 34*2; //sprite sheet Y pos
         this.sH = 34; //sprite sheet H

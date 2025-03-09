@@ -71,9 +71,18 @@ function isWalkable(x, y) {
 }
 
 // Function to handle player movement
-function movePlayer(dx, dy) {
+function movePlayer(dx, dy, direction) {
     let newX = player.x + dx;
     let newY = player.y + dy;
+    if(direction == "NORTH"){
+        player.sY = 0;
+    } else if (direction == "EAST"){
+        player.sY = 1 * player.sH;
+    } else if (direction == "SOUTH"){
+        player.sY = 2 * player.sH;
+    } else if (direction == "WEST"){
+        player.sY = 3 * player.sH;
+    }
 
     if (isWalkable(newX, newY)) {
         player.x = newX;
