@@ -87,7 +87,7 @@ function hValCal(atColumn,atRow, toColumn,toRow, multWeight, geometric) { /////
 }
 
 function startPath(toTile, pathFor){
-	
+    return; //temp disabiling to troubleshoot pathfinding
     var currentTile = pixCoordToIndex(pathFor.x, pathFor.y);
     if (PATHFINDING_DEBUG_LOG) console.log("starting pathfinding from tile "+currentTile+" to tile "+toTile);
     if (PATHFINDING_DEBUG_LOG) console.log("- collisionGrid["+currentTile+"]="+collisionGrid[currentTile]+" and collisionGrid["+toTile+"]="+collisionGrid[toTile]);
@@ -99,7 +99,7 @@ function startPath(toTile, pathFor){
     }
 	
 	if (pathfindingGridDataNeedsRefreshing || !PATHFINDING_REUSES_GRID_UNLESS_REFRESHED) { 
-        SetupPathfindingGridData(pathFor);
+       SetupPathfindingGridData(pathFor);
     }
 	  
     collisionGrid[toTile].setGoal();
