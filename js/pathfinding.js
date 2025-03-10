@@ -4,8 +4,8 @@ const PATHFINDING_DEBUG_LOG = false; // set to true for verbose debug info in th
 // so set this to TRUE if the world changes (new buildings)
 // to force a fresh data gathering step
 const PATHFINDING_REUSES_GRID_UNLESS_REFRESHED = false; // true, use the variable below, not sure we can make each unit a recalculated grid.
-var pathfindingGridDataNeedsRefreshing = true; // set to true calculate grid
-const USE_FASTER_ARRAYREMOVE = true; // set to true for faster but maybe buggy version
+var pathfindingGridDataNeedsRefreshing = false; // set to true calculate grid
+const USE_FASTER_ARRAYREMOVE = false; // set to true for faster but maybe buggy version
 
 var unvisitedList = [];
 const TILE_GOAL = 3; //Temp used for end tile
@@ -19,7 +19,6 @@ function SetupPathfindingGridData(whichPathfinder) {
 
   // Create a new pathfinding grid (1D array)
   let pathfindingGrid = new Array(TILE_ROWS * TILE_COLS).fill(null);
-  console.log("Pathfinding Grid Length:", pathfindingGrid.length);
   
   // Initialize collision grid if not already created
   if (!collisionGrid || collisionGrid.length === 0) {
@@ -68,7 +67,6 @@ function SetupPathfindingGridData(whichPathfinder) {
 
   pathfindingGridDataNeedsRefreshing = false;
 
-  console.log("Pathfinding Grid and Collision Grid Setup Complete.");
   return pathfindingGrid;
 }
 
@@ -86,7 +84,8 @@ function hValCal(atColumn,atRow, toColumn,toRow, multWeight, geometric) { /////
 }
 
 function startPath(toTile, pathFor){
-    var currentTile = pixCoordToIndex(pathFor.x, pathFor.y);
+    var currentTile = pixCoordToIndexIn1D(pathFor.x, pathFor.y);
+  //  console.log(currentTile);
     if (PATHFINDING_DEBUG_LOG) console.log("starting pathfinding from tile "+currentTile+" to tile "+toTile);
     if (PATHFINDING_DEBUG_LOG) console.log("- collisionGrid["+currentTile+"]="+collisionGrid[currentTile]+" and collisionGrid["+toTile+"]="+collisionGrid[toTile]);
     if (PATHFINDING_DEBUG_LOG) console.time("- pathfinding took"); // start a debug timer
@@ -96,11 +95,11 @@ function startPath(toTile, pathFor){
 		return;
     }
 	
-	if (pathfindingGridDataNeedsRefreshing || !PATHFINDING_REUSES_GRID_UNLESS_REFRESHED) { 
+	  if (pathfindingGridDataNeedsRefreshing || !PATHFINDING_REUSES_GRID_UNLESS_REFRESHED) { 
        SetupPathfindingGridData(pathFor);
     }
 	  
-    collisionGrid[toTile].setGoal();
+    pathfinderGrid[toTile].setGoal();
 	  PathfindingNextStep(pathFor);
  
     // on my computer this is usually 0.003 ms

@@ -29,6 +29,10 @@ gameCanvas.addEventListener("click", (event) => {
     player.targetX = clickX;
     player.targetY = clickY;
     pathfinderGrid = SetupPathfindingGridData(player)
+    let endTile = pixCoordToIndexIn1D(400, 300);
+    let startTile = pixCoordToIndexIn1D(player.x, player.y);
+    console.log ("S: " + startTile + " E: " + endTile)
+    startPath(startTile, endTile);
 })
 
 

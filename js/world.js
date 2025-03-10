@@ -223,6 +223,15 @@ function pixCoordToIndex(pX, pY){
 	return tileCoordToIndex(col, row);
 }
 
+function pixCoordToIndexIn1D(pX, pY, numCols) { 
+    var col = Math.floor(pX / TILE_W);
+    var row = Math.floor(pY / TILE_H);
+    console.log(row*TILE_COLS+col)
+    return row * TILE_COLS + col;
+}
+
+
+
 function drawPathingFindingTiles() {
     var tileCount = TILE_COLS * GRID_ROWS;
     for (var eachTil = 0; eachTil < tileCount; eachTil++) {
