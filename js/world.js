@@ -223,10 +223,10 @@ function pixCoordToIndex(pX, pY){
 	return tileCoordToIndex(col, row);
 }
 
-function pixCoordToIndexIn1D(pX, pY, numCols) { 
+function pixCoordToIndexIn1D(pX, pY) { 
     var col = Math.floor(pX / TILE_W);
     var row = Math.floor(pY / TILE_H);
-    console.log(row*TILE_COLS+col)
+    console.log(row,TILE_COLS,col)
     return row * TILE_COLS + col;
 }
 

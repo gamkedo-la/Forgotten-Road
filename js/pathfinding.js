@@ -14,18 +14,17 @@ function SetupPathfindingGridData(whichPathfinder) {
   let endR = -1;
   let endC = -1;
 
-  let unvisitedList = []; 
+  unvisitedList = []; 
   let pathfinder = whichPathfinder || {}; // Ensure pathfinder is valid
 
   // Create a new pathfinding grid (1D array)
   let pathfindingGrid = new Array(TILE_ROWS * TILE_COLS).fill(null);
   
   // Initialize collision grid if not already created
-  if (!collisionGrid || collisionGrid.length === 0) {
-      collisionGrid = new Array(TILE_ROWS).fill(null).map(() =>
-          new Array(TILE_COLS).fill(null).map(() => new GridElement())
-      );
-  }
+  collisionGrid = Array.from({ length: TILE_ROWS }, () =>
+    Array.from({ length: TILE_COLS }, () => new GridElement())
+);
+
 
   console.log("Collision Grid Initialized with Rows:", collisionGrid.length, "Cols:", collisionGrid[0]?.length || 0);
 
@@ -84,19 +83,20 @@ function hValCal(atColumn,atRow, toColumn,toRow, multWeight, geometric) { /////
 }
 
 function startPath(toTile, pathFor){
+   // console.log(toTile, pathFor)
     var currentTile = pixCoordToIndexIn1D(pathFor.x, pathFor.y);
-  //  console.log(currentTile);
+    console.log(currentTile);
     if (PATHFINDING_DEBUG_LOG) console.log("starting pathfinding from tile "+currentTile+" to tile "+toTile);
     if (PATHFINDING_DEBUG_LOG) console.log("- collisionGrid["+currentTile+"]="+collisionGrid[currentTile]+" and collisionGrid["+toTile+"]="+collisionGrid[toTile]);
     if (PATHFINDING_DEBUG_LOG) console.time("- pathfinding took"); // start a debug timer
 
-    if (toTile< 0 || toTile >= collisionGrid.length) { // invalid or off board
+    if (toTile< 0 || toTile >= pathfinderGrid.length) { // invalid or off board
         if (PATHFINDING_DEBUG_LOG) console.log("Not a valid location");
 		return;
     }
 	
 	  if (pathfindingGridDataNeedsRefreshing || !PATHFINDING_REUSES_GRID_UNLESS_REFRESHED) { 
-       SetupPathfindingGridData(pathFor);
+       pathFinderGrid = SetupPathfindingGridData(pathFor);
     }
 	  
     pathfinderGrid[toTile].setGoal();

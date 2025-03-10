@@ -20,20 +20,29 @@ gameCanvas.addEventListener("mousemove", (event) => {
 
 gameCanvas.addEventListener("click", (event) => {
     const rect = gameCanvas.getBoundingClientRect();
+    
+    // Get mouse click coordinates relative to the canvas
     mouse.x = event.clientX - rect.left;
     mouse.y = event.clientY - rect.top;
 
-    //write a function for clicked objects
+    // Write a function for clicked objects (if applicable)
+    // Example: if (isClickedObject(mouse.x, mouse.y)) return;
 
-    //If not a clicked objecct, start pathfinding
-    player.targetX = clickX;
-    player.targetY = clickY;
-    pathfinderGrid = SetupPathfindingGridData(player)
-    let endTile = pixCoordToIndexIn1D(400, 300);
+    // If not a clicked object, start pathfinding
+    player.targetX = mouse.x;
+    player.targetY = mouse.y;
+
+    // Setup pathfinding grid
+    pathfinderGrid = SetupPathfindingGridData(player);
+
+    let endTile = pixCoordToIndexIn1D(player.targetX, player.targetY);
     let startTile = pixCoordToIndexIn1D(player.x, player.y);
-    console.log ("S: " + startTile + " E: " + endTile)
-    startPath(startTile, endTile);
-})
+
+    //console.log("S: " + startTile + " E: " + endTile);
+
+    startPath(endTile, player);
+});
+
 
 
 
