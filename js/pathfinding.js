@@ -8,7 +8,6 @@ var pathfindingGridDataNeedsRefreshing = true; // set to true calculate grid
 const USE_FASTER_ARRAYREMOVE = true; // set to true for faster but maybe buggy version
 
 var unvisitedList = [];
-const TILE_WATER = 2; //Temp used for unwalkable tile
 const TILE_GOAL = 3; //Temp used for end tile
 
 function SetupPathfindingGridData(whichPathfinder) {
@@ -16,49 +15,48 @@ function SetupPathfindingGridData(whichPathfinder) {
   let endC = -1;
 
   let unvisitedList = []; 
-  let pathfinder = whichPathfinder;
+  let pathfinder = whichPathfinder || {}; // Ensure pathfinder is valid
 
+  // Create a new pathfinding grid (1D array)
   let pathfindingGrid = new Array(TILE_ROWS * TILE_COLS).fill(null);
-
+  console.log("Pathfinding Grid Length:", pathfindingGrid.length);
+  
+  // Initialize collision grid if not already created
   if (!collisionGrid || collisionGrid.length === 0) {
-      collisionGrid = new Array(TILE_ROWS).fill(null).map(() => new Array(TILE_COLS).fill(null));
+      collisionGrid = new Array(TILE_ROWS).fill(null).map(() =>
+          new Array(TILE_COLS).fill(null).map(() => new GridElement())
+      );
   }
 
-  // If grid is already populated, copy data
-  if (collisionGrid.length > 0 && collisionGrid[0].length > 0) {
-      for (let row = 0; row < TILE_ROWS; row++) {
-          for (let col = 0; col < TILE_COLS; col++) {
-              let idx = row * TILE_COLS + col;
-              if (collisionGrid[row] && collisionGrid[row][col]) {
-                  pathfindingGrid[idx] = collisionGrid[row][col]; 
-              } else {
-                  console.warn(`Missing grid data at row ${row}, col ${col}`);
-              }
-          }
-      }
-  } else {
-      // Initialize grid
-      for (let row = 0; row < TILE_ROWS; row++) {
-          for (let col = 0; col < TILE_COLS; col++) {
-              let idxHere = tileCoordToIndex(col, row);
+  console.log("Collision Grid Initialized with Rows:", collisionGrid.length, "Cols:", collisionGrid[0]?.length || 0);
 
+  // Populate collision grid and pathfinding grid
+  for (let row = 0; row < TILE_ROWS; row++) {
+      for (let col = 0; col < TILE_COLS; col++) {
+          let idx = row * TILE_COLS + col;
+
+          if (!collisionGrid[row][col]) {
               collisionGrid[row][col] = new GridElement();
-              collisionGrid[row][col].name = `${col},${row}`;
-              collisionGrid[row][col].idx = idxHere;
-              collisionGrid[row][col].pathfinder = pathfinder;
-              unvisitedList.push(collisionGrid[row][col]);
+          }
 
-              collisionGrid[row][col].setup(col, row, idxHere, collisionGrid[idxHere], pathfinder);
+          // Assign grid element properties
+          collisionGrid[row][col].name = `${col},${row}`;
+          collisionGrid[row][col].idx = idx;
+          collisionGrid[row][col].pathfinder = pathfinder;
+          unvisitedList.push(collisionGrid[row][col]);
 
-              if (collisionGrid[row][col].elementType === TILE_GOAL) { 
-                  endR = row;
-                  endC = col;
-              }
+          // Store reference in pathfindingGrid
+          pathfindingGrid[idx] = collisionGrid[row][col];
+
+          // Check if this is the goal tile
+          if (collisionGrid[row][col].elementType === TILE_GOAL) { 
+              endR = row;
+              endC = col;
           }
       }
   }
 
-  // Compute h values based on goal position
+  // Compute heuristic values if a goal exists
   if (endR !== -1 && endC !== -1) {
       for (let row = 0; row < TILE_ROWS; row++) {
           for (let col = 0; col < TILE_COLS; col++) {
@@ -70,7 +68,8 @@ function SetupPathfindingGridData(whichPathfinder) {
 
   pathfindingGridDataNeedsRefreshing = false;
 
-  return pathfindingGrid; // Return the grid for further use
+  console.log("Pathfinding Grid and Collision Grid Setup Complete.");
+  return pathfindingGrid;
 }
 
 
@@ -87,7 +86,6 @@ function hValCal(atColumn,atRow, toColumn,toRow, multWeight, geometric) { /////
 }
 
 function startPath(toTile, pathFor){
-    return; //temp disabiling to troubleshoot pathfinding
     var currentTile = pixCoordToIndex(pathFor.x, pathFor.y);
     if (PATHFINDING_DEBUG_LOG) console.log("starting pathfinding from tile "+currentTile+" to tile "+toTile);
     if (PATHFINDING_DEBUG_LOG) console.log("- collisionGrid["+currentTile+"]="+collisionGrid[currentTile]+" and collisionGrid["+toTile+"]="+collisionGrid[toTile]);
@@ -103,7 +101,7 @@ function startPath(toTile, pathFor){
     }
 	  
     collisionGrid[toTile].setGoal();
-	PathfindingNextStep(pathFor);
+	  PathfindingNextStep(pathFor);
  
     // on my computer this is usually 0.003 ms
     if (PATHFINDING_DEBUG_LOG) console.timeEnd("- pathfinding took"); // end the debug timer and say how long it look

@@ -5,6 +5,9 @@ class Entity {
         this._y = y;
         this._health = health;
         this._damage = damage;
+        this.targetX = null;
+        this.targetY = null;
+        this.speed = 2;
     }
 
     // Getters
