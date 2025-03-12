@@ -1,6 +1,8 @@
 var canvas, ctx, collisionCanvas, collisionCtx;
 const enemies = [];
 var turnPathFindingDrawingOn = false;
+const PLAYER_MOVE_SPEED = 4;
+
 
 // Player and enemy setup
 const player = new Player("Hero", 300, 500, 100, 10, 1, 50);
@@ -74,6 +76,7 @@ window.onload = function() {
 function imageLoadingDoneSoStartGame() {
     var framesPerSecond = 60;
     setInterval(function() {
+        check_gamepad();
         moveEverything();
         drawEverything();
     }, 1000 / framesPerSecond);
@@ -97,19 +100,16 @@ function checkCollision(character, building, message) {
 
 // Move all entities
 function moveEverything() {
-    // Move player
-    const SPEED = 4;
-    if (keys.up) movePlayer(0, -SPEED, "NORTH");
-    if (keys.down) movePlayer(0,SPEED, "SOUTH");
-    if (keys.left) movePlayer(-SPEED,0, "WEST");
-    if (keys.right) movePlayer(SPEED,0, "EAST");
     
-
+    // Move player
+    if (keys.up || gamepad.up) movePlayer(0, -PLAYER_MOVE_SPEED, "NORTH");
+    if (keys.down || gamepad.down) movePlayer(0,PLAYER_MOVE_SPEED, "SOUTH");
+    if (keys.left || gamepad.left) movePlayer(-PLAYER_MOVE_SPEED,0, "WEST");
+    if (keys.right || gamepad.right) movePlayer(PLAYER_MOVE_SPEED,0, "EAST");
+    
     // Collision with house
     checkCollision(player, gameState.house, "You're in the blacksmith shop! You can interact with NPCs or buy items.");
     checkCollision(player, gameState.house2, "You're in the alchemist shop! You can interact with NPCs or buy items.");
-
-
     
     // Basic enemy interaction (combat)
     enemies.forEach((enemy) => {
