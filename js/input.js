@@ -6,6 +6,7 @@ const keys = {
     down: false,
     left: false,
     right: false,
+    action: false
 };
 
 var mouse = {x: 0, y: 0, hoverObjects: null};
@@ -48,17 +49,32 @@ gameCanvas.addEventListener("click", (event) => {
 
 // Key listeners
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowUp') keys.up = true;
-    if (event.key === 'ArrowDown') keys.down = true;
-    if (event.key === 'ArrowLeft') keys.left = true;
-    if (event.key === 'ArrowRight') keys.right = true;
+    //console.log("keydown: "+event.key);
+    if ((event.key === 'ArrowUp') || (event.key === 'w')) keys.up = true;
+    if ((event.key === 'ArrowDown') || (event.key === 's')) keys.down = true;
+    if ((event.key === 'ArrowLeft') || (event.key === 'a')) keys.left = true;
+    if ((event.key === 'ArrowRight') || (event.key === 'd')) keys.right = true;
+    if ((event.key === ' ') || 
+        (event.key === 'f') ||
+        (event.key === 'x') ||
+        (event.key === 'z') ||
+        (event.key === 'Control') ||
+        (event.key === 'Shift')
+        ) keys.action = true;
 });
 
 document.addEventListener('keyup', (event) => {
-    if (event.key === 'ArrowUp') keys.up = false;
-    if (event.key === 'ArrowDown') keys.down = false;
-    if (event.key === 'ArrowLeft') keys.left = false;
-    if (event.key === 'ArrowRight') keys.right = false;
+    if ((event.key === 'ArrowUp') || (event.key === 'w')) keys.up = false;
+    if ((event.key === 'ArrowDown') || (event.key === 's')) keys.down = false;
+    if ((event.key === 'ArrowLeft') || (event.key === 'a')) keys.left = false;
+    if ((event.key === 'ArrowRight') || (event.key === 'd')) keys.right = false;
+    if ((event.key === ' ') || 
+        (event.key === 'f') ||
+        (event.key === 'x') ||
+        (event.key === 'z') ||
+        (event.key === 'Control') ||
+        (event.key === 'Shift')
+        ) keys.action = false;
 });
 
 // Function to handle player movement
