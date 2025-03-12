@@ -57,7 +57,7 @@ function SetupPathfindingGridData(whichPathfinder) {
           endR = row;
           endC = col;
       }
-      //turnPathFindingDrawingOn = true;
+      turnPathFindingDrawingOn = true;
     }
   }
 
