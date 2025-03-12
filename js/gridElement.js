@@ -1,3 +1,6 @@
+var presetUnwalkableTiles = [];
+var playerUnits = [];
+
 function GridElement() {
   this.elementType = NOTHING; // Default to a known type
 
@@ -46,7 +49,7 @@ function GridElement() {
       var pieceName = "";
       var tileBGColor = '#FF000080';
 
-      console.log(this.elementType)
+      //console.log(this.elementType)
 
       switch (this.elementType) {
           case NOTHING:
