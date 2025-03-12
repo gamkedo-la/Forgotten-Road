@@ -23,35 +23,42 @@ function SetupPathfindingGridData(whichPathfinder) {
   // Initialize collision grid if not already created
   collisionGrid = Array.from({ length: TILE_ROWS }, () =>
     Array.from({ length: TILE_COLS }, () => new GridElement())
-);
-
-
-  console.log("Collision Grid Initialized with Rows:", collisionGrid.length, "Cols:", collisionGrid[0]?.length || 0);
+  );
 
   // Populate collision grid and pathfinding grid
   for (let row = 0; row < TILE_ROWS; row++) {
-      for (let col = 0; col < TILE_COLS; col++) {
-          let idx = row * TILE_COLS + col;
+    for (let col = 0; col < TILE_COLS; col++) {
+        let idx = row * TILE_COLS + col;
 
-          if (!collisionGrid[row][col]) {
-              collisionGrid[row][col] = new GridElement();
-          }
+      //if (!collisionGrid[row][col]) {
+          collisionGrid[row][col] = new GridElement();
+          let backgroundGridTileType = backgroundGrid[row][col];
+          collisionGrid[row][col].setup(col, row, idx, backgroundGridTileType, pathfinder);
+      //}
 
-          // Assign grid element properties
-          collisionGrid[row][col].name = `${col},${row}`;
-          collisionGrid[row][col].idx = idx;
-          collisionGrid[row][col].pathfinder = pathfinder;
-          unvisitedList.push(collisionGrid[row][col]);
-
-          // Store reference in pathfindingGrid
-          pathfindingGrid[idx] = collisionGrid[row][col];
-
-          // Check if this is the goal tile
-          if (collisionGrid[row][col].elementType === TILE_GOAL) { 
-              endR = row;
-              endC = col;
-          }
+      if (!collisionGrid[row][col].elementType) {
+        console.warn("ElementType is undefined at:", row, col);
+      } else {
+        //console.log(collisionGrid[row][col].elementType);
+        //console.log(col, row, idx, backgroundGrid[row][col])
       }
+
+      // Assign grid element  properties
+      //collisionGrid[row][col].name = `${col},${row}`;
+      //collisionGrid[row][col].idx = idx;
+      //collisionGrid[row][col].pathfinder = pathfinder;
+      unvisitedList.push(collisionGrid[row][col]);
+  
+      // Store reference in pathfindingGrid
+      pathfindingGrid[idx] = collisionGrid[row][col];
+
+      // Check if this is the goal tile
+      if (collisionGrid[row][col].elementType === TILE_GOAL) { 
+          endR = row;
+          endC = col;
+      }
+      //turnPathFindingDrawingOn = true;
+    }
   }
 
   // Compute heuristic values if a goal exists
@@ -83,9 +90,8 @@ function hValCal(atColumn,atRow, toColumn,toRow, multWeight, geometric) { /////
 }
 
 function startPath(toTile, pathFor){
-   // console.log(toTile, pathFor)
     var currentTile = pixCoordToIndexIn1D(pathFor.x, pathFor.y);
-    console.log(currentTile);
+
     if (PATHFINDING_DEBUG_LOG) console.log("starting pathfinding from tile "+currentTile+" to tile "+toTile);
     if (PATHFINDING_DEBUG_LOG) console.log("- collisionGrid["+currentTile+"]="+collisionGrid[currentTile]+" and collisionGrid["+toTile+"]="+collisionGrid[toTile]);
     if (PATHFINDING_DEBUG_LOG) console.time("- pathfinding took"); // start a debug timer
@@ -97,6 +103,7 @@ function startPath(toTile, pathFor){
 	
 	  if (pathfindingGridDataNeedsRefreshing || !PATHFINDING_REUSES_GRID_UNLESS_REFRESHED) { 
        pathFinderGrid = SetupPathfindingGridData(pathFor);
+       console.log("updating pathFinderGrid");
     }
 	  
     pathfinderGrid[toTile].setGoal();

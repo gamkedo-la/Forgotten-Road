@@ -1,5 +1,6 @@
 var canvas, ctx, collisionCanvas, collisionCtx;
 const enemies = [];
+var turnPathFindingDrawingOn = false;
 
 // Player and enemy setup
 const player = new Player("Hero", 300, 500, 100, 10, 1, 50);
@@ -139,6 +140,9 @@ function drawEverything() {
     ctx.drawImage(townMapPic, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
     drawBackground();
+    if(turnPathFindingDrawingOn){
+        drawPathingFindingTiles();
+    }
 
     // Render building if inside
     if(gameState.house.insidebuilding){

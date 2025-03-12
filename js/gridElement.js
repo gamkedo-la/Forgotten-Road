@@ -1,4 +1,6 @@
 function GridElement() {
+    this.elementType = NOTHING;  // Default to a known type
+
     this.tilC;
     this.tilR; // so each tile knows its own col and row position in overall grid
     this.tilIdx;
@@ -11,19 +13,22 @@ function GridElement() {
     
     this.setup = function(myC, myR, myIdx, myElement, whichPathFinder) {
       this.reset();
-      this.tilC=myC;
-      this.tilR=myR;
-      this.tilIdx=myIdx;
-      this.elementType = myElement;
+      this.tilC = myC;
+      this.tilR = myR;
+      this.tilIdx = myIdx;
+      this.elementType = myElement; // Assigned here first
+  
       var elementTypeConsideration = this.elementType;
-      this.elementType = this.isNotPassible(elementTypeConsideration);
+      this.elementType = this.isNotPassible(elementTypeConsideration); // Overwritten here
+  
       var pathFinderX = whichPathFinder.x;
       var pathFinderY = whichPathFinder.y;
-      var playersLocation = pixCoordToIndex(pathFinderX,pathFinderY);
-        if(this.tilIdx == playersLocation){
-          this.elementType = SOURCE;
-          this.setDistIfLess(0,null);
-        }
+      var playersLocation = pixCoordToIndex(pathFinderX, pathFinderY);
+  
+      if (this.tilIdx == playersLocation) {
+          this.elementType = SOURCE; // Ensures player's position is correct
+          this.setDistIfLess(0, null);
+      }
     }
   
     this.reset = function() {
@@ -69,7 +74,7 @@ function GridElement() {
       var tileTopEdgeY = this.tilR * GRID_HEIGHT;
   
       colorRect(tileLeftEdgeX, tileTopEdgeY, GRID_WIDTH, GRID_HEIGHT, tileBGColor);
-      canvasContext.fillStyle = 'white';
+      ctx.fillStyle = 'white';
       //canvasContext.fillText(pieceName, tileLeftEdgeX + GRID_WIDTH / 2, tileTopEdgeY + GRID_HEIGHT / 2);
   
       /*if (tileOverIdx == this.tilIdx) { // mouseover?

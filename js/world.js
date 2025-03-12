@@ -226,18 +226,15 @@ function pixCoordToIndex(pX, pY){
 function pixCoordToIndexIn1D(pX, pY) { 
     var col = Math.floor(pX / TILE_W);
     var row = Math.floor(pY / TILE_H);
-    console.log(row,TILE_COLS,col)
     return row * TILE_COLS + col;
 }
 
 
 
 function drawPathingFindingTiles() {
-    var tileCount = TILE_COLS * GRID_ROWS;
-    for (var eachTil = 0; eachTil < tileCount; eachTil++) {
-        grid[eachTil].display();
+    for (let row = 0; row < TILE_ROWS; row++) {
+        for (let col = 0; col < TILE_COLS; col++) {
+            collisionGrid[row][col].display();
+        }
     } // end of for eachTil
 } // end of drawTiles()
-
-
-
