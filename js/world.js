@@ -232,9 +232,11 @@ function pixCoordToIndexIn1D(pX, pY) {
 
 
 function drawPathingFindingTiles() {
-    for (let row = 0; row < TILE_ROWS; row++) {
-        for (let col = 0; col < TILE_COLS; col++) {
-            collisionGrid[row][col].display();
+    console.log(TILE_COLS, TILE_ROWS)
+    for (let col = 0; col < TILE_COLS; col++) {
+        for (let row = 0; row < TILE_ROWS; row++) {
+            collisionGrid[col][row].display();
+            colorText("C: " + col + " R:" + row, col*32, row*32+10, "White");
         }
     } // end of for eachTil
 } // end of drawTiles()

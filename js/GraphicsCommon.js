@@ -20,6 +20,7 @@ function colorCircle(centerX,centerY, radius, fillColor) {  //draw circles
 
 function colorText(showWords, textX, textY, fillColor) {
 	ctx.fillStyle = fillColor;
+	ctx.font="7px sans-serif"
 	ctx.fillText(showWords, textX, textY);
 }
 
