@@ -12,6 +12,8 @@ player.levelUp();
 const goblin = new Monster("Goblin", 32*9, 32*4, 32, 5, 20);
 enemies.push(goblin);
 
+goblin.placeAtRandomPosition(5);
+
 console.log(`${goblin.name} is lurking in the woods...`);
 goblin.attack(player);
 
