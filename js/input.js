@@ -6,7 +6,8 @@ const keys = {
     down: false,
     left: false,
     right: false,
-    action: false
+    action: false,
+    pause: false,
 };
 
 var mouse = {x: 0, y: 0, hoverObjects: null};
@@ -61,6 +62,9 @@ document.addEventListener('keydown', (event) => {
         (event.key === 'Control') ||
         (event.key === 'Shift')
         ) keys.action = true;
+    if (event.key === 'p') {
+        keys.pause = true;
+    }
 });
 
 document.addEventListener('keyup', (event) => {
@@ -75,6 +79,9 @@ document.addEventListener('keyup', (event) => {
         (event.key === 'Control') ||
         (event.key === 'Shift')
         ) keys.action = false;
+    if (event.key === 'p') {
+        keys.pause = false;
+    }
 });
 
 // Function to handle player movement

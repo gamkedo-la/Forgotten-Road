@@ -18,9 +18,9 @@ function colorCircle(centerX,centerY, radius, fillColor) {  //draw circles
 	ctx.fill();
 }
 
-function colorText(showWords, textX, textY, fillColor) {
+function colorText(showWords, textX, textY, fillColor, fontSize = 7) {
 	ctx.fillStyle = fillColor;
-	ctx.font="7px sans-serif"
+	ctx.font=`${fontSize}px sans-serif`
 	ctx.fillText(showWords, textX, textY);
 }
 
