@@ -30,20 +30,25 @@ class Monster extends Entity {
       console.log(`Player is at grid position (${playerGridCol}, ${playerGridRow})`);
       
       for (let row = 0; row < TILE_ROWS; row++) {
-          for (let col = 0; col < TILE_COLS; col++) {
-              if (backgroundGrid[row][col] === TILE_WALL) {
-                  wallPositions++;
-                  continue;
-              }       
-              const distX = Math.abs(col - playerGridCol);
-              const distY = Math.abs(row - playerGridRow);
-              const distance = Math.sqrt(distX * distX + distY * distY);
-              
-              if (distance >= minDistanceFromPlayer) {
-                  validSpawnPositions.push({row, col});
-              } else {
-                  tooClosePositions++;
-              }
+        for (let col = 0; col < TILE_COLS; col++) {  
+            if (!backgroundGrid[row] || backgroundGrid[row][col] === undefined) {  
+                console.warn(`Skipping undefined tile at row=${row}, col=${col}`);
+                continue;
+            }
+    
+            if (backgroundGrid[row][col] == TILE_WALL) {
+                wallPositions++;
+                continue;
+            }       
+            const distX = Math.abs(col - playerGridCol);
+            const distY = Math.abs(row - playerGridRow);
+            const distance = Math.sqrt(distX * distX + distY * distY);
+            
+            if (distance >= minDistanceFromPlayer) {
+                validSpawnPositions.push({ col, row });      
+            } else {
+                tooClosePositions++;
+            }
           }
       }      
       console.log(`Spawn location analysis:`);

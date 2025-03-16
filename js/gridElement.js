@@ -116,13 +116,12 @@ function GridElement() {
       this.elementType = toType;
   }
 
-  function GetGridAtCR(atC, atR) {
-      if (atR >= 0 && atR < TILE_ROWS && atC >= 0 && atC < TILE_COLS) {
-          return collisionGrid[atR][atC]; // Correctly accessing 2D array
-      }
-      return null; // Avoids out-of-bounds errors
+  function GetGridAtCR(atRow, atCol) {
+    if (atRow >= 0 && atRow < TILE_ROWS && atCol >= 0 && atCol < TILE_COLS) {
+        return collisionGrid[atRow][atCol]; // ✅ Now consistent
+    }
+    return null;
   }
-
 
   this.myUnvisitedNeighbors = function() {
       var myNeighbors = [];
