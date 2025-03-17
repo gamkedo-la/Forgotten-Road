@@ -3,6 +3,8 @@ const enemies = [];
 var turnPathFindingDrawingOn = false;
 const PLAYER_MOVE_SPEED = 4;
 
+console.log("============ The Forgotten Road ============\nInitializing...");
+
 // Player and enemy setup
 const player = new Player("Hero", 300, 500, 100, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
@@ -100,6 +102,7 @@ window.onload = function () {
 };
 
 function imageLoadingDoneSoStartGame() {
+  console.log("All images downloaded. Starting game!");
   var framesPerSecond = 60;
   setInterval(function () {
     check_gamepad();

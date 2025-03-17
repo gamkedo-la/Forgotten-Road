@@ -109,10 +109,12 @@ function precomputeBackground() {
         cachedBackgroundGrid[row] = []; // Initialize row
         for (let col = 0; col < TILE_COLS; col++) {
        
-            //console.log("Generated backgroundGrid:", backgroundGrid);
-            console.log("backgroundGrid.length (should be TILE_ROWS="+TILE_ROWS+"):", backgroundGrid.length);
-            console.log("backgroundGrid[0]?.length (should be TILE_COLS="+TILE_COLS+"):", backgroundGrid[0]?.length);
+            // debug the array shape - this looks good now
+            // console.log("Generated backgroundGrid:", backgroundGrid);
+            // console.log("backgroundGrid.length (should be TILE_ROWS="+TILE_ROWS+"):", backgroundGrid.length);
+            // console.log("backgroundGrid[0]?.length (should be TILE_COLS="+TILE_COLS+"):", backgroundGrid[0]?.length);
 
+            // missing data?
             if (!backgroundGrid[row] || backgroundGrid[row][col] === undefined) {
                 console.error("ERROR missing backgroundGrid data for row,col "+row+","+col);
                 console.log(`backgroundGrid.length: ${backgroundGrid.length}`);
