@@ -43,10 +43,18 @@ function SetupCollisionGridFromBackground() {
         return;
     }
 
-    // Reset collision grid
-    collisionGrid = new Array(TILE_ROWS).fill(null).map(() =>
-        new Array(TILE_COLS).fill(null)
-    );
+    // Reset collision grid (FIXME: backwards)
+    //collisionGrid = new Array(TILE_ROWS).fill(null).map(() =>
+    //    new Array(TILE_COLS).fill(null)
+    //);
+
+    // Reset collision grid to be all valid data
+    for (let row = 0; row < TILE_ROWS; row++) {
+        collisionGrid[row]=[];
+        for (let col = 0; col < TILE_COLS; col++) {
+            collisionGrid[row][col]=0;
+        }
+    }
 
     for (let row = 0; row < TILE_ROWS; row++) {
         for (let col = 0; col < TILE_COLS; col++) {
@@ -176,10 +184,10 @@ function checkTileTypeForTrees(tileType, x, y) {
     if (
         x < backgroundGrid[0].length - 1 && 
         y < backgroundGrid.length - 1 &&
-        backgroundGrid[x][y] === TILE_TREE &&
-        backgroundGrid[x][y + 1] === TILE_TREE &&
-        backgroundGrid[x + 1][y] === TILE_TREE &&
-        backgroundGrid[x + 1][y + 1] === TILE_TREE
+        backgroundGrid[y][x] === TILE_TREE &&
+        backgroundGrid[y][x + 1] === TILE_TREE &&
+        backgroundGrid[y + 1][x] === TILE_TREE &&
+        backgroundGrid[y + 1][x + 1] === TILE_TREE
     ) {
         return { sX: 0, sY: 32*3 }; // Example sprite position for a tree
     }
