@@ -104,6 +104,8 @@ window.onload = function () {
 function imageLoadingDoneSoStartGame() {
   console.log("All images downloaded. Starting game!");
   var framesPerSecond = 60;
+
+  SetupCollisionGridFromBackground();
   setInterval(function () {
     check_gamepad();
     moveEverything();

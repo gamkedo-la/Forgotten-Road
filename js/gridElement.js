@@ -15,27 +15,29 @@ function GridElement() {
   this.cameFrom; // GridElement reference to which tile we left to reach this one
 
   this.setup = function(myC, myR, myIdx, myElement, whichPathFinder) {
-      this.reset();
-      this.tilC = myC;
-      this.tilR = myR;
-      this.tilIdx = myIdx;
+    this.reset();
+    this.tilC = myC;
+    this.tilR = myR;
+    this.tilIdx = myIdx;
 
-      console.log(`Setting up tile (${this.tilC}, ${this.tilR}) - Initial type: ${myElement}`);
+    console.log(`🚀 Setting tilIdx at Setup: (${this.tilC}, ${this.tilR}) => ${this.tilIdx}`);
 
-      this.elementType = myElement; // First assignment
-      this.elementType = this.isNotPassible(this.elementType); // Overwritten here
+    this.elementType = myElement;
+    this.elementType = this.isNotPassible(this.elementType);
 
-      console.log(`Final type after isNotPassible(): ${this.elementType}`);
+    console.log(`🔍 After isNotPassible: (${this.tilC}, ${this.tilR}) => ${this.tilIdx}`);
 
-      var pathFinderX = whichPathFinder.x;
-      var pathFinderY = whichPathFinder.y;
-      var playersLocation = pixCoordToIndex(pathFinderX, pathFinderY);
+    var pathFinderX = whichPathFinder.x;
+    var pathFinderY = whichPathFinder.y;
+    var playersLocation = pixCoordToIndex(pathFinderX, pathFinderY);
 
-      if (this.tilIdx == playersLocation) {
-          this.elementType = SOURCE;
-          this.setDistIfLess(0, null);
-      }
-  };
+    if (this.tilIdx == playersLocation) {
+        console.log(`🎯 Player Spawn Found at ${this.tilIdx}, marking as SOURCE`);
+        this.elementType = SOURCE;
+        this.setDistIfLess(0, null);
+    }
+};
+
 
   this.reset = function() {
       if (this.elementType == VISITED || this.elementType == PATH) {

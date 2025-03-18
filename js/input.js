@@ -98,7 +98,7 @@ function movePlayer(dx, dy, direction) {
         player.sY = 3 * player.sH;
     }
 
-    if (isWalkable(newX, newY)) {
+    if (isWalkable(newY, newX)) {
         player.x = newX;
         player.y = newY;
     }

@@ -18,12 +18,9 @@ function SetupPathfindingGridData(whichPathfinder) {
   let pathfinder = whichPathfinder || {}; // Ensure pathfinder is valid
 
   // Create a new pathfinding grid (1D array)
-  let pathfindingGrid = new Array(TILE_COLS * TILE_ROWS).fill(null);
-  
-  // Initialize collision grid if not already created
-  collisionGrid = Array.from({ length: TILE_ROWS }, () =>
-    Array.from({ length: TILE_COLS }, () => new GridElement())
-  );
+  let pathfindingGrid = new Array(TILE_ROWS).fill(null).map(() => new Array(TILE_COLS).fill(1)); // Default to walls (1)
+
+
 
   // Populate collision grid and pathfinding grid
   for (let row = 0; row < TILE_ROWS; row++) {
@@ -33,6 +30,7 @@ function SetupPathfindingGridData(whichPathfinder) {
       //if (!collisionGrid[row][col]) {
           collisionGrid[row][col] = new GridElement();
           let backgroundGridTileType = backgroundGrid[row][col];
+  
           collisionGrid[row][col].setup(col, row, idx, backgroundGridTileType, pathfinder);
       //}
 
@@ -49,8 +47,15 @@ function SetupPathfindingGridData(whichPathfinder) {
       //collisionGrid[row][col].pathfinder = pathfinder;
       unvisitedList.push(collisionGrid[row][col]);
   
-      // Store reference in pathfindingGrid
-      pathfindingGrid[idx] = collisionGrid[row][col];
+      // Convert elementType to a walkable (0) or non-walkable (1) value
+      pathfindingGrid[row][col] = (collisionGrid[row][col].elementType === 3) ? 0 : 1;
+
+
+   //   console.log("Updated Pathfinding Grid (2D):", pathfindingGrid);
+   //   console.log("Pathfinding Grid Dimensions:", pathfindingGrid.length, pathfindingGrid[0]?.length);
+      //console.table(pathfindingGrid); // Visualizes the grid in the console
+      
+
 
       // Check if this is the goal tile
       if (collisionGrid[row][col].elementType === TILE_GOAL) { 
@@ -58,6 +63,7 @@ function SetupPathfindingGridData(whichPathfinder) {
           endR = row;
       }
       turnPathFindingDrawingOn = true;
+     // console.log(`Pathfinding Grid Dimensions: ${pathfinderGrid.length}, First Row: ${pathfinderGrid[0]?.length}`);
     }
   }
 
@@ -72,6 +78,12 @@ function SetupPathfindingGridData(whichPathfinder) {
   }
 
   pathfindingGridDataNeedsRefreshing = false;
+
+  //console.log("Final Pathfinding Grid:", JSON.stringify(pathfindingGrid));
+  //console.log("Pathfinding Grid Length:", pathfindingGrid.length);
+  //console.log("First Row:", JSON.stringify(pathfindingGrid.slice(0, TILE_COLS)));
+  console.log("Player's Start Tile:", pathfindingGrid[0][9]);
+
 
   return pathfindingGrid;
 }

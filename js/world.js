@@ -43,59 +43,48 @@ function SetupCollisionGridFromBackground() {
         return;
     }
 
-    // Reset collision grid (FIXME: backwards)
-    //collisionGrid = new Array(TILE_ROWS).fill(null).map(() =>
-    //    new Array(TILE_COLS).fill(null)
-    //);
-
-    // Reset collision grid to be all valid data
-    for (let row = 0; row < TILE_ROWS; row++) {
-        collisionGrid[row]=[];
-        for (let col = 0; col < TILE_COLS; col++) {
-            collisionGrid[row][col]=0;
-        }
-    }
+    // Ensure collisionGrid is an array before assigning rows
+    collisionGrid = new Array(TILE_ROWS).fill(null).map(() =>
+        new Array(TILE_COLS).fill(null)
+    );
 
     for (let row = 0; row < TILE_ROWS; row++) {
         for (let col = 0; col < TILE_COLS; col++) {
             let idxHere = tileCoordToIndex(col, row);
 
-            // Initialize collisionGrid entry
+            // Explicitly assign a GridElement object
             collisionGrid[row][col] = new GridElement();
             collisionGrid[row][col].name = `${col},${row}`;
             collisionGrid[row][col].idx = idxHere;
 
-            // Set collision based on backgroundGrid tile type
-            let tileType = backgroundGrid[row][col]; // Assumes backgroundGrid[row][col] exists
+            // Set collision based on backgroundGrid
+            let tileType = backgroundGrid[row][col]; // Ensure backgroundGrid[row][col] exists
+            collisionGrid[row][col].elementType = tileType;
 
-            if (tileType == TILE_WALL) {
-                collisionGrid[row][col].isWalkable = false;
-            } else {
-                collisionGrid[row][col].isWalkable = true;
-            }
+            // Set walkability
+            collisionGrid[row][col].isWalkable = (tileType !== TILE_WALL);
 
-            // If tile is a goal, set it
-            if (tileType === TILE_GOAL) {
-                collisionGrid[row][col].elementType = TILE_GOAL;
-            }
+           // console.log(`Set tile (${col}, ${row}) to ${tileType} Walkable: ${collisionGrid[row][col].isWalkable}`);
         }
     }
-
-    console.log("Collision grid set up based on background grid.");
+    console.log("✅ Collision grid set up based on background grid.");
 }
 
 
+
 // Function to check if a tile is walkable
-function isWalkable(x, y) {
-    let col = Math.floor(x / TILE_W);
-    let row = Math.floor(y / TILE_H);
+function isWalkable(y, x) {
+    let colW = Math.floor(x / TILE_W);
+    let rowW = Math.floor(y / TILE_H);
+
+    console.log(`Checking isWalkable: x=${x}, y=${y}, col=${col}, row=${row}`);
 
     // Ensure we're within grid bounds
-    if (row < 0 || row >= TILE_ROWS || col < 0 || col >= TILE_COLS) {
+    if (rowW < 0 || rowW >= TILE_ROWS || colW < 0 || colW >= TILE_COLS) {
         return false; // Treat out-of-bounds as unwalkable
     }
 
-    return collisionGrid[row][col] == 0;
+    return collisionGrid[rowW][colW] == 0;
 }
 
 // Drawing 
