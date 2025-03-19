@@ -74,18 +74,19 @@ function SetupCollisionGridFromBackground() {
 
 // Function to check if a tile is walkable
 function isWalkable(y, x) {
-    let colW = Math.floor(x / TILE_W);
-    let rowW = Math.floor(y / TILE_H);
-
-    console.log(`Checking isWalkable: x=${x}, y=${y}, col=${col}, row=${row}`);
-
-    // Ensure we're within grid bounds
-    if (rowW < 0 || rowW >= TILE_ROWS || colW < 0 || colW >= TILE_COLS) {
-        return false; // Treat out-of-bounds as unwalkable
+    if (!pathfindingGrid[y] || pathfindingGrid[y][x] === undefined) {
+        console.warn(`⚠️ Out of bounds or undefined tile at (${x}, ${y})`);
+        return false;
     }
 
-    return collisionGrid[rowW][colW] == 0;
+    let tileType = pathfindingGrid[y][x];
+    let walkable = (tileType === 0); // Adjust based on valid walkable types
+
+    console.log(`🚶 Checking (${x}, ${y}) - Tile Type: ${tileType} → Walkable? ${walkable}`);
+    return walkable;
 }
+
+
 
 // Drawing 
 let cachedBackgroundGrid = []; // Store precomputed tile properties

@@ -120,7 +120,7 @@ function checkCollision(character, building, message) {
     character._y < building.y + building.height &&
     character._y + character.height > building.y
   ) {
-    console.log(message);
+    //console.log(message);
     building.sX = building.width;
     building.insidebuilding = true;
   } else {

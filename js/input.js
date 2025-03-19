@@ -88,18 +88,19 @@ document.addEventListener('keyup', (event) => {
 function movePlayer(dx, dy, direction) {
     let newX = player.x + dx;
     let newY = player.y + dy;
-    if(direction == "NORTH"){
-        player.sY = 0;
-    } else if (direction == "EAST"){
-        player.sY = 1 * player.sH;
-    } else if (direction == "SOUTH"){
-        player.sY = 2 * player.sH;
-    } else if (direction == "WEST"){
-        player.sY = 3 * player.sH;
-    }
 
-    if (isWalkable(newY, newX)) {
+    let tileX = Math.floor(newX / TILE_W); // Convert pixels to grid
+    let tileY = Math.floor(newY / TILE_H);
+
+    console.log(`🚀 Moving player from (${player.x}, ${player.y}) → (${newX}, ${newY})`);
+    console.log(`🎯 Checking grid position (${tileX}, ${tileY})`);
+
+    if (isWalkable(tileY, tileX)) {
         player.x = newX;
         player.y = newY;
+        console.log(`✅ Player moved to (${player.x}, ${player.y})`);
+    } else {
+        console.warn(`❌ Movement blocked at (${tileX}, ${tileY})`);
     }
 }
+

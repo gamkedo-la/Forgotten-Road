@@ -18,7 +18,7 @@ function SetupPathfindingGridData(whichPathfinder) {
   let pathfinder = whichPathfinder || {}; // Ensure pathfinder is valid
 
   // Create a new pathfinding grid (1D array)
-  let pathfindingGrid = new Array(TILE_ROWS).fill(null).map(() => new Array(TILE_COLS).fill(1)); // Default to walls (1)
+  let pathfindingGrid = new Array(TILE_ROWS).fill(null).map(() => new Array(TILE_COLS).fill(0)); // Default to walls (1)
 
 
 
@@ -49,6 +49,9 @@ function SetupPathfindingGridData(whichPathfinder) {
   
       // Convert elementType to a walkable (0) or non-walkable (1) value
       pathfindingGrid[row][col] = (collisionGrid[row][col].elementType === 3) ? 0 : 1;
+      console.log(`Tile at (${col}, ${row}) - ElementType: ${collisionGrid[row][col].elementType}`);
+      console.log(`🏁 Player starts at grid (${Math.floor(player.x/32)}, ${Math.floor(player.y/32)}) → Tile Type: ${pathfindingGrid[Math.floor(player.y/32)]?.[Math.floor(player.x/32)]}`);
+
 
 
    //   console.log("Updated Pathfinding Grid (2D):", pathfindingGrid);

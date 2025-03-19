@@ -9,8 +9,8 @@ class Player extends Entity {
         this.sY = 34*2; //sprite sheet Y pos
         this.sH = 34; //sprite sheet H
         this.sW = 32; //sprite sheet W
-        this.x = 32*9;
-        this.y = 0;
+        this.x = 32*5;
+        this.y = 32*4;
         this.width = 32;
         this.height = 34;
     }

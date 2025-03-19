@@ -20,19 +20,19 @@ function GridElement() {
     this.tilR = myR;
     this.tilIdx = myIdx;
 
-    console.log(`🚀 Setting tilIdx at Setup: (${this.tilC}, ${this.tilR}) => ${this.tilIdx}`);
+    //console.log(`🚀 Setting tilIdx at Setup: (${this.tilC}, ${this.tilR}) => ${this.tilIdx}`);
 
     this.elementType = myElement;
     this.elementType = this.isNotPassible(this.elementType);
 
-    console.log(`🔍 After isNotPassible: (${this.tilC}, ${this.tilR}) => ${this.tilIdx}`);
+    //console.log(`🔍 After isNotPassible: (${this.tilC}, ${this.tilR}) => ${this.tilIdx}`);
 
     var pathFinderX = whichPathFinder.x;
     var pathFinderY = whichPathFinder.y;
     var playersLocation = pixCoordToIndex(pathFinderX, pathFinderY);
 
     if (this.tilIdx == playersLocation) {
-        console.log(`🎯 Player Spawn Found at ${this.tilIdx}, marking as SOURCE`);
+      //  console.log(`🎯 Player Spawn Found at ${this.tilIdx}, marking as SOURCE`);
         this.elementType = SOURCE;
         this.setDistIfLess(0, null);
     }
