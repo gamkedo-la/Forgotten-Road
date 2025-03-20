@@ -99,7 +99,9 @@ function GridElement() {
   this.isNotPassible = function(elementType) {
     let updatedElementType = elementType; // ✅ Now it's properly scoped
 
-    if (updatedElementType == 0) {
+    if (updatedElementType == TILE_GRASS ||
+        updatedElementType == TILE_ROAD || 
+        updatedElementType == TILE_FLOOR) {
         return NOTHING;
     }
     if (tileTypeWalkable(updatedElementType)) { 

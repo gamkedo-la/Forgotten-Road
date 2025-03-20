@@ -18,9 +18,7 @@ function SetupPathfindingGridData(whichPathfinder) {
   let pathfinder = whichPathfinder || {}; // Ensure pathfinder is valid
 
   // Create a new pathfinding grid (1D array)
-  let pathfindingGrid = new Array(TILE_ROWS).fill(null).map(() => new Array(TILE_COLS).fill(0)); // Default to walls (1)
-
-
+  pathfindingGrid = new Array(TILE_ROWS).fill(null).map(() => new Array(TILE_COLS).fill(0)); // Default to walls (1)
 
   // Populate collision grid and pathfinding grid
   for (let row = 0; row < TILE_ROWS; row++) {

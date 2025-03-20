@@ -30,6 +30,9 @@ var backgroundGrid = [
 
 // Collision grid (1 = blocked, 0 = walkable)
 var collisionGrid = [];
+let pathfindingGrid = Array.from({ length: GRID_HEIGHT }, () =>
+    new Array(GRID_WIDTH).fill(0) // Default all tiles to walkable (0)
+);
 
 const TILE_GRASS = 0;
 const TILE_WALL = 1;
@@ -73,21 +76,33 @@ function SetupCollisionGridFromBackground() {
 
 
 // Function to check if a tile is walkable
-function isWalkable(y, x) {
-    if (!pathfindingGrid[y] || pathfindingGrid[y][x] === undefined) {
-        console.warn(`⚠️ Out of bounds or undefined tile at (${x}, ${y})`);
+function isWalkable(x, y) {
+    if (!pathfindingGrid) {
+        console.error("ERROR: pathfindingGrid is not yet defined!");
         return false;
     }
+    let tile = pathfindingGrid[y]?.[x];
+    console.log(`Checking walkability for (${x}, ${y}): Tile = ${tile}`); 
+    if (!pathfindingGrid[y]) {
+        console.error(`ERROR: pathfindingGrid[${y}] does not exist!`, pathfindingGrid);
+        return false;
+    }
+    
+    if (typeof pathfindingGrid[y][x] === "undefined") {
+        console.error('ERROR: pathfindingGrid[${y}][${x}] is undefined!', pathfindingGrid[y]);
+        return false;
+    }
+    
+    console.log(`Checking walkability for (${x}, ${y}): Tile = ${pathfindingGrid[y][x]}`);
 
-    let tileType = pathfindingGrid[y][x];
-    let walkable = (tileType === 0); // Adjust based on valid walkable types
-
-    console.log(`🚶 Checking (${x}, ${y}) - Tile Type: ${tileType} → Walkable? ${walkable}`);
-    return walkable;
+    if (!pathfindingGrid || !pathfindingGrid[y] || typeof pathfindingGrid[y][x] === "undefined") {
+        console.error('Invalid grid lookup: (${x}, ${y})');
+        return false;
+    }
+    
+    return pathfindingGrid[y][x] == 0; // 0 means walkable
 }
-
-
-
+    
 // Drawing 
 let cachedBackgroundGrid = []; // Store precomputed tile properties
 let backgroundNeedsUpdate = true; // Flag to track updates
