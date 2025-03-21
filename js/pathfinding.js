@@ -1,237 +1,109 @@
-const PATHFINDING_DEBUG_LOG = false; // set to true for verbose debug info in the console
+// GridElement Class for Pathfinding
+class GridElement {
+  constructor(x, y, walkable) {
+      this.x = x;
+      this.y = y;
+      this.walkable = walkable;
+      this.g = 0;
+      this.h = 0;
+      this.f = 0;
+      this.parent = null;
+  }
+}
 
-// this lets us reuse previously created grid data
-// so set this to TRUE if the world changes (new buildings)
-// to force a fresh data gathering step
-const PATHFINDING_REUSES_GRID_UNLESS_REFRESHED = false; // true, use the variable below, not sure we can make each unit a recalculated grid.
-var pathfindingGridDataNeedsRefreshing = false; // set to true calculate grid
-const USE_FASTER_ARRAYREMOVE = false; // set to true for faster but maybe buggy version
+// A* Pathfinding Algorithm
+function findPath(startX, startY, endX, endY, collisionGrid) {
+  let openSet = [];
+  let closedSet = [];
+  let startNode = new GridElement(startX, startY, true);
+  let endNode = new GridElement(endX, endY, true);
+  openSet.push(startNode);
 
-var unvisitedList = [];
-const TILE_GOAL = 3; //Temp used for end tile
-
-function SetupPathfindingGridData(whichPathfinder) {
-  let endR = -1;
-  let endC = -1;
-
-  unvisitedList = []; 
-  let pathfinder = whichPathfinder || {}; // Ensure pathfinder is valid
-
-  // Create a new pathfinding grid (1D array)
-  pathfindingGrid = new Array(TILE_ROWS).fill(null).map(() => new Array(TILE_COLS).fill(0)); // Default to walls (1)
-
-  // Populate collision grid and pathfinding grid
-  for (let row = 0; row < TILE_ROWS; row++) {
-    for (let col = 0; col < TILE_COLS; col++) {
-        let idx = row * TILE_COLS + col;
-
-      //if (!collisionGrid[row][col]) {
-          collisionGrid[row][col] = new GridElement();
-          let backgroundGridTileType = backgroundGrid[row][col];
-  
-          collisionGrid[row][col].setup(col, row, idx, backgroundGridTileType, pathfinder);
-      //}
-
-      if (!collisionGrid[row][col].elementType) {
-        console.warn("ElementType is undefined at:", col, row);
-      } else {
-        //console.log(collisionGrid[row][col].elementType);
-        //console.log(col, row, idx, backgroundGrid[row][col])
+  while (openSet.length > 0) {
+      let lowestIndex = 0;
+      for (let i = 1; i < openSet.length; i++) {
+          if (openSet[i].f < openSet[lowestIndex].f) {
+              lowestIndex = i;
+          }
       }
-
-      // Assign grid element  properties
-      //collisionGrid[row][col].name = `${col},${row}`;
-      //collisionGrid[row][col].idx = idx;
-      //collisionGrid[row][col].pathfinder = pathfinder;
-      unvisitedList.push(collisionGrid[row][col]);
-  
-      // Convert elementType to a walkable (0) or non-walkable (1) value
-      pathfindingGrid[row][col] = (collisionGrid[row][col].elementType === 3) ? 0 : 1;
-      console.log(`Tile at (${col}, ${row}) - ElementType: ${collisionGrid[row][col].elementType}`);
-      console.log(`🏁 Player starts at grid (${Math.floor(player.x/32)}, ${Math.floor(player.y/32)}) → Tile Type: ${pathfindingGrid[Math.floor(player.y/32)]?.[Math.floor(player.x/32)]}`);
-
-
-
-   //   console.log("Updated Pathfinding Grid (2D):", pathfindingGrid);
-   //   console.log("Pathfinding Grid Dimensions:", pathfindingGrid.length, pathfindingGrid[0]?.length);
-      //console.table(pathfindingGrid); // Visualizes the grid in the console
       
-
-
-      // Check if this is the goal tile
-      if (collisionGrid[row][col].elementType === TILE_GOAL) { 
-          endC = col;
-          endR = row;
-      }
-      turnPathFindingDrawingOn = true;
-     // console.log(`Pathfinding Grid Dimensions: ${pathfinderGrid.length}, First Row: ${pathfinderGrid[0]?.length}`);
-    }
-  }
-
-  // Compute heuristic values if a goal exists
-  if (endR !== -1 && endC !== -1) {
-    for (let row = 0; row < TILE_ROWS; row++) { 
-      for (let col = 0; col < TILE_COLS; col++) {
-              let idxHere = tileCoordToIndex(col, row);
-              collisionGrid[row][col].hVal = hValCal(col, row, endC, endR, 3, true);
+      let currentNode = openSet[lowestIndex];
+      
+      if (currentNode.x === endNode.x && currentNode.y === endNode.y) {
+          let path = [];
+          let temp = currentNode;
+          while (temp.parent) {
+              path.push(temp);
+              temp = temp.parent;
           }
+          return path.reverse();
       }
-  }
-
-  pathfindingGridDataNeedsRefreshing = false;
-
-  //console.log("Final Pathfinding Grid:", JSON.stringify(pathfindingGrid));
-  //console.log("Pathfinding Grid Length:", pathfindingGrid.length);
-  //console.log("First Row:", JSON.stringify(pathfindingGrid.slice(0, TILE_COLS)));
-  console.log("Player's Start Tile:", pathfindingGrid[0][9]);
-
-
-  return pathfindingGrid;
-}
-
-
-function hValCal(atColumn,atRow, toColumn,toRow, multWeight, geometric) { /////
-  var diffC = atColumn - toColumn;
-  var diffR = atRow - toRow;
-  var geo = geometric;
-
-  if(geo){
-	return multWeight * Math.sqrt( diffC*diffC + diffR*diffR ); // geometric dist.
-  } else {
-    return multWeight * (Math.abs(diffC) + Math.abs(diffR)); ///// manhatten streets
-  }
-}
-
-function startPath(toTile, pathFor){
-    var currentTile = pixCoordToIndexIn1D(pathFor.x, pathFor.y);
-
-    if (PATHFINDING_DEBUG_LOG) console.log("starting pathfinding from tile "+currentTile+" to tile "+toTile);
-    if (PATHFINDING_DEBUG_LOG) console.log("- collisionGrid["+currentTile+"]="+collisionGrid[currentTile]+" and collisionGrid["+toTile+"]="+collisionGrid[toTile]);
-    if (PATHFINDING_DEBUG_LOG) console.time("- pathfinding took"); // start a debug timer
-
-    if (toTile< 0 || toTile >= pathfinderGrid.length) { // invalid or off board
-        if (PATHFINDING_DEBUG_LOG) console.log("Not a valid location");
-		return;
-    }
-	
-	  if (pathfindingGridDataNeedsRefreshing || !PATHFINDING_REUSES_GRID_UNLESS_REFRESHED) { 
-       pathFinderGrid = SetupPathfindingGridData(pathFor);
-       console.log("updating pathFinderGrid");
-    }
-	  
-    pathfinderGrid[toTile].setGoal();
-	  PathfindingNextStep(pathFor);
- 
-    // on my computer this is usually 0.003 ms
-    if (PATHFINDING_DEBUG_LOG) console.timeEnd("- pathfinding took"); // end the debug timer and say how long it look
-    if (!pathFor.tilePath || !pathFor.tilePath.length) {
-        if (PATHFINDING_DEBUG_LOG) console.log("- pathfinding failed: zero-length path created!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    } else { 
-        if (PATHFINDING_DEBUG_LOG) console.log("- pathfinding succeeded! path length in tiles: "+pathFor.tilePath.length);
-    }
-
-
-}
-
-function PathfindingNextStep(whichPathfinder) {
-  var totalCalculations = 0;
-  var tentativeDistance = 0;
-	var pathfinder = whichPathfinder;
-	var safetyBreak = 50000;
-	var endTile = null;
-
-      while(unvisitedList.length > 0 && safetyBreak-- > 0) { //// "while Q is not empty:"
-        //// "u := vertex in Q with min dist[u]"
-        var currentTile = null;
-        var currentTileIndex = -1;
-        var ctDistWithH; ///// a* with hVal heuristic added
-        //if (PATHFINDING_DEBUG_LOG) console.log(unvisitedList.length);
-        for (var i=0; i < unvisitedList.length; i++) {
-          totalCalculations++;
-          var compareTile = unvisitedList[i];
-        
-          if(currentTile == null || compareTile.distance + compareTile.hVal < ctDistWithH) { /////
-            currentTile = compareTile;
-            currentTileIndex = i;
-            ctDistWithH = currentTile.distance + currentTile.hVal; /////
-            //if (PATHFINDING_DEBUG_LOG) console.log(`Current Tile: ${currentTile.name}, Distance: ${currentTile.distance}, Heuristic: ${currentTile.hVal}`);
+      
+      openSet.splice(lowestIndex, 1);
+      closedSet.push(currentNode);
+      
+      let neighbors = getNeighbors(currentNode, collisionGrid);
+      for (let neighbor of neighbors) {
+          if (closedSet.includes(neighbor) || !neighbor.walkable) {
+              continue;
           }
-        }
-        
-        // we can optimize out this slow search n destroy loop
-        if (USE_FASTER_ARRAYREMOVE) {
-            // we already know which one to remove so we don't need to look for it
-            unvisitedList.splice(currentTileIndex,1); 
-        } else {
-            // do it the slow way
-            arrayRemove(unvisitedList,currentTile); //// remove u from Q
-        }
-     
-        //// "for each neighbor v of u: //// where v has not yet been removed from Q"
-        var neighborsStillInUnvisitedList = currentTile.myUnvisitedNeighbors();
-        for (var i = 0; i < neighborsStillInUnvisitedList.length; i++) {
-          totalCalculations++;
-          var neighborTile = neighborsStillInUnvisitedList[i];
+          let tempG = currentNode.g + 1;
+          let newPath = false;
           
-          ///// A* note: hVal is NOT part of these calls, would accumulate
-          if (neighborTile.isTileType(NOTHING)) {
-            tentativeDistance = currentTile.distance+1;
-            neighborTile.setDistIfLess(tentativeDistance, currentTile);
-            neighborTile.setTile(VISITED);
-          } else if (neighborTile.isTileType(DEST)) {
-            tentativeDistance = currentTile.distance+1;
-            neighborTile.setDistIfLess (tentativeDistance, currentTile);
-            endTile=neighborTile;
-            unvisitedList = []; //// empty the unvisitedList since we've found the end
+          if (!openSet.includes(neighbor)) {
+              openSet.push(neighbor);
+              newPath = true;
+          } else if (tempG < neighbor.g) {
+              newPath = true;
           }
-        }
-      
-      } 
-      
-       { //// all nodes have been accounted for, work backward from end's tiles for path
-             //// terminate the algorithm from taking further steps since we found what we needed
-        if (endTile!=null) {
-          //if (PATHFINDING_DEBUG_LOG) console.log("Best distance found: " + endTile.distance);
-			if(endTile.distance == INFINITY_START_DISTANCE){
-				if (PATHFINDING_DEBUG_LOG) console.log("No Valid Path Found");
-			} else {
-			  // walk backward from destination to create the path
-			  var previousTile = endTile.cameFrom;
-			  pathfinder.tilePath = [];
-			  
-			  pathfinder.tilePath.unshift(endTile.idx);
-              var countSteps = 0;
-			  for (var pathIndex = endTile.distance; pathIndex>1; pathIndex--) {
-                totalCalculations++;
-                countSteps++;
-			//	if (PATHFINDING_DEBUG_LOG) console.log(previousTile.name);
-				pathfinder.tilePath.unshift(previousTile.idx);
-				previousTile.setTile(PATH);  
-				previousTile = previousTile.cameFrom;  
-			  }
-			}
-		}
+          
+          if (newPath) {
+              neighbor.g = tempG;
+              neighbor.h = heuristic(neighbor, endNode);
+              neighbor.f = neighbor.g + neighbor.h;
+              neighbor.parent = currentNode;
+          }
+      }
   }
-
-  if (PATHFINDING_DEBUG_LOG) console.log("- pathfinding completed after doing "+totalCalculations+" calculations.");
-
+  let path = AStarAlgorithm(startX, startY, endX, endY, collisionGrid); // A* function
+  return path || []; // Ensure it returns an array
 }
 
-function arrayContains(arr, obj) {
-    var arrLen = arr.length;
-    for (var i = 0; i < arrLen; i++) {
-        if (arr[i] === obj) {
-            return true;
+
+
+// Get neighboring tiles
+function getNeighbors(node, collisionGrid) {
+    let neighbors = [];
+    let directions = [
+        { dx: -1, dy: 0 }, // Left (W)
+        { dx: 1, dy: 0 },  // Right (E)
+        { dx: 0, dy: -1 }, // Up (N)
+        { dx: 0, dy: 1 }   // Down (S)
+    ];
+    
+    for (let dir of directions) {
+        let nx = node.x + dir.dx;
+        let ny = node.y + dir.dy;
+
+        // Ensure we're within grid bounds
+        if (nx >= 0 && ny >= 0 && nx < TILE_COLS && ny < TILE_ROWS) {
+            neighbors.push(new GridElement(nx, ny, collisionGrid[ny][nx].isWalkable));
         }
     }
-    return false;
-}
-function arrayRemove(arr, obj) {
-    for (var i = arr.length-1; i >= 0; i--) {
-        if (arr[i] === obj) {
-            arr.splice(i,1);
-            return;
-        }
-    }
+    return neighbors;
 }
 
+
+// Heuristic Function (Manhattan Distance)
+function heuristic(a, b) {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+// Move Player Along Path
+function movePlayerAlongPath(player, path) {
+  if (path.length > 0) {
+      let nextTile = path.shift();
+      player.x = nextTile.x * TILE_W;
+      player.y = nextTile.y * TILE_H;
+  }
+}

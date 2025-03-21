@@ -23,27 +23,31 @@ gameCanvas.addEventListener("mousemove", (event) => {
 gameCanvas.addEventListener("click", (event) => {
     const rect = gameCanvas.getBoundingClientRect();
     
-    // Get mouse click coordinates relative to the canvas
-    mouse.x = event.clientX - rect.left;
-    mouse.y = event.clientY - rect.top;
+    let clickX = Math.floor((event.clientX - rect.left) / TILE_W);
+    let clickY = Math.floor((event.clientY - rect.top) / TILE_H);
 
-    // Write a function for clicked objects (if applicable)
-    // Example: if (isClickedObject(mouse.x, mouse.y)) return;
+    let playerX = Math.floor(player.x / TILE_W);
+    let playerY = Math.floor(player.y / TILE_H);
 
-    // If not a clicked object, start pathfinding
-    player.targetX = mouse.x;
-    player.targetY = mouse.y;
+    console.log(`Player at (${playerX}, ${playerY})`);
+    console.log(`Target at (${clickX}, ${clickY})`);
 
-    // Setup pathfinding grid
-    pathfinderGrid = SetupPathfindingGridData(player);
+    if (!player.isMoving) {
+        player.path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
+        if (player.path.length > 0) {
+            player.followPath();
+        }
+    }
 
-    let endTile = pixCoordToIndexIn1D(player.targetX, player.targetY);
-    let startTile = pixCoordToIndexIn1D(player.x, player.y);
-
-    //console.log("S: " + startTile + " E: " + endTile);
-
-    startPath(endTile, player);
+    if (player.path.length > 0) {
+        console.log("Path found:", player.path);
+        player.followPath();
+    } else {
+        console.warn("No valid path found!");
+    }
 });
+
+
 
 
 
@@ -92,15 +96,15 @@ function movePlayer(dx, dy, direction) {
     let tileX = Math.floor(newX / TILE_W); // Convert pixels to grid
     let tileY = Math.floor(newY / TILE_H);
 
-    console.log(`🚀 Moving player from (${player.x}, ${player.y}) → (${newX}, ${newY})`);
-    console.log(`🎯 Checking grid position (${tileX}, ${tileY})`);
+    console.log(`Moving player from (${player.x}, ${player.y}) → (${newX}, ${newY})`);
+    console.log(`Checking grid position (${tileX}, ${tileY})`);
 
     if (isWalkable(tileY, tileX)) {
         player.x = newX;
         player.y = newY;
-        console.log(`✅ Player moved to (${player.x}, ${player.y})`);
+        console.log(`Player moved to (${player.x}, ${player.y})`);
     } else {
-        console.warn(`❌ Movement blocked at (${tileX}, ${tileY})`);
+        console.warn(`Movement blocked at (${tileX}, ${tileY})`);
     }
 }
 

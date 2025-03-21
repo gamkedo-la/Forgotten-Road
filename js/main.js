@@ -151,6 +151,8 @@ function moveEverything() {
   if (keys.left || gamepad.left) movePlayer(-PLAYER_MOVE_SPEED, 0, "WEST");
   if (keys.right || gamepad.right) movePlayer(PLAYER_MOVE_SPEED, 0, "EAST");
 
+  player.followPath();
+
   // Collision with house
   checkCollision(
     player,

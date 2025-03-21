@@ -13,6 +13,10 @@ class Player extends Entity {
         this.y = 32*4;
         this.width = 32;
         this.height = 34;
+        this.path = [];
+        this.speed = 2;
+        this.isMoving = false;
+
     }
 
     // Getters
@@ -30,4 +34,45 @@ class Player extends Entity {
         this._damage += 2;   // Increase attack power
         console.log(`${this.name} leveled up to ${this._level}!`);
     }
+    followPath() {
+        if (!this.path || this.path.length === 0 || this.isMoving) return;
+    
+        this.isMoving = true;
+        let moveSpeed = 2;
+        let stepIndex = 0;
+    
+        console.log("Target Path:", this.path.map(t => `(${t.x},${t.y})`).join(" → "));
+    
+        const moveToNextTile = () => {
+            if (stepIndex >= this.path.length) {
+                this.path = [];
+                this.isMoving = false;
+                return;
+            }
+    
+            const targetTile = this.path[stepIndex];
+            const targetX = targetTile.x * TILE_W;
+            const targetY = targetTile.y * TILE_H;
+    
+            const interval = setInterval(() => {
+                const dx = targetX - this.x;
+                const dy = targetY - this.y;
+    
+                if (Math.abs(dx) <= moveSpeed && Math.abs(dy) <= moveSpeed) {
+                    this.x = targetX;
+                    this.y = targetY;
+                    clearInterval(interval);
+                    stepIndex++;
+                    moveToNextTile(); // move to next tile
+                } else {
+                    if (dx !== 0) this.x += Math.sign(dx) * moveSpeed;
+                    else if (dy !== 0) this.y += Math.sign(dy) * moveSpeed;
+                }
+            }, 16); // ~60 FPS
+        };
+    
+        moveToNextTile();
+    }
+    
+           
 }
