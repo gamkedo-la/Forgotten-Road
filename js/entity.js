@@ -25,6 +25,22 @@ class Entity {
     set x(value) { this._x = value; }
     set y(value) { this._y = value; }
 
+    takeDamage(amount) {
+        this.health -= amount;
+        console.log(`${this.name} has ${this.health} HP left.`);
+    
+        if (this.health <= 0) {
+            this.die();
+        }
+    }
+    
+    die() {
+        console.log(`${this.name} has been defeated!`);
+        this.isDead = true;
+        // Optional: remove from enemy array, hide sprite, etc.
+    }
+    
+
     // Common method for moving an entity
     move(dx, dy) {
         this._x += dx;

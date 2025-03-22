@@ -33,19 +33,18 @@ gameCanvas.addEventListener("click", (event) => {
     console.log(`Target at (${clickX}, ${clickY})`);
 
     if (!player.isMoving) {
-        player.path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
-        if (player.path.length > 0) {
-            player.followPath();
+        const path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
+        if (path.length > 0) {
+            player.setPath(path);
+            console.log("Path found:", path.map(p => `(${p.x}, ${p.y})`).join(" → "));
+        } else {
+            console.warn("No valid path found!");
         }
-    }
-
-    if (player.path.length > 0) {
-        console.log("Path found:", player.path);
-        player.followPath();
     } else {
-        console.warn("No valid path found!");
+        console.log("Player is already moving.");
     }
 });
+
 
 
 
@@ -68,6 +67,10 @@ document.addEventListener('keydown', (event) => {
         ) keys.action = true;
     if (event.key === 'p') {
         keys.pause = true;
+    }
+
+    if (event.key === 'f') {
+        player.staffAttack(enemies);
     }
 });
 

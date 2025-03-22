@@ -70,7 +70,6 @@ function SetupCollisionGridFromBackground() {
            // console.log(`Set tile (${col}, ${row}) to ${tileType} Walkable: ${collisionGrid[row][col].isWalkable}`);
         }
     }
-    console.log("✅ Collision grid set up based on background grid.");
 }
 
 
