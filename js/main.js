@@ -229,13 +229,24 @@ function drawEverything() {
   );
 
   // Render enemies
-  enemies.forEach((enemy) => {
-    ctx.fillStyle = enemy.color;
-    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-    if(enemy.isDead){
-      colorText("Dead", enemy.x, enemy.y+22, "white", fontSize = 12)
+  for (let i = enemies.length - 1; i >= 0; i--) {
+    const enemy = enemies[i];
+
+    if (enemy.isDead) {
+        continue;
     }
-  });
+
+    // Alive enemy flash logic
+    const now = Date.now();
+    if (enemy.isFlashing && now - enemy.lastHitTime < enemy.flashDuration) {
+        // Flash yellow
+        ctx.fillStyle = enemy.flashColor;
+        ctx.fillRect(enemy.x, enemy.y, TILE_W, TILE_H);
+    } else {
+        enemy.isFlashing = false; // End flash
+        enemy.draw(ctx); // Normal rendering
+    }
+  }
 
   // Render house if outside
 

@@ -8,6 +8,10 @@ class Entity {
         this.targetX = null;
         this.targetY = null;
         this.speed = 0.5;
+        this.isFlashing = false;
+        this.flashColor = "yellow";
+        this.flashDuration = 200; 
+        this.lastHitTime = 0;
     }
 
     // Getters
@@ -29,6 +33,9 @@ class Entity {
         this.health -= amount;
         console.log(`${this.name} has ${this.health} HP left.`);
     
+        this.isFlashing = true;
+        this.lastHitTime = Date.now();
+    
         if (this.health <= 0) {
             this.die();
         }
@@ -39,7 +46,7 @@ class Entity {
     
         this.isDead = true;
         this.deathTime = Date.now();
-        console.log(`💀 ${this.name} has been defeated!`);
+        console.log(`${this.name} has been defeated!`);
     
         this.sprite = "dead"; 
     

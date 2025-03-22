@@ -74,5 +74,13 @@ class Monster extends Entity {
       console.log(`Placed ${this.name} at grid position (${spawnPos.col}, ${spawnPos.row}), pixel coordinates (${spawnX}, ${spawnY})`);
       
       return true;
-  }
+    }
+
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        if(this.isDead){
+            colorText("Dead", this.x, this.y+22, "white", fontSize = 12)
+        }
+    }
 }
