@@ -1,3 +1,9 @@
+const FRAME_WALK_WIDTH = 32;      // Each frame width (walking)
+const FRAME_ATTACK_WIDTH = 37;    // Slightly wider to fit staff swing
+const FRAME_HEIGHT = 34;          // Frame height is consistent
+const FRAMES_PER_ANIMATION = 4;
+const frameDuration = 0.1; // seconds (100 ms)
+
 class Player extends Entity {
     constructor(name, x, y, health, damage, level, gold) {
         super(name, x, y, health, damage);
@@ -20,6 +26,12 @@ class Player extends Entity {
         this.moveTarget = null; // pixel coordinates to walk to
         this.isAttacking = false;
         this.facing = "down";
+        this.state = "idle";
+        this.attackTimer = 0;
+        this.currentAttackFrame = 0;
+        this.walkTimer = 0;
+        this.currentWalkFrame = 0;
+        this.image = warriorPic;
     }
 
     // Getters
@@ -127,7 +139,53 @@ class Player extends Entity {
             this.facing = dy > 0 ? "down" : "up";
         }
         
-    }       
+    }   
+
+    getDirectionIndex() {
+        switch (this.facing) {
+            case "up": return 0;
+            case "left": return 3;
+            case "right": return 1;
+            case "down": return 2;
+            default: return 2;
+        }
+    }
+    
+    draw(deltaTime) {
+        let frameWidth, srcX, srcY;
+    
+        if (this.state === "attacking") {
+            this.attackTimer += deltaTime;
+            if (this.attackTimer > frameDuration) {
+                this.attackTimer = 0;
+                this.currentAttackFrame++;
+    
+                if (this.currentAttackFrame >= FRAMES_PER_ANIMATION) {
+                    this.currentAttackFrame = 0;
+                    this.state = "idle";
+                }
+            }
+    
+            frameWidth = FRAME_ATTACK_WIDTH;
+            srcX = 32+FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
+            srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+    
+        } else {
+            // Walking or idle
+            this.walkTimer += deltaTime;
+            if (this.walkTimer > frameDuration) {
+                this.walkTimer = 0;
+                this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+            }
+    
+            frameWidth = FRAME_WALK_WIDTH;
+            srcX = this.currentWalkFrame * frameWidth;
+            srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+        }
+    
+        ctx.drawImage(player.image, srcX, srcY, frameWidth, FRAME_HEIGHT, this.x, this.y, frameWidth, FRAME_HEIGHT);
+    }
+        
 }
 
 

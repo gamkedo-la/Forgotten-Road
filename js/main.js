@@ -2,6 +2,8 @@ var canvas, ctx, collisionCanvas, collisionCtx;
 const enemies = [];
 var turnPathFindingDrawingOn = false;
 const PLAYER_MOVE_SPEED = 4;
+let lastFrameTime = performance.now();
+
 
 console.log("============ The Forgotten Road ============\nInitializing...");
 
@@ -106,11 +108,19 @@ function imageLoadingDoneSoStartGame() {
   var framesPerSecond = 60;
 
   SetupCollisionGridFromBackground();
-  setInterval(function () {
+  function drawGameFrame(currentTime) {
+    const deltaTime = (currentTime - lastFrameTime) / 1000; // in seconds
+    lastFrameTime = currentTime;
+  
     check_gamepad();
     moveEverything();
-    drawEverything();
-  }, 1000 / framesPerSecond);
+    drawEverything(deltaTime);  // <- pass it here
+  
+    requestAnimationFrame(drawGameFrame);
+  }
+  
+  requestAnimationFrame(drawGameFrame);
+  
 }
 
 function checkCollision(character, building, message) {
@@ -176,7 +186,7 @@ function moveEverything() {
 }
 
 // Render game
-function drawEverything() {
+function drawEverything(deltaTime) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(
     townMapPic,
@@ -223,19 +233,7 @@ function drawEverything() {
     );
   }
 
-  // Render player
-  //move this to player class
-  ctx.drawImage(
-    player.image,
-    player.sX,
-    player.sY,
-    player.sW,
-    player.sH,
-    player.x,
-    player.y,
-    player.width,
-    player.height
-  );
+  player.draw(deltaTime);
 
   // Render enemies
   for (let i = enemies.length - 1; i >= 0; i--) {

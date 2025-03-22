@@ -45,12 +45,6 @@ gameCanvas.addEventListener("click", (event) => {
     }
 });
 
-
-
-
-
-
-
 // Key listeners
 document.addEventListener('keydown', (event) => {
     //console.log("keydown: "+event.key);
@@ -71,6 +65,9 @@ document.addEventListener('keydown', (event) => {
 
     if (event.key === 'f') {
         player.staffAttack(enemies);
+        player.state = "attacking";
+        player.currentAttackFrame = 0;
+        player.attackTimer = 0;
     }
 });
 
