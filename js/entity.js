@@ -35,13 +35,24 @@ class Entity {
     }
     
     die() {
-        console.log(`${this.name} has been defeated!`);
+        if (this.isDead) return; 
+    
         this.isDead = true;
-        // Optional: remove from enemy array, hide sprite, etc.
+        this.deathTime = Date.now();
+        console.log(`💀 ${this.name} has been defeated!`);
+    
+        this.sprite = "dead"; 
+    
+        // Delay removal by 5 seconds
+        setTimeout(() => {
+            const index = enemies.indexOf(this);
+            if (index !== -1) {
+                enemies.splice(index, 1);
+                console.log(`${this.name} removed from enemies array.`);
+            }
+        }, 5000); 
     }
     
-
-    // Common method for moving an entity
     move(dx, dy) {
         this._x += dx;
         this._y += dy;
@@ -49,6 +60,5 @@ class Entity {
         if (isCollisionAt(this._x, this._y)) {
             console.log("Collision detected at", this._x, this._y);
         }
-    
     }
 }

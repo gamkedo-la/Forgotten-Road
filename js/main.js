@@ -164,28 +164,6 @@ function moveEverything() {
     gameState.house2,
     "You're in the alchemist shop! You can interact with NPCs or buy items."
   );
-
-  // Basic enemy interaction (combat)
-  enemies.forEach((enemy) => {
-    if (
-      player.x < enemy.x + enemy.width &&
-      player.x + player.width > enemy.x &&
-      player.y < enemy.y + enemy.height &&
-      player.y + player.height > enemy.y
-    ) {
-      // Combat (just simple damage exchange for now)
-      player.health -= enemy.damage;
-      enemy.health -= player.damage;
-      if (enemy.health <= 0) {
-        enemies.splice(enemies.indexOf(enemy), 1);
-        player.gold += 10; // Collect gold on kill
-      }
-      if (player.health <= 0) {
-        console.log("Game Over!");
-        // Reset game state or show game over screen
-      }
-    }
-  });
 }
 
 // Render game
@@ -237,6 +215,7 @@ function drawEverything() {
   }
 
   // Render player
+  //move this to player class
   ctx.drawImage(
     player.image,
     player.sX,
@@ -253,6 +232,9 @@ function drawEverything() {
   enemies.forEach((enemy) => {
     ctx.fillStyle = enemy.color;
     ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    if(enemy.isDead){
+      colorText("Dead", enemy.x, enemy.y+22, "white", fontSize = 12)
+    }
   });
 
   // Render house if outside
@@ -283,10 +265,6 @@ function drawEverything() {
       gameState.house2.height
     );
   }
-
-  // Draw collision box for house
-  //drawCollisionBox(gameState.house.x, gameState.house.y, gameState.house.width, gameState.house.height);
-  //drawCollisionBox(gameState.house2.x, gameState.house2.y, gameState.house2.width, gameState.house2.height);
 
   // Display player stats
    colorRect(5, 5, 110, 50, "rgba(0, 0, 0, 0.5)");
