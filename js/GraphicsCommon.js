@@ -39,22 +39,16 @@ function drawTextWithShadowCentered(text, x,y, color, font="13px sans-serif") {
 
 const UI_TEXT_STYLES = {
 	DEFAULT: {
-		primaryColor: "yellow",
-		outlineColor: "black",
+		textColor: "yellow",
+		shadowColor: "black",
 		font: "18px Arial",
-		shadowBlur: 5,
-		shadowOffsetX: 2,
-		shadowOffsetY: 2,
-		outlineWidth: 4
+		shadowBlur: 5
 	},
 	HEADER: {
-		primaryColor: "white",
-		outlineColor: "black",
+		textColor: "white",
+		shadowColor: "black",
 		font: "bold 24px Arial",
-		shadowBlur: 4,
-		shadowOffsetX: 1,
-		shadowOffsetY: 1,
-		outlineWidth: 4
+		shadowBlur: 4
 	}
 };
 

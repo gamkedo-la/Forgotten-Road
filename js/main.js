@@ -290,8 +290,10 @@ function drawEverything() {
 
   // Display player stats
    colorRect(5, 5, 110, 50, "rgba(0, 0, 0, 0.5)");
-   drawUIText(`Health: ${player.health}`, 10, 25, "DEFAULT");
-   drawUIText(`Gold: ${player.gold}`, 10, 45, "DEFAULT");
+   const style = UI_TEXT_STYLES.DEFAULT;
+   drawTextWithShadowCentered(`Health: ${player.health}`, 55, 25, style.textColor, style.font);
+   drawTextWithShadowCentered(`Gold: ${player.gold}`, 55, 45, style.textColor, style.font);
+
 //   ctx.fillStyle = "black";
 //   ctx.font = "16px Arial";
 //   ctx.fillText(`Health: ${player.health}`, 10, 20);
