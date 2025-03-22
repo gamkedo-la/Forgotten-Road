@@ -291,13 +291,8 @@ function drawEverything() {
   // Display player stats
    colorRect(5, 5, 110, 50, "rgba(0, 0, 0, 0.5)");
    const style = UI_TEXT_STYLES.DEFAULT;
-   drawTextWithShadowCentered(`Health: ${player.health}`, 55, 25, style.textColor, style.font);
-   drawTextWithShadowCentered(`Gold: ${player.gold}`, 55, 45, style.textColor, style.font);
-
-//   ctx.fillStyle = "black";
-//   ctx.font = "16px Arial";
-//   ctx.fillText(`Health: ${player.health}`, 10, 20);
-//   ctx.fillText(`Gold: ${player.gold}`, 10, 40);
+   drawTextWithShadow(`Health: ${player.health}`, 15, 25, style.textColor, style.font, style.align);
+   drawTextWithShadow(`Gold: ${player.gold}`, 15, 45, style.textColor, style.font, style.align);
 
   //   Pause UI
   if (paused) {

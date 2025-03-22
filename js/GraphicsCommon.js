@@ -24,8 +24,8 @@ function colorText(showWords, textX, textY, fillColor, fontSize = 7) {
 	ctx.fillText(showWords, textX, textY);
 }
 
-function drawTextWithShadowCentered(text, x,y, color, font="13px sans-serif") {
-	ctx.textAlign = "center";
+function drawTextWithShadow(text, x,y, color, font="13px sans-serif", align) {
+	ctx.textAlign = align;
 	ctx.font = font;
 	ctx.shadowBlur = 8;
 	ctx.shadowColor = "black";
@@ -51,25 +51,6 @@ const UI_TEXT_STYLES = {
 		shadowBlur: 4
 	}
 };
-
-function drawUIText(text, x, y, styleType = "DEFAULT") {
-	const style = UI_TEXT_STYLES[styleType] || UI_TEXT_STYLES.DEFAULT;
-	
-	ctx.font = style.font;
-	ctx.textAlign = "start";
-	
-	ctx.shadowBlur = style.shadowBlur;
-	ctx.shadowColor = style.outlineColor;
-	ctx.shadowOffsetX = style.shadowOffsetX;
-	ctx.shadowOffsetY = style.shadowOffsetY;
-	
-	ctx.fillStyle = style.primaryColor;
-	ctx.fillText(text, x, y);
-	
-	ctx.shadowBlur = 0;
-	ctx.shadowOffsetX = 0;
-	ctx.shadowOffsetY = 0;
-}
 
 function outlineRect(topLeftX, topLeftY, boxWidth, boxHeight, lineColor) {
     ctx.beginPath();
