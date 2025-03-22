@@ -37,6 +37,46 @@ function drawTextWithShadowCentered(text, x,y, color, font="13px sans-serif") {
 	ctx.shadowBlur = 0;
 }
 
+const UI_TEXT_STYLES = {
+	DEFAULT: {
+		primaryColor: "yellow",
+		outlineColor: "black",
+		font: "18px Arial",
+		shadowBlur: 5,
+		shadowOffsetX: 2,
+		shadowOffsetY: 2,
+		outlineWidth: 4
+	},
+	HEADER: {
+		primaryColor: "white",
+		outlineColor: "black",
+		font: "bold 24px Arial",
+		shadowBlur: 4,
+		shadowOffsetX: 1,
+		shadowOffsetY: 1,
+		outlineWidth: 4
+	}
+};
+
+function drawUIText(text, x, y, styleType = "DEFAULT") {
+	const style = UI_TEXT_STYLES[styleType] || UI_TEXT_STYLES.DEFAULT;
+	
+	ctx.font = style.font;
+	ctx.textAlign = "start";
+	
+	ctx.shadowBlur = style.shadowBlur;
+	ctx.shadowColor = style.outlineColor;
+	ctx.shadowOffsetX = style.shadowOffsetX;
+	ctx.shadowOffsetY = style.shadowOffsetY;
+	
+	ctx.fillStyle = style.primaryColor;
+	ctx.fillText(text, x, y);
+	
+	ctx.shadowBlur = 0;
+	ctx.shadowOffsetX = 0;
+	ctx.shadowOffsetY = 0;
+}
+
 function outlineRect(topLeftX, topLeftY, boxWidth, boxHeight, lineColor) {
     ctx.beginPath();
     ctx.strokeStyle = lineColor;

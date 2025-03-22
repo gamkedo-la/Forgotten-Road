@@ -289,10 +289,13 @@ function drawEverything() {
   //drawCollisionBox(gameState.house2.x, gameState.house2.y, gameState.house2.width, gameState.house2.height);
 
   // Display player stats
-  ctx.fillStyle = "black";
-  ctx.font = "16px Arial";
-  ctx.fillText(`Health: ${player.health}`, 10, 20);
-  ctx.fillText(`Gold: ${player.gold}`, 10, 40);
+   colorRect(5, 5, 110, 50, "rgba(0, 0, 0, 0.5)");
+   drawUIText(`Health: ${player.health}`, 10, 25, "DEFAULT");
+   drawUIText(`Gold: ${player.gold}`, 10, 45, "DEFAULT");
+//   ctx.fillStyle = "black";
+//   ctx.font = "16px Arial";
+//   ctx.fillText(`Health: ${player.health}`, 10, 20);
+//   ctx.fillText(`Gold: ${player.gold}`, 10, 40);
 
   //   Pause UI
   if (paused) {
