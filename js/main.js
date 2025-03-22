@@ -164,6 +164,15 @@ function moveEverything() {
     gameState.house2,
     "You're in the alchemist shop! You can interact with NPCs or buy items."
   );
+
+  projectiles.forEach(p => p.update(collisionGrid, enemies));
+
+  // Remove inactive projectiles
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    if (!projectiles[i].isActive) {
+      projectiles.splice(i, 1);
+    }
+  }
 }
 
 // Render game
@@ -247,6 +256,8 @@ function drawEverything() {
         enemy.draw(ctx); // Normal rendering
     }
   }
+
+  projectiles.forEach(p => p.draw(ctx));
 
   // Render house if outside
 
