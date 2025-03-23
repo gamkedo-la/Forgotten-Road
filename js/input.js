@@ -113,5 +113,13 @@ function movePlayer(dx, dy, direction) {
     } else {
         console.warn(`Movement blocked at (${tileX}, ${tileY})`);
     }
+
+    const directionFacingMap = {
+        NORTH: "up",
+        SOUTH: "down",
+        EAST: "right",
+        WEST: "left",
+    };
+    player.facing = directionFacingMap[direction];
 }
 
