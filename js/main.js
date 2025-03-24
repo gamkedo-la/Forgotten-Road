@@ -4,7 +4,6 @@ var turnPathFindingDrawingOn = false;
 const PLAYER_MOVE_SPEED = 4;
 let lastFrameTime = performance.now();
 
-
 console.log("============ The Forgotten Road ============\nInitializing...");
 
 // Player and enemy setup
@@ -23,6 +22,7 @@ goblin.attack(player);
 console.log(`${player.name} now has ${player.health} HP.`);
 
 var insidebuilding = false;
+var projectiles = [];
 
 // Game state
 const gameState = {
