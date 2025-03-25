@@ -7,7 +7,7 @@ let lastFrameTime = performance.now();
 console.log("============ The Forgotten Road ============\nInitializing...");
 
 // Player and enemy setup
-const player = new Player("Hero", 300, 500, 100, 10, 1, 50);
+const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
 player.levelUp();
 
@@ -287,10 +287,9 @@ function drawEverything(deltaTime) {
   }
 
   // Display player stats
-   colorRect(5, 5, 110, 50, "rgba(0, 0, 0, 0.5)");
+   colorRect(5, 55, 110, 30, "rgba(0, 0, 0, 0.5)");
    const style = UI_TEXT_STYLES.DEFAULT;
-   drawTextWithShadow(`Health: ${player.health}`, 15, 25, style.textColor, style.font, style.align);
-   drawTextWithShadow(`Gold: ${player.gold}`, 15, 45, style.textColor, style.font, style.align);
+   drawTextWithShadow(`Gold: ${player.gold}`, 15, 75, style.textColor, style.font, style.align);
 
   //   Pause UI
   if (paused) {
@@ -299,4 +298,6 @@ function drawEverything(deltaTime) {
     colorText("PAUSED", canvas.width / 2, canvas.height / 2, "white", 16);
     ctx.textAlign = "start";
   }
+
+  player.drawHearts();
 }

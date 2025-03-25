@@ -3,7 +3,8 @@ class Entity {
         this._name = name;
         this._x = x;
         this._y = y;
-        this._health = health;
+        this.currentHP = health;
+        this.maxHP = health;
         this._damage = damage;
         this.targetX = null;
         this.targetY = null;
@@ -30,16 +31,24 @@ class Entity {
     set y(value) { this._y = value; }
 
     takeDamage(amount) {
-        this.health -= amount;
+        
+        this.currentHP -= amount;
+        if (this.currentHP < 0) this.currentHP = 0;
         console.log(`${this.name} has ${this.health} HP left.`);
     
         this.isFlashing = true;
         this.lastHitTime = Date.now();
     
-        if (this.health <= 0) {
+        if (this.currentHP <= 0) {
             this.die();
         }
     }
+
+    heal(amount) {
+        this.currentHP += amount;
+        if (this.currentHP > this.maxHP) this.currentHP = this.maxHP;
+    }
+    
     
     die() {
         if (this.isDead) return; 
