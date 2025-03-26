@@ -89,7 +89,7 @@ class Monster extends Entity {
         const now = performance.now();
     
         if (now - this.lastAttackTime < this.cooldownTime) {
-            console.log("Cooldown not met.");
+     //       console.log("Cooldown not met.");
             return;
         }
     
@@ -101,7 +101,7 @@ class Monster extends Entity {
     
         const totalDistance = distX + distY;
         if (totalDistance > 8) {
-            console.log("Player out of range.");
+         //   console.log("Player out of range.");
             return;
         }
     
@@ -113,15 +113,15 @@ class Monster extends Entity {
             direction = dx > 0 ? "right" : "left";
         }
     
-        console.log("Player direction relative to enemy:", direction);
-        console.log("Enemy facing:", this.facing);
+        //console.log("Player direction relative to enemy:", direction);
+       // console.log("Enemy facing:", this.facing);
     
         if (!direction || this.facing !== direction) {
-            console.log("Enemy not facing player.");
+        //    console.log("Enemy not facing player.");
             return;
         }
     
-        const bolt = new Projectile(this.x + TILE_W / 4, this.y + TILE_H / 4, direction, 3, this);
+        const bolt = new Projectile(this.x, this.y, this.facing, 4, "enemy", this);
         projectiles.push(bolt);
         
         this.lastAttackTime = now;

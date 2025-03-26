@@ -102,6 +102,16 @@ class Player extends Entity {
         }, 300);
     }
     
+    takeDamage(amount) {
+        this.currentHP -= amount;
+        if (this.currentHP <= 0) {
+            this.currentHP = 0;
+            console.log(`${this.name} has died!`);
+            // To do:  Add game over 
+        } else {
+            console.log(`${this.name} takes ${amount} damage! HP is now ${this.currentHP}`);
+        }
+    }
         
     updateMovement() {
         if (!this.isMoving || !this.moveTarget) return;
