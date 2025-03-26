@@ -295,9 +295,10 @@ function drawEverything(deltaTime) {
   }
 
   // Display player stats
-   colorRect(5, 55, 110, 30, "rgba(0, 0, 0, 0.5)");
+   var UIvertical = 40;
+   colorRect(5, UIvertical, 110, 30, "rgba(0, 0, 0, 0.5)");
    const style = UI_TEXT_STYLES.DEFAULT;
-   drawTextWithShadow(`Gold: ${player.gold}`, 15, 75, style.textColor, style.font, style.align);
+   drawTextWithShadow(`Gold: ${player.gold}`, 15, UIvertical+20, style.textColor, style.font, style.align);
 
   //   Pause UI
   if (paused) {

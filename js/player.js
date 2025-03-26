@@ -152,8 +152,8 @@ class Player extends Entity {
     }
 
     drawHearts() {
-        var heartSize = 32; // pixels
-        var spacing = 4;    // pixels between hearts
+        var heartSize = 24; // pixels
+        var spacing = 3;    // pixels between hearts
         var totalHearts = Math.ceil(this.maxHP / 10);
         var fullHearts = Math.floor(this.currentHP / 10);
         var hasHalfHeart = this.currentHP % 10 >= 5;
