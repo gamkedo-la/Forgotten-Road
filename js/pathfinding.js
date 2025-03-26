@@ -65,8 +65,12 @@ function findPath(startX, startY, endX, endY, collisionGrid) {
           }
       }
   }
-  let path = AStarAlgorithm(startX, startY, endX, endY, collisionGrid); // A* function
-  return path || []; // Ensure it returns an array
+  
+  console.log("Path not found from "+startX+","+startY+" to "+endX+","+endY);
+  // no such function:
+  // let path = AStarAlgorithm(startX, startY, endX, endY, collisionGrid); // A* function
+  // return path || []; // Ensure it returns an array
+  return [];
 }
 
 

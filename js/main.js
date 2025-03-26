@@ -165,7 +165,18 @@ function moveEverything() {
   if (keys.left || gamepad.left) movePlayer(-PLAYER_MOVE_SPEED, 0, "WEST");
   if (keys.right || gamepad.right) movePlayer(PLAYER_MOVE_SPEED, 0, "EAST");
 
+  // move player along path
   player.updateMovement();
+  // move enemies on optional path
+  for (let enemy of enemies) {
+    if (!enemy.path || !enemy.path.length) { // if idle
+        if (Math.random()<0.05) { // occasionally
+            enemy.chooseNewPath(); // start moving near to the player
+        }
+    }
+    enemy.updateMovement();
+  }
+
 
   // Collision with house
   checkCollision(

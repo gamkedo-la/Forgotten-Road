@@ -10,6 +10,8 @@ class Monster extends Entity {
         this.lastAttackTime = 0;
         this.facing = "left";  
         this.currentWalkFrame = 0;
+        this.walkTimer = 0;
+        this.attackTimer = 0;
         this.image = enemyPic; // fixme: override in specific child class 
     }
 
@@ -128,6 +130,67 @@ class Monster extends Entity {
         
         this.lastAttackTime = now;
         console.log(`${this.name} fires a bolt at ${player.name}`);
+    }
+
+    // FIXME: this is identical to code found in player class
+    // move to Entity parent class and share the code
+    updateMovement() {
+        if (!this.isMoving || !this.moveTarget) return;
+
+        const dx = this.moveTarget.x - this.x;
+        const dy = this.moveTarget.y - this.y;
+
+        const moveSpeed = 2;
+
+        if (Math.abs(dx) <= moveSpeed && Math.abs(dy) <= moveSpeed) {
+            this.x = this.moveTarget.x;
+            this.y = this.moveTarget.y;
+            this.path.shift(); // Remove reached tile
+
+            if (this.path.length === 0) {
+                this.isMoving = false;
+                this.moveTarget = null;
+            } else {
+                const next = this.path[0];
+                this.moveTarget = {
+                    x: next.x * TILE_W,
+                    y: next.y * TILE_H
+                };
+            }
+        } else {
+            if (dx !== 0) this.x += Math.sign(dx) * moveSpeed;
+            else if (dy !== 0) this.y += Math.sign(dy) * moveSpeed;
+        }
+
+        if (dx !== 0) {
+            this.x += Math.sign(dx) * moveSpeed;
+            this.facing = dx > 0 ? "right" : "left";
+        } else if (dy !== 0) {
+            this.y += Math.sign(dy) * moveSpeed;
+            this.facing = dy > 0 ? "down" : "up";
+        }
+        
+    }  
+
+    setPath(path) {
+        this.path = path;
+        if (this.path.length > 0) {
+            this.moveTarget = {
+                x: this.path[0].x * TILE_W,
+                y: this.path[0].y * TILE_H
+            };
+            this.isMoving = true;
+        }
+    }  
+
+    chooseNewPath() {
+        console.log("enemy is looking for a new path");
+        this.gridX = Math.round(this.x/TILE_W);
+        this.gridY = Math.round(this.y/TILE_H);
+        this.targetX = Math.round((player.x+Math.random()*50-25)/TILE_W);
+        this.targetY = Math.round((player.y+Math.random()*50-25)/TILE_H);
+        const path = findPath(this.gridX, this.gridY, this.targetX, this.targetY, collisionGrid);
+        this.setPath(path);
     }
 
     getDirectionIndex() {
