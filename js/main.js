@@ -109,7 +109,7 @@ function imageLoadingDoneSoStartGame() {
 
   SetupCollisionGridFromBackground();
   function drawGameFrame(currentTime) {
-    const deltaTime = (currentTime - lastFrameTime) / 1000; // in seconds
+    var deltaTime = (currentTime - lastFrameTime) / 1000; // in seconds
     lastFrameTime = currentTime;
   
     check_gamepad();
@@ -142,6 +142,10 @@ function checkCollision(character, building, message) {
 // Move all entities
 function moveEverything() {
   // Pause/unpause game
+  let now = performance.now();
+  let deltaTime = now - (lastFrameTime || now);
+  lastFrameTime = now;
+  
   if (keys.pause && !pressedPause) {
     paused = !paused;
     pressedPause = true;
@@ -174,6 +178,10 @@ function moveEverything() {
     gameState.house2,
     "You're in the alchemist shop! You can interact with NPCs or buy items."
   );
+
+  for (let enemy of enemies) {
+    enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
+  }
 
   projectiles.forEach(p => p.update(collisionGrid, enemies));
 

@@ -1,5 +1,5 @@
 class Projectile {
-    constructor(x, y, direction, speed = 4) {
+    constructor(x, y, direction, speed = 4, owner = null) {
         this.x = x;
         this.y = y;
         this.direction = direction;
@@ -7,6 +7,7 @@ class Projectile {
         this.width = TILE_W / 2;
         this.height = TILE_H / 2;
         this.isActive = true;
+        this.owner = owner
     }
 
     update(collisionGrid, enemies) {
@@ -35,14 +36,13 @@ class Projectile {
         // Check collision with enemies
         for (let enemy of enemies) {
             if (enemy.isDead) continue;
-
+        
+            //Skip if this enemy is the one who fired the projectile
+            if (enemy === this.owner) continue;
+        
             const enemyTileX = Math.floor(enemy.x / TILE_W);
             const enemyTileY = Math.floor(enemy.y / TILE_H);
-
-            if(collisionGrid[tileY] == 8){
-                console.log("On row 8");
-            }
-            
+        
             if (enemyTileX === tileX && enemyTileY === tileY) {
                 enemy.takeDamage(15); // Crossbow deals 15 damage
                 console.log(`${enemy.name} was shot!`);
@@ -50,6 +50,7 @@ class Projectile {
                 break;
             }
         }
+        
     }
 
     draw(ctx) {

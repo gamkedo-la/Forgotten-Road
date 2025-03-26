@@ -5,6 +5,10 @@ class Monster extends Entity {
         this.color = "red";
         this.width = 32;
         this.height = 32;
+        this.attackCooldown = 0; 
+        this.cooldownTime = 1000; 
+        this.lastAttackTime = 0;
+        this.facing = "left";            
     }
 
     // Getter for loot
@@ -76,6 +80,54 @@ class Monster extends Entity {
       return true;
     }
 
+    fireAtPlayerIfInRange(player, projectiles, collisionGrid) {
+        if (this.isDead) {
+            console.log("Enemy is dead.");
+            return;
+        }
+    
+        const now = performance.now();
+    
+        if (now - this.lastAttackTime < this.cooldownTime) {
+            console.log("Cooldown not met.");
+            return;
+        }
+    
+        const dx = player.x - this.x;
+        const dy = player.y - this.y;
+    
+        const distX = Math.abs(Math.floor(dx / TILE_W));
+        const distY = Math.abs(Math.floor(dy / TILE_H));
+    
+        const totalDistance = distX + distY;
+        if (totalDistance > 8) {
+            console.log("Player out of range.");
+            return;
+        }
+    
+        let direction = null;
+    
+        if (distX === 0 && dy !== 0) {
+            direction = dy > 0 ? "down" : "up";
+        } else if (distY === 0 && dx !== 0) {
+            direction = dx > 0 ? "right" : "left";
+        }
+    
+        console.log("Player direction relative to enemy:", direction);
+        console.log("Enemy facing:", this.facing);
+    
+        if (!direction || this.facing !== direction) {
+            console.log("Enemy not facing player.");
+            return;
+        }
+    
+        const bolt = new Projectile(this.x + TILE_W / 4, this.y + TILE_H / 4, direction, 3, this);
+        projectiles.push(bolt);
+        
+        this.lastAttackTime = now;
+        console.log(`${this.name} fires a bolt at ${player.name}`);
+    }
+        
     draw(){
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
