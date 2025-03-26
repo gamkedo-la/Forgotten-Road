@@ -7,6 +7,7 @@ var pickUpItemPic = document.createElement("img");
 var heartFullPic = document.createElement("img");
 var heartHalfPic = document.createElement("img");
 var heartEmptyPic = document.createElement("img");
+var enemyPic = document.createElement("img"); // placeholder
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -42,6 +43,7 @@ function loadImages() {
         {varName: heartFullPic, theFile: "fullHeart.png"},
         {varName: heartHalfPic, theFile: "halfHeart.png"},
         {varName: heartEmptyPic, theFile: "noHeart.png"},
+        {varName: enemyPic, theFile: "Kobald.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_WALL, theFile: "wall.png", sX: "0", sY: "0",options: 0},

@@ -8,7 +8,9 @@ class Monster extends Entity {
         this.attackCooldown = 0; 
         this.cooldownTime = 1000; 
         this.lastAttackTime = 0;
-        this.facing = "left";            
+        this.facing = "left";  
+        this.currentWalkFrame = 0;
+        this.image = enemyPic; // fixme: override in specific child class 
     }
 
     // Getter for loot
@@ -127,10 +129,57 @@ class Monster extends Entity {
         this.lastAttackTime = now;
         console.log(`${this.name} fires a bolt at ${player.name}`);
     }
-        
-    draw(){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    getDirectionIndex() {
+        switch (this.facing) {
+            case "up": return 0;
+            case "left": return 3;
+            case "right": return 1;
+            case "down": return 2;
+            default: return 2;
+        }
+    }       
+
+    draw(deltaTime){
+
+        let frameWidth, srcX, srcY;
+    
+        if (this.state === "attacking") {
+            this.attackTimer += deltaTime;
+            if (this.attackTimer > frameDuration) {
+                this.attackTimer = 0;
+                this.currentAttackFrame++;
+    
+                if (this.currentAttackFrame >= FRAMES_PER_ANIMATION) {
+                    this.currentAttackFrame = 0;
+                    this.state = "idle";
+                }
+            }
+    
+            frameWidth = FRAME_ATTACK_WIDTH;
+            srcX = 32+FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
+            srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+    
+        } else {
+            // Walking or idle
+            this.walkTimer += deltaTime;
+            if (this.walkTimer > frameDuration) {
+                this.walkTimer = 0;
+                this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+            }
+    
+            frameWidth = FRAME_WALK_WIDTH;
+            srcX = this.currentWalkFrame * frameWidth;
+            srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+        }
+    
+        // red debug square
+        // ctx.fillStyle = this.color;
+        // ctx.fillRect(this.x, this.y, this.width, this.height);
+        // draw enemy sprite
+        // console.log("enemy draw: srcX="+srcX+" srcY="+srcY+" frameWidth="+frameWidth+" FRAME_HEIGHT="+FRAME_HEIGHT+" this.x="+this.x+" this.y="+this.y);
+        ctx.drawImage(this.image, srcX, srcY, frameWidth, FRAME_HEIGHT, this.x, this.y, frameWidth, FRAME_HEIGHT);
+
         if(this.isDead){
             colorText("Dead", this.x, this.y+22, "white", fontSize = 12)
         }

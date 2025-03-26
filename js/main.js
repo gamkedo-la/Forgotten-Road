@@ -259,7 +259,7 @@ function drawEverything(deltaTime) {
         ctx.fillRect(enemy.x, enemy.y, TILE_W, TILE_H);
     } else {
         enemy.isFlashing = false; // End flash
-        enemy.draw(ctx); // Normal rendering
+        enemy.draw(deltaTime); // Normal rendering
     }
   }
 
