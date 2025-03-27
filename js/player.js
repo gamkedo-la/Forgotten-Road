@@ -81,7 +81,7 @@ class Player extends Entity {
         let attacked = false;
     
         enemies.forEach(enemy => {
-            if (dist(enemy.x, targetX, enemy.y, targetY) < attackRadius) {
+            if (dist(enemy.x, enemy.y, targetX, targetY) < attackRadius) {
                 enemy.takeDamage(10);
                 console.log(`You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`);
                 attacked = true;
