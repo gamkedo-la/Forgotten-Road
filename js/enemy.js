@@ -1,3 +1,4 @@
+var DEBUG_turnOffEnemy_AI_ToAvoidFreeze = true;
 class Monster extends Entity {
     constructor(name, x, y, health, damage, loot) {
         super(name, x, y, health, damage);
@@ -189,8 +190,10 @@ class Monster extends Entity {
         this.gridY = Math.round(this.y/TILE_H);
         this.targetX = Math.round((player.x+Math.random()*50-25)/TILE_W);
         this.targetY = Math.round((player.y+Math.random()*50-25)/TILE_H);
-        //const path = findPath(this.gridX, this.gridY, this.targetX, this.targetY, collisionGrid);
-        //this.setPath(path);
+        if(DEBUG_turnOffEnemy_AI_ToAvoidFreeze == false) {
+            const path = findPath(this.gridX, this.gridY, this.targetX, this.targetY, collisionGrid);
+            this.setPath(path);
+        }
     }
 
     getDirectionIndex() {
