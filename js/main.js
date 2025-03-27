@@ -321,3 +321,9 @@ function drawEverything(deltaTime) {
 
   player.drawHearts();
 }
+
+function dist(x1, y1, x2, y2) {
+  const distX = (x1 - x2);
+  const distY = (y1 - y2);
+  return Math.sqrt(distX * distX + distY * distY);
+}

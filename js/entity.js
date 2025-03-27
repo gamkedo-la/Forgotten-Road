@@ -34,7 +34,7 @@ class Entity {
         
         this.currentHP -= amount;
         if (this.currentHP < 0) this.currentHP = 0;
-        console.log(`${this.name} has ${this.health} HP left.`);
+        console.log(`${this.name} has ${this.currentHP} HP left.`);
     
         this.isFlashing = true;
         this.lastHitTime = Date.now();

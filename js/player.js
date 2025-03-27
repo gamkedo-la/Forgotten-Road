@@ -66,29 +66,24 @@ class Player extends Entity {
     
         this.isAttacking = true;
     
-        const playerX = Math.floor(this.x / TILE_W);
-        const playerY = Math.floor(this.y / TILE_H);
-    
         // Determine target tile based on facing direction
-        let targetX = playerX;
-        let targetY = playerY;
-    
+        let targetX = this.x;
+        let targetY = this.y;
+        let attackRange = TILE_W;
+        let attackRadius = TILE_W;
         switch (this.facing) {
-            case "up":    targetY -= 1; break;
-            case "down":  targetY += 1; break;
-            case "left":  targetX -= 1; break;
-            case "right": targetX += 1; break;
+            case "up":    targetY -= attackRange; break;
+            case "down":  targetY += attackRange; break;
+            case "left":  targetX -= attackRange; break;
+            case "right": targetX += attackRange; break;
         }
     
         let attacked = false;
     
         enemies.forEach(enemy => {
-            const enemyX = Math.floor(enemy.x / TILE_W);
-            const enemyY = Math.floor(enemy.y / TILE_H);
-    
-            if (enemyX === targetX && enemyY === targetY) {
+            if (dist(enemy.x, targetX, enemy.y, targetY) < attackRadius) {
                 enemy.takeDamage(10);
-                console.log(`You hit ${enemy.name} at (${enemyX}, ${enemyY}) for 10 damage!`);
+                console.log(`You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`);
                 attacked = true;
             }
         });
