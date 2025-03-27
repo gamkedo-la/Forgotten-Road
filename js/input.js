@@ -29,19 +29,19 @@ gameCanvas.addEventListener("click", (event) => {
     let playerX = Math.floor(player.x / TILE_W);
     let playerY = Math.floor(player.y / TILE_H);
 
-    console.log(`Player at (${playerX}, ${playerY})`);
-    console.log(`Target at (${clickX}, ${clickY})`);
+    //console.log(`Player at (${playerX}, ${playerY})`);
+    //console.log(`Target at (${clickX}, ${clickY})`);
 
     if (!player.isMoving) {
         const path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
         if (path.length > 0) {
             player.setPath(path);
-            console.log("Path found:", path.map(p => `(${p.x}, ${p.y})`).join(" → "));
+            //console.log("Path found:", path.map(p => `(${p.x}, ${p.y})`).join(" → "));
         } else {
-            console.warn("No valid path found!");
+            //console.warn("No valid path found!");
         }
     } else {
-        console.log("Player is already moving.");
+        //console.log("Player is already moving.");
     }
 });
 
@@ -91,7 +91,7 @@ document.addEventListener('keyup', (event) => {
         const projY = player.y + TILE_H / 4;
         const bolt = new Projectile(projX, projY, player.facing);
         projectiles.push(bolt);
-        console.log("Fired crossbow bolt!");
+        //console.log("Fired crossbow bolt!");
     }
 });
 
@@ -103,15 +103,15 @@ function movePlayer(dx, dy, direction) {
     let tileX = Math.floor(newX / TILE_W); // Convert pixels to grid
     let tileY = Math.floor(newY / TILE_H);
 
-    console.log(`Moving player from (${player.x}, ${player.y}) → (${newX}, ${newY})`);
-    console.log(`Checking grid position (${tileX}, ${tileY})`);
+    //console.log(`Moving player from (${player.x}, ${player.y}) → (${newX}, ${newY})`);
+    //console.log(`Checking grid position (${tileX}, ${tileY})`);
 
     if (isWalkable(tileY, tileX)) {
         player.x = newX;
         player.y = newY;
-        console.log(`Player moved to (${player.x}, ${player.y})`);
+        //console.log(`Player moved to (${player.x}, ${player.y})`);
     } else {
-        console.warn(`Movement blocked at (${tileX}, ${tileY})`);
+        //console.warn(`Movement blocked at (${tileX}, ${tileY})`);
     }
 
     const directionFacingMap = {

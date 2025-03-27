@@ -81,7 +81,7 @@ function isWalkable(x, y) {
         return false;
     }
     let tile = pathfindingGrid[y]?.[x];
-    console.log(`Checking walkability for (${x}, ${y}): Tile = ${tile}`); 
+    //console.log(`Checking walkability for (${x}, ${y}): Tile = ${tile}`); 
     if (!pathfindingGrid[y]) {
         console.error(`ERROR: pathfindingGrid[${y}] does not exist!`, pathfindingGrid);
         return false;
@@ -92,7 +92,7 @@ function isWalkable(x, y) {
         return false;
     }
     
-    console.log(`Checking walkability for (${x}, ${y}): Tile = ${pathfindingGrid[y][x]}`);
+    //console.log(`Checking walkability for (${x}, ${y}): Tile = ${pathfindingGrid[y][x]}`);
 
     if (!pathfindingGrid || !pathfindingGrid[y] || typeof pathfindingGrid[y][x] === "undefined") {
         console.error('Invalid grid lookup: (${x}, ${y})');

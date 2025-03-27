@@ -22,7 +22,7 @@ class Monster extends Entity {
     attack(target) {
         if (target instanceof Player) {
             target.health -= this.damage;
-            console.log(`${this.name} attacks ${target.name} for ${this.damage} damage!`);
+            //console.log(`${this.name} attacks ${target.name} for ${this.damage} damage!`);
         }
     }
 
@@ -35,7 +35,7 @@ class Monster extends Entity {
       const playerGridCol = Math.floor(player.x / TILE_W);
       const playerGridRow = Math.floor(player.y / TILE_H);
       
-      console.log(`Player is at grid position (${playerGridCol}, ${playerGridRow})`);
+      //console.log(`Player is at grid position (${playerGridCol}, ${playerGridRow})`);
       
       for (let row = 0; row < TILE_ROWS; row++) {
         for (let col = 0; col < TILE_COLS; col++) {  
@@ -59,11 +59,11 @@ class Monster extends Entity {
             }
           }
       }      
-      console.log(`Spawn location analysis:`);
-      console.log(`- Total grid positions: ${totalPositions}`);
-      console.log(`- Unwalkable places e.g. Wall: ${wallPositions}`);
-      console.log(`- Places too close to player: ${tooClosePositions}`);
-      console.log(`- Valid spawn positions: ${validSpawnPositions.length}`);
+      //console.log(`Spawn location analysis:`);
+      //console.log(`- Total grid positions: ${totalPositions}`);
+      //console.log(`- Unwalkable places e.g. Wall: ${wallPositions}`);
+      //console.log(`- Places too close to player: ${tooClosePositions}`);
+      //console.log(`- Valid spawn positions: ${validSpawnPositions.length}`);
       
       if (validSpawnPositions.length === 0) {
           console.error("No valid spawning positions found!");
@@ -79,21 +79,21 @@ class Monster extends Entity {
       this.x = spawnX;
       this.y = spawnY;
       
-      console.log(`Placed ${this.name} at grid position (${spawnPos.col}, ${spawnPos.row}), pixel coordinates (${spawnX}, ${spawnY})`);
+      //console.log(`Placed ${this.name} at grid position (${spawnPos.col}, ${spawnPos.row}), pixel coordinates (${spawnX}, ${spawnY})`);
       
       return true;
     }
 
     fireAtPlayerIfInRange(player, projectiles, collisionGrid) {
         if (this.isDead) {
-            console.log("Enemy is dead.");
+            //console.log("Enemy is dead.");
             return;
         }
     
         const now = performance.now();
     
         if (now - this.lastAttackTime < this.cooldownTime) {
-     //       console.log("Cooldown not met.");
+        //console.log("Cooldown not met.");
             return;
         }
     
@@ -184,7 +184,7 @@ class Monster extends Entity {
     }  
 
     chooseNewPath() {
-        console.log("enemy is looking for a new path");
+        //console.log("enemy is looking for a new path");
         this.gridX = Math.round(this.x/TILE_W);
         this.gridY = Math.round(this.y/TILE_H);
         this.targetX = Math.round((player.x+Math.random()*50-25)/TILE_W);
