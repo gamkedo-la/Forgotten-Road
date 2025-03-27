@@ -189,8 +189,8 @@ class Monster extends Entity {
         this.gridY = Math.round(this.y/TILE_H);
         this.targetX = Math.round((player.x+Math.random()*50-25)/TILE_W);
         this.targetY = Math.round((player.y+Math.random()*50-25)/TILE_H);
-        const path = findPath(this.gridX, this.gridY, this.targetX, this.targetY, collisionGrid);
-        this.setPath(path);
+        //const path = findPath(this.gridX, this.gridY, this.targetX, this.targetY, collisionGrid);
+        //this.setPath(path);
     }
 
     getDirectionIndex() {
