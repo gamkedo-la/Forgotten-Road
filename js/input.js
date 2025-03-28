@@ -47,7 +47,7 @@ gameCanvas.addEventListener("click", (event) => {
 
 // Key listeners
 document.addEventListener('keydown', (event) => {
-    //console.log("keydown: "+event.key);
+    if (player.state === "dead") return; // Prevent input if dead
     if ((event.key === 'ArrowUp') || (event.key === 'w')) keys.up = true;
     if ((event.key === 'ArrowDown') || (event.key === 's')) keys.down = true;
     if ((event.key === 'ArrowLeft') || (event.key === 'a')) keys.left = true;
