@@ -4,11 +4,12 @@ class Projectile {
         this.y = y;
         this.direction = direction;
         this.speed = speed;
-        this.width = TILE_W / 2;
-        this.height = TILE_H / 2;
+        this.width = 17;
+        this.height = 17;
         this.isActive = true;
         this.owner = owner;
         this.ownerType = ownerType;
+        this.sY = 0;
 
     }
 
@@ -17,10 +18,10 @@ class Projectile {
     
         // Move projectile
         switch (this.direction) {
-            case "up": this.y -= this.speed; break;
-            case "down": this.y += this.speed; break;
-            case "left": this.x -= this.speed; break;
-            case "right": this.x += this.speed; break;
+            case "up": this.y -= this.speed; this.sY = 0 * this.height; break;
+            case "down": this.y += this.speed; this.sY = 2 * this.height; break;
+            case "left": this.x -= this.speed; this.sY = 3 * this.height; break;
+            case "right": this.x += this.speed; this.sY = 1 * this.height; break;
         }
     
         const tileX = Math.floor(this.x / TILE_W);
@@ -68,8 +69,6 @@ class Projectile {
 
     draw(ctx) {
         if (!this.isActive) return;
-
-        ctx.fillStyle = "brown";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.drawImage(boltPic, 0,this.sY, this.width, this.height, this.x, this.y, this.width, this.height);
     }
 }
