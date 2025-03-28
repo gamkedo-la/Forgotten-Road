@@ -222,9 +222,9 @@ class Monster extends Entity {
                 }
             }
     
-            frameWidth = FRAME_ATTACK_WIDTH;
+            frameWidth = this.width;
             srcX = 32+FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
-            srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+            srcY = this.getDirectionIndex() * this.height;
     
         } else {
             // Walking or idle
@@ -234,9 +234,9 @@ class Monster extends Entity {
                 this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
             }
     
-            frameWidth = FRAME_WALK_WIDTH;
+            frameWidth = this.width;
             srcX = this.currentWalkFrame * frameWidth;
-            srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+            srcY = this.getDirectionIndex() * this.height;
         }
     
         // red debug square

@@ -32,6 +32,8 @@ class Player extends Entity {
         this.walkTimer = 0;
         this.currentWalkFrame = 0;
         this.image = warriorPic;
+        this.deathTimer = 0;
+        this.currentDeathFrame = 0;
     }
 
     // Getters
@@ -102,7 +104,7 @@ class Player extends Entity {
         if (this.currentHP <= 0) {
             this.currentHP = 0;
             console.log(`${this.name} has died!`);
-            // To do:  Add game over 
+            this.state = "dead";
         } else {
             console.log(`${this.name} takes ${amount} damage! HP is now ${this.currentHP}`);
         }
@@ -194,9 +196,23 @@ class Player extends Entity {
             }
     
             frameWidth = FRAME_ATTACK_WIDTH;
-            srcX = 32+FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
+            srcX = 32 + FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
             srcY = this.getDirectionIndex() * FRAME_HEIGHT;
     
+        } else if (this.state === "dead") {
+            this.deathTimer += deltaTime;
+            if (this.deathTimer > frameDuration) {
+                this.deathTimer = 0;
+                if (this.currentDeathFrame < 8) {
+                    this.currentDeathFrame++;
+                }
+                // Remain on last frame once finished
+            }
+    
+            frameWidth = 32;
+            srcX = this.currentDeathFrame * frameWidth;
+            srcY = 4 * 34; // 5th row 
+            
         } else {
             // Walking or idle
             this.walkTimer += deltaTime;
@@ -211,8 +227,7 @@ class Player extends Entity {
         }
     
         ctx.drawImage(player.image, srcX, srcY, frameWidth, FRAME_HEIGHT, this.x, this.y, frameWidth, FRAME_HEIGHT);
-    }
-        
+    }    
 }
 
 
