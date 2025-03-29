@@ -14,6 +14,14 @@ const leatherArmor = {
     sprite: leatherArmorIconPic
 };
 
+const healthPotion = {
+    id: "health_potion",
+    name: "Health Potion",
+    type: "consumable",
+    heal: 5,
+    sprite: healthPotionPic
+};
+
 function drawBackpackUI(ctx, player) {
     const startX = 600;
     const startY = 10;
