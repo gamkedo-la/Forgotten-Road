@@ -82,7 +82,8 @@ class Entity {
             const goldAmount = Math.floor(Math.random() * 10) + 5;
             player.gold += goldAmount;
             console.log(`${this.name} dropped ${goldAmount} gold!`);
-        } else {
+        }
+        else {
             worldItems.push({
                 ...randomDrop,
                 x: dropX,

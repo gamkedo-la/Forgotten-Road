@@ -18,7 +18,8 @@ const healthPotion = {
     id: "health_potion",
     name: "Health Potion",
     type: "consumable",
-    heal: 5,
+    use: "heal",
+    amount: 5,
     sprite: healthPotionPic
 };
 

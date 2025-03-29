@@ -189,7 +189,13 @@ function moveEverything() {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < item.pickupRadius) {
-        player.addItemToInventory(item);
+        
+        if (item.use === "heal" && player.currentHP < player.maxHP) {
+         player.heal(item.amount);   // heal damaged player
+        }
+        else {
+            player.addItemToInventory(item);
+        }
         worldItems.splice(i, 1);
     }
   }
