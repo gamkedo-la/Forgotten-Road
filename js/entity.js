@@ -51,22 +51,46 @@ class Entity {
     
     
     die() {
-        if (this.isDead) return; 
+        if (this.isDead) return;
     
         this.isDead = true;
         this.deathTime = Date.now();
         console.log(`${this.name} has been defeated!`);
+        this.sprite = "dead";
     
-        this.sprite = "dead"; 
+        // Drop item
+        this.dropLoot();
     
-        // Delay removal by 5 seconds
+        // Delay removal
         setTimeout(() => {
             const index = enemies.indexOf(this);
             if (index !== -1) {
                 enemies.splice(index, 1);
                 console.log(`${this.name} removed from enemies array.`);
             }
-        }, 5000); 
+        }, 5000);
+    }
+
+    dropLoot() {
+        const drops = [{ ...basicStaff }, { ...leatherArmor }];
+        const randomDrop = drops[Math.floor(Math.random() * drops.length)];
+    
+        const dropX = this.x;
+        const dropY = this.y;
+    
+        if (randomDrop === "gold") {
+            const goldAmount = Math.floor(Math.random() * 10) + 5;
+            player.gold += goldAmount;
+            console.log(`${this.name} dropped ${goldAmount} gold!`);
+        } else {
+            worldItems.push({
+                ...randomDrop,
+                x: dropX,
+                y: dropY,
+                pickupRadius: 20
+            });
+            console.log(`${this.name} dropped ${randomDrop.name}`);
+        }
     }
     
     move(dx, dy) {

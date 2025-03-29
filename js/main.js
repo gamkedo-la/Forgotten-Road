@@ -11,6 +11,8 @@ const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
 player.addItemToInventory(basicStaff) ;
 player.addItemToInventory(leatherArmor);
+var worldItems = []; // Holds items dropped in the game world
+
 
 player.levelUp();
 
@@ -180,6 +182,17 @@ function moveEverything() {
     enemy.updateMovement();
   }
 
+  for (let i = worldItems.length - 1; i >= 0; i--) {
+    const item = worldItems[i];
+    const dx = player.x - item.x;
+    const dy = player.y - item.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < item.pickupRadius) {
+        player.addItemToInventory(item);
+        worldItems.splice(i, 1);
+    }
+  }
 
   // Collision with house
   checkCollision(
@@ -256,6 +269,15 @@ function drawEverything(deltaTime) {
   }
 
   player.draw(deltaTime);
+
+  for (let item of worldItems) {
+    if (item.sprite instanceof Image && item.sprite.complete) {
+        ctx.drawImage(item.sprite, item.x, item.y, 32, 32); // or TILE_W, TILE_H
+    } else {
+        ctx.fillStyle = "orange";
+        ctx.fillRect(item.x, item.y, 32, 32); // fallback box
+    }
+}
 
   // Render enemies
   for (let i = enemies.length - 1; i >= 0; i--) {
