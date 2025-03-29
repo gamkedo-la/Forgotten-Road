@@ -9,6 +9,8 @@ var heartHalfPic = document.createElement("img");
 var heartEmptyPic = document.createElement("img");
 var enemyPic = document.createElement("img"); // placeholder
 var boltPic = document.createElement("img"); 
+var staffIconPic = document.createElement("img"); 
+var leatherArmorIconPic = document.createElement("img"); 
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -46,6 +48,8 @@ function loadImages() {
         {varName: heartEmptyPic, theFile: "noHeart.png"},
         {varName: enemyPic, theFile: "Kobald.png"},
         {varName: boltPic, theFile: "bolt.png"},
+        {varName: staffIconPic, theFile: "staffIcon.png"},
+        {varName: leatherArmorIconPic, theFile: "armorIcon.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_WALL, theFile: "wall.png", sX: "0", sY: "0",options: 0},

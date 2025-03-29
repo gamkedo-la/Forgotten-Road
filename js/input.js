@@ -16,6 +16,8 @@ gameCanvas.addEventListener("mousemove", (event) => {
     const rect = gameCanvas.getBoundingClientRect();
     clickX = event.clientX - rect.left;
     clickY = event.clientY - rect.top;
+    mouse.x = event.clientX - rect.left;
+    mouse.y = event.clientY - rect.top;
 
     //mouse.hoverObject - write a function to identify objects
 })

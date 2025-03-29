@@ -9,6 +9,9 @@ console.log("============ The Forgotten Road ============\nInitializing...");
 // Player and enemy setup
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
+player.addItemToInventory(basicStaff) ;
+player.addItemToInventory(leatherArmor);
+
 player.levelUp();
 
 const goblin = new Monster("Goblin", 32 * 9, 32 * 4, 32, 5, 20);
@@ -304,6 +307,8 @@ function drawEverything(deltaTime) {
       gameState.house2.height
     );
   }
+
+  drawBackpackUI(ctx, player);
 
   // Display player stats
    var UIvertical = 40;

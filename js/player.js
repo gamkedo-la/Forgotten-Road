@@ -34,6 +34,13 @@ class Player extends Entity {
         this.image = warriorPic;
         this.deathTimer = 0;
         this.currentDeathFrame = 0;
+        this.inventory = []; // Backpack items (array of item objects)
+        this.equipment = {
+            weapon: null,
+            armor: null,
+            accessory: null
+        };
+
     }
 
     // Getters
@@ -67,7 +74,9 @@ class Player extends Entity {
         if (this.isAttacking || this.isMoving) return;
     
         this.isAttacking = true;
-    
+
+        let bonusDamage = this.getEquippedBonusDamage();
+        
         // Determine target tile based on facing direction
         let targetX = this.x;
         let targetY = this.y;
@@ -84,7 +93,7 @@ class Player extends Entity {
     
         enemies.forEach(enemy => {
             if (dist(enemy.x, enemy.y, targetX, targetY) < attackRadius) {
-                enemy.takeDamage(10);
+                enemy.takeDamage(10 + bonusDamage);
                 console.log(`You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`);
                 attacked = true;
             }
@@ -109,6 +118,29 @@ class Player extends Entity {
             console.log(`${this.name} takes ${amount} damage! HP is now ${this.currentHP}`);
         }
     }
+
+    addItemToInventory(item) {
+        if (this.inventory.length < 20) {
+            this.inventory.push(item);
+            console.log(`${item.name} added to backpack.`);
+        } else {
+            console.log("Backpack is full!");
+        }
+    }
+    
+    equipItem(item) {
+        if (item.type && this.equipment.hasOwnProperty(item.type)) {
+            this.equipment[item.type] = item;
+            console.log(`Equipped ${item.name} as ${item.type}.`);
+        } else {
+            console.log("Item cannot be equipped.");
+        }
+    }
+    
+    getEquippedBonusDamage() {
+        return this.equipment.weapon ? this.equipment.weapon.damage : 0;
+    }
+    
         
     updateMovement() {
         if (!this.isMoving || !this.moveTarget || this.state == "dead") return;
