@@ -19,7 +19,7 @@ class Entity {
     get name() { return this._name; }
     get x() { return this._x; }
     get y() { return this._y; }
-    get health() { return this._health; }
+    get health() { return this.currentHP; }
     get damage() { return this._damage; }
 
     // Setters
