@@ -1,5 +1,6 @@
 var canvas, ctx, collisionCanvas, collisionCtx;
 const enemies = [];
+const temp_ui_elements = [];
 var turnPathFindingDrawingOn = false;
 const PLAYER_MOVE_SPEED = 4;
 let lastFrameTime = performance.now();
@@ -224,6 +225,10 @@ function moveEverything() {
       projectiles.splice(i, 1);
     }
   }
+
+  temp_ui_elements.forEach(element => {
+    element.update(deltaTime);
+  })
 }
 
 // Render game
@@ -343,6 +348,11 @@ function drawEverything(deltaTime) {
    colorRect(5, UIvertical, 110, 30, "rgba(0, 0, 0, 0.5)");
    const style = UI_TEXT_STYLES.DEFAULT;
    drawTextWithShadow(`Gold: ${player.gold}`, 15, UIvertical+20, style.textColor, style.font, style.align);
+
+  //  Draw Temp UI elements
+  temp_ui_elements.forEach(ui_element => {
+    ui_element.draw();
+  })
 
   //   Pause UI
   if (paused) {

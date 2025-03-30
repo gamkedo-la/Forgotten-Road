@@ -42,6 +42,10 @@ class Entity {
         if (this.currentHP <= 0) {
             this.die();
         }
+
+        // spawn floating text
+        const floatingDamageNumber = new TextEntity(`-${amount}`, this._x, this._y, "red", 0, -1);
+        temp_ui_elements.push(floatingDamageNumber);
     }
 
     heal(amount) {
