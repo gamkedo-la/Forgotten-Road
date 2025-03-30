@@ -173,15 +173,25 @@ function moveEverything() {
 
   // move player along path
   player.updateMovement();
+
   // move enemies on optional path
   for (let enemy of enemies) {
-    if (!enemy.path || !enemy.path.length) { // if idle
-        if (Math.random()<0.05) { // occasionally
-            enemy.chooseNewPath(); // start moving near to the player
+    updateEnemy(enemy, player);
+  }
+  
+  for (let enemy of enemies) {
+    if (!enemy.path || !enemy.path.length) {
+        if (Math.random() < 0.01) { // Lower chance for performance
+            enemy.chooseNewPath(player, collisionGrid);
         }
     }
-    enemy.updateMovement();
+  //  console.log(`Total enemies: ${enemies.length}`);
+    for (const monster of enemies) {
+      monster.chooseNewPath(player, backgroundGrid);
   }
+    enemy.updateMovement();
+}
+
 
   for (let i = worldItems.length - 1; i >= 0; i--) {
     const item = worldItems[i];

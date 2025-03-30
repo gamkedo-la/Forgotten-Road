@@ -14,6 +14,15 @@ class Monster extends Entity {
         this.walkTimer = 0;
         this.attackTimer = 0;
         this.image = enemyPic; // fixme: override in specific child class 
+        this.lastPathTime = 0;
+        this.pathCooldown = 1000; 
+        const BEHAVIOR_STATES = {
+            IDLE: "idle",
+            PATROL: "patrol",
+            CHASE: "chase",
+            LOST: "lost",
+        };
+        this.state = BEHAVIOR_STATES.IDLE;
     }
 
     // Getter for loot
@@ -26,6 +35,8 @@ class Monster extends Entity {
             //console.log(`${this.name} attacks ${target.name} for ${this.damage} damage!`);
         }
     }
+
+    
 
     placeAtRandomPosition(minDistanceFromPlayer = 5) {
       let validSpawnPositions = [];
@@ -133,45 +144,53 @@ class Monster extends Entity {
         console.log(`${this.name} fires a bolt at ${player.name}`);
     }
 
+    tryToChasePlayer(enemy, player) {
+        const path = findPath(enemy.x, enemy.y, player.x, player.y);
+      
+        if (path && path.length > 0) {
+          enemy.path = path;
+          enemy.state = BEHAVIOR_STATES.CHASE;
+        } else {
+          console.warn("Goblin couldn't find a path!");
+          enemy.state = BEHAVIOR_STATES.LOST;
+          enemy.path = null;
+        }
+    }
+
+    funcwanderOrPatrol() {
+        if (!this.patrolPath) {
+          // Simple square patrol
+          this.patrolPath = [
+            { x: this.x + 1, y: this.y },
+            { x: this.x, y: this.y + 1 },
+            { x: this.x - 1, y: this.y },
+            { x: this.x, y: this.y - 1 },
+          ];
+        }
+        this.state = BEHAVIOR_STATES.PATROL;
+      }
+
+
     // FIXME: this is identical to code found in player class
     // move to Entity parent class and share the code
     updateMovement() {
-        if (!this.isMoving || !this.moveTarget) return;
-
-        const dx = this.moveTarget.x - this.x;
-        const dy = this.moveTarget.y - this.y;
-
-        const moveSpeed = 2;
-
-        if (Math.abs(dx) <= moveSpeed && Math.abs(dy) <= moveSpeed) {
-            this.x = this.moveTarget.x;
-            this.y = this.moveTarget.y;
-            this.path.shift(); // Remove reached tile
-
-            if (this.path.length === 0) {
-                this.isMoving = false;
-                this.moveTarget = null;
-            } else {
-                const next = this.path[0];
-                this.moveTarget = {
-                    x: next.x * TILE_W,
-                    y: next.y * TILE_H
-                };
+        if (this.path && this.path.length > 0) {
+            const next = this.path[this.pathIndex];
+            if (next) {
+                this.x = next.x * TILE_W;
+                this.y = next.y * TILE_H;
+                this.pathIndex++;
+    
+                if (this.pathIndex >= this.path.length) {
+                    this.path = null; // reached end
+                    this.pathIndex = 0;
+                }
             }
-        } else {
-            if (dx !== 0) this.x += Math.sign(dx) * moveSpeed;
-            else if (dy !== 0) this.y += Math.sign(dy) * moveSpeed;
         }
+    }
+    
+     
 
-        if (dx !== 0) {
-            this.x += Math.sign(dx) * moveSpeed;
-            this.facing = dx > 0 ? "right" : "left";
-        } else if (dy !== 0) {
-            this.y += Math.sign(dy) * moveSpeed;
-            this.facing = dy > 0 ? "down" : "up";
-        }
-        
-    }  
 
     setPath(path) {
         this.path = path;
@@ -184,17 +203,34 @@ class Monster extends Entity {
         }
     }  
 
-    chooseNewPath() {
-        //console.log("enemy is looking for a new path");
-        this.gridX = Math.round(this.x/TILE_W);
-        this.gridY = Math.round(this.y/TILE_H);
-        this.targetX = Math.round((player.x+Math.random()*50-25)/TILE_W);
-        this.targetY = Math.round((player.y+Math.random()*50-25)/TILE_H);
-        if(DEBUG_turnOffEnemy_AI_ToAvoidFreeze == false) {
-            const path = findPath(this.gridX, this.gridY, this.targetX, this.targetY, collisionGrid);
-            this.setPath(path);
+    chooseNewPath(player, collisionGrid) {                  
+        if (this.path && this.path.length > 0) {
+            return; // Already has a path, no need to re-find
         }
-    }
+        
+        const now = performance.now(); // changed from Date.now()
+        if (now - this.lastPathTime < this.pathCooldown) {
+            return; 
+        }
+    
+        this.lastPathTime = now;
+    
+        const startX = Math.floor(this.x / TILE_W);
+        const startY = Math.floor(this.y / TILE_H);
+        const endX = Math.floor(player.x / TILE_W);
+        const endY = Math.floor(player.y / TILE_H);
+    
+        if (startX === endX && startY === endY) return;
+    
+        const path = findPath(startX, startY, endX, endY, collisionGrid);
+    
+        if (path && path.length > 0) {
+            this.setPath(path);
+            console.log(`${this.name} found path of ${path.length} steps`);
+        } else {
+       //     console.warn(`${this.name} couldn't find a path!`);
+        }
+    }    
 
     getDirectionIndex() {
         switch (this.facing) {
@@ -251,3 +287,29 @@ class Monster extends Entity {
         }
     }
 }
+
+function updateEnemy(enemy, player) {
+    switch (enemy.state) {
+     /* case BEHAVIOR_STATES.IDLE:
+        // Do nothing
+        break;
+        
+      case BEHAVIOR_STATES.PATROL:
+        followPatrolPath(enemy);
+        break;
+  
+      case BEHAVIOR_STATES.CHASE:
+        followPath(enemy);
+        if (enemy.path.length === 0) {
+          enemy.state = BEHAVIOR_STATES.IDLE;
+        }
+        break;
+  
+      case BEHAVIOR_STATES.LOST:
+        // Behavior when pathing fails
+        wanderOrPatrol(enemy);
+        break;
+        */
+    }
+       
+  }
