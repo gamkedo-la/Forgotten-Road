@@ -185,11 +185,6 @@ function moveEverything() {
             enemy.chooseNewPath(player, collisionGrid);
         }
     }
-  //  console.log(`Total enemies: ${enemies.length}`);
-    for (const monster of enemies) {
-      monster.chooseNewPath(player, backgroundGrid);
-  }
-    enemy.updateMovement();
 }
 
 
