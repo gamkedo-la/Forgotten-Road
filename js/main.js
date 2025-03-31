@@ -10,10 +10,9 @@ console.log("============ The Forgotten Road ============\nInitializing...");
 // Player and enemy setup
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
-player.addItemToInventory(basicStaff) ;
+player.addItemToInventory(basicStaff);
 player.addItemToInventory(leatherArmor);
 var worldItems = []; // Holds items dropped in the game world
-
 
 player.levelUp();
 
@@ -32,31 +31,37 @@ var projectiles = [];
 
 // Game state
 const gameState = {
-  house: {
-    x: 32,
-    y: 0,
-    sX: 0,
-    sY: 0,
-    sW: 32 * 6,
-    sH: 32 * 6,
-    width: 32 * 6,
-    height: 32 * 6,
-    color: "rgba(9, 0, 128, 0.5)",
-    image: blacksmithShopPic,
-    insidebuilding: false,
-  },
-  house2: {
-    x: 32 * 18,
-    y: 5 * 32,
-    sX: 0,
-    sY: 32 * 6,
-    sW: 32 * 6,
-    sH: 32 * 6,
-    width: 32 * 6,
-    height: 32 * 6,
-    color: "rgba(9, 0, 128, 0.5)",
-    image: alchemistShopPic,
-    insidebuilding: false,
+  buildings: {
+    house: {
+      x: 32,
+      y: 0,
+      sX: 0,
+      sY: 0,
+      sW: 32 * 6,
+      sH: 32 * 6,
+      width: 32 * 6,
+      height: 32 * 6,
+      color: "rgba(9, 0, 128, 0.5)",
+      image: blacksmithShopPic,
+      buildingMessage:
+        "You're in the blacksmith shop! You can interact with NPCs or buy items.",
+      insidebuilding: false,
+    },
+    house2: {
+      x: 32 * 18,
+      y: 5 * 32,
+      sX: 0,
+      sY: 32 * 6,
+      sW: 32 * 6,
+      sH: 32 * 6,
+      width: 32 * 6,
+      height: 32 * 6,
+      color: "rgba(9, 0, 128, 0.5)",
+      image: alchemistShopPic,
+      buildingMessage:
+        "You're in the alchemist shop! You can interact with NPCs or buy items.",
+      insidebuilding: false,
+    },
   },
 };
 
@@ -117,16 +122,41 @@ function imageLoadingDoneSoStartGame() {
   function drawGameFrame(currentTime) {
     var deltaTime = (currentTime - lastFrameTime) / 1000; // in seconds
     lastFrameTime = currentTime;
-  
+
     check_gamepad();
     moveEverything();
-    drawEverything(deltaTime);  // <- pass it here
-  
+    drawEverything(deltaTime); // <- pass it here
+
     requestAnimationFrame(drawGameFrame);
   }
-  
+
   requestAnimationFrame(drawGameFrame);
-  
+}
+
+function drawBuildings() {
+  Object.keys(gameState.buildings).forEach((buildingKey) => {
+    ctx.drawImage(
+      gameState.buildings[buildingKey].image,
+      gameState.buildings[buildingKey].sX,
+      gameState.buildings[buildingKey].sY,
+      gameState.buildings[buildingKey].sW,
+      gameState.buildings[buildingKey].sH,
+      gameState.buildings[buildingKey].x,
+      gameState.buildings[buildingKey].y,
+      gameState.buildings[buildingKey].width,
+      gameState.buildings[buildingKey].height
+    );
+  });
+}
+
+function checkBuildingCollisions() {
+  Object.keys(gameState.buildings).forEach((buildingKey) => {
+    checkCollision(
+      player,
+      gameState.buildings[buildingKey],
+      gameState.buildings[buildingKey].buildingMessage
+    );
+  });
 }
 
 function checkCollision(character, building, message) {
@@ -151,7 +181,7 @@ function moveEverything() {
   let now = performance.now();
   let deltaTime = now - (lastFrameTime || now);
   lastFrameTime = now;
-  
+
   if (keys.pause && !pressedPause) {
     paused = !paused;
     pressedPause = true;
@@ -178,15 +208,15 @@ function moveEverything() {
   for (let enemy of enemies) {
     updateEnemy(enemy, player);
   }
-  
+
   for (let enemy of enemies) {
     if (!enemy.path || !enemy.path.length) {
-        if (Math.random() < 0.01) { // Lower chance for performance
-            enemy.chooseNewPath(player, collisionGrid);
-        }
+      if (Math.random() < 0.01) {
+        // Lower chance for performance
+        enemy.chooseNewPath(player, collisionGrid);
+      }
     }
-}
-
+  }
 
   for (let i = worldItems.length - 1; i >= 0; i--) {
     const item = worldItems[i];
@@ -195,34 +225,23 @@ function moveEverything() {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < item.pickupRadius) {
-        
-        if (item.use === "heal" && player.currentHP < player.maxHP) {
-         player.heal(item.amount);   // heal damaged player
-        }
-        else {
-            player.addItemToInventory(item);
-        }
-        worldItems.splice(i, 1);
+      if (item.use === "heal" && player.currentHP < player.maxHP) {
+        player.heal(item.amount); // heal damaged player
+      } else {
+        player.addItemToInventory(item);
+      }
+      worldItems.splice(i, 1);
     }
   }
 
   // Collision with house
-  checkCollision(
-    player,
-    gameState.house,
-    "You're in the blacksmith shop! You can interact with NPCs or buy items."
-  );
-  checkCollision(
-    player,
-    gameState.house2,
-    "You're in the alchemist shop! You can interact with NPCs or buy items."
-  );
+  checkBuildingCollisions();
 
   for (let enemy of enemies) {
     enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
   }
 
-  projectiles.forEach(p => p.update(collisionGrid, enemies));
+  projectiles.forEach((p) => p.update(collisionGrid, enemies));
 
   // Remove inactive projectiles
   for (let i = projectiles.length - 1; i >= 0; i--) {
@@ -231,9 +250,9 @@ function moveEverything() {
     }
   }
 
-  temp_ui_elements.forEach(element => {
+  temp_ui_elements.forEach((element) => {
     element.update(deltaTime);
-  })
+  });
 }
 
 // Render game
@@ -257,107 +276,60 @@ function drawEverything(deltaTime) {
   }
 
   // Render building if inside
-  if (gameState.house.insidebuilding) {
-    ctx.drawImage(
-      gameState.house.image,
-      gameState.house.sX,
-      gameState.house.sY,
-      gameState.house.sW,
-      gameState.house.sH,
-      gameState.house.x,
-      gameState.house.y,
-      gameState.house.width,
-      gameState.house.height
-    );
-  }
-  if (gameState.house2.insidebuilding) {
-    ctx.drawImage(
-      gameState.house2.image,
-      gameState.house2.sX,
-      gameState.house2.sY,
-      gameState.house2.sW,
-      gameState.house2.sH,
-      gameState.house2.x,
-      gameState.house2.y,
-      gameState.house2.width,
-      gameState.house2.height
-    );
-  }
+  drawBuildings();
 
   player.draw(deltaTime);
 
   for (let item of worldItems) {
     if (item.sprite instanceof Image && item.sprite.complete) {
-        ctx.drawImage(item.sprite, item.x, item.y, 32, 32); // or TILE_W, TILE_H
+      ctx.drawImage(item.sprite, item.x, item.y, 32, 32); // or TILE_W, TILE_H
     } else {
-        ctx.fillStyle = "orange";
-        ctx.fillRect(item.x, item.y, 32, 32); // fallback box
+      ctx.fillStyle = "orange";
+      ctx.fillRect(item.x, item.y, 32, 32); // fallback box
     }
-}
+  }
 
   // Render enemies
   for (let i = enemies.length - 1; i >= 0; i--) {
     const enemy = enemies[i];
 
     if (enemy.isDead) {
-        continue;
+      continue;
     }
 
     // Alive enemy flash logic
     const now = Date.now();
     if (enemy.isFlashing && now - enemy.lastHitTime < enemy.flashDuration) {
-        // Flash yellow
-        ctx.fillStyle = enemy.flashColor;
-        ctx.fillRect(enemy.x, enemy.y, TILE_W, TILE_H);
+      // Flash yellow
+      ctx.fillStyle = enemy.flashColor;
+      ctx.fillRect(enemy.x, enemy.y, TILE_W, TILE_H);
     } else {
-        enemy.isFlashing = false; // End flash
-        enemy.draw(deltaTime); // Normal rendering
+      enemy.isFlashing = false; // End flash
+      enemy.draw(deltaTime); // Normal rendering
     }
   }
 
-  projectiles.forEach(p => p.draw(ctx));
-
-  // Render house if outside
-
-  if (!gameState.house.insidebuilding) {
-    ctx.drawImage(
-      gameState.house.image,
-      gameState.house.sX,
-      gameState.house.sY,
-      gameState.house.sW,
-      gameState.house.sH,
-      gameState.house.x,
-      gameState.house.y,
-      gameState.house.width,
-      gameState.house.height
-    );
-  }
-  if (!gameState.house2.insidebuilding) {
-    ctx.drawImage(
-      gameState.house2.image,
-      gameState.house2.sX,
-      gameState.house2.sY,
-      gameState.house2.sW,
-      gameState.house2.sH,
-      gameState.house2.x,
-      gameState.house2.y,
-      gameState.house2.width,
-      gameState.house2.height
-    );
-  }
+  projectiles.forEach((p) => p.draw(ctx));
 
   drawBackpackUI(ctx, player);
 
   // Display player stats
-   var UIvertical = 40;
-   colorRect(5, UIvertical, 110, 30, "rgba(0, 0, 0, 0.5)");
-   const style = UI_TEXT_STYLES.DEFAULT;
-   drawTextWithShadow(`Gold: ${player.gold}`, 15, UIvertical+20, style.textColor, style.font, style.align);
+  var UIvertical = 40;
+  colorRect(5, UIvertical, 110, 30, "rgba(0, 0, 0, 0.5)");
+  const style = UI_TEXT_STYLES.DEFAULT;
+  drawTextWithShadow(
+    `Gold: ${player.gold}`,
+    15,
+    UIvertical + 20,
+    style.textColor,
+    style.font,
+    style.align
+  );
 
   //  Draw Temp UI elements
-  temp_ui_elements.forEach(ui_element => {
+  temp_ui_elements.forEach((ui_element) => {
     ui_element.draw();
-  })
+  });
 
   //   Pause UI
   if (paused) {
@@ -371,7 +343,7 @@ function drawEverything(deltaTime) {
 }
 
 function dist(x1, y1, x2, y2) {
-  const distX = (x1 - x2);
-  const distY = (y1 - y2);
+  const distX = x1 - x2;
+  const distY = y1 - y2;
   return Math.sqrt(distX * distX + distY * distY);
 }
