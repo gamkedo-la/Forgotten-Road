@@ -3,6 +3,7 @@ const BEHAVIOR_STATES = {
     PATROL: "patrol",
     CHASE: "chase",
     LOST: "lost",
+    KITE: "kite" //backing away from player
 };
 
 var DEBUG_turnOffEnemy_AI_ToAvoidFreeze = false;
@@ -119,6 +120,9 @@ class Monster extends Entity {
         const endX = Math.floor(player.x / TILE_W);
         const endY = Math.floor(player.y / TILE_H);
 
+
+
+
         if (startX === endX && startY === endY) return;
 
         const path = findPath(startX, startY, endX, endY, collisionGrid);
@@ -136,7 +140,14 @@ class Monster extends Entity {
             const dy = next.y * TILE_H - this.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
             const speed = this.speed;
-            
+    
+            // Update facing
+            if (Math.abs(dx) > Math.abs(dy)) {
+                this.facing = dx > 0 ? "right" : "left";
+            } else {
+                this.facing = dy > 0 ? "down" : "up";
+            }
+    
             if (dist < speed) {
                 this.x = next.x * TILE_W;
                 this.y = next.y * TILE_H;
@@ -148,7 +159,6 @@ class Monster extends Entity {
         }
     }
     
-
     followPatrolPath() {
         if (!this.patrolPath) return;
         if (!this.path || this.path.length === 0) {
@@ -157,6 +167,23 @@ class Monster extends Entity {
             this.followPath();
         }
     }
+
+    kiteAwayFrom(target) {
+        const dx = this.x - target.x;
+        const dy = this.y - target.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist > TILE_W * 5) {
+            this.state = BEHAVIOR_STATES.CHASE;
+            return;
+        }
+    
+        const moveX = (dx / dist) * this.speed;
+        const moveY = (dy / dist) * this.speed;
+    
+        this.x += moveX;
+        this.y += moveY;
+    }    
 
     funcwanderOrPatrol() {
         if (!this.patrolPath) {
@@ -170,21 +197,6 @@ class Monster extends Entity {
         this.state = BEHAVIOR_STATES.PATROL;
     }
 
-    updateMovement() {
-        if (this.path && this.path.length > 0) {
-            const next = this.path[this.pathIndex];
-            if (next) {
-                this.x = next.x * TILE_W;
-                this.y = next.y * TILE_H;
-                this.pathIndex++;
-                if (this.pathIndex >= this.path.length) {
-                    this.path = null;
-                    this.pathIndex = 0;
-                }
-            }
-        }
-    }
-
     getDirectionIndex() {
         switch (this.facing) {
             case "up": return 0;
@@ -195,8 +207,21 @@ class Monster extends Entity {
         }
     }
 
+    faceToward(target) {
+        var dx = target.x - this.x;
+        var dy = target.y - this.y;
+    
+        if (Math.abs(dx) > Math.abs(dy)) {
+            this.facing = dx > 0 ? "right" : "left";
+        } else {
+            this.facing = dy > 0 ? "down" : "up";
+        }
+    }    
+
     draw(deltaTime) {
         let frameWidth, srcX, srcY;
+
+    //    console.log(`Enemy facing: ${this.facing}`);
 
         if (this.state === "attacking") {
             this.attackTimer += deltaTime;
@@ -210,19 +235,30 @@ class Monster extends Entity {
             }
 
             frameWidth = this.width;
-            srcX = 32 + FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
-            srcY = this.getDirectionIndex() * this.height;
+            srcX = this.width + FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
+            srcY = this.getDirectionIndex() * this.height; 
+            console.log(srcY);
         } else {
             this.walkTimer += deltaTime;
-            if (this.walkTimer > frameDuration) {
-                this.walkTimer = 0;
-                this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+        
+            let frame = 0;
+        
+            if (this.state !== BEHAVIOR_STATES.IDLE) {
+                if (this.walkTimer > frameDuration) {
+                    this.walkTimer = 0;
+                    this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+                }
+                frame = this.currentWalkFrame;
+            } else {
+                this.currentWalkFrame = 0; // Reset to ensure a consistent starting frame
             }
-
+        
             frameWidth = this.width;
-            srcX = this.currentWalkFrame * frameWidth;
+            srcX = frame * frameWidth;
             srcY = this.getDirectionIndex() * this.height;
-        }
+        
+            console.log(`Enemy state: ${this.state}, facing: ${this.facing}, srcY: ${srcY}`);
+        } 
 
         ctx.drawImage(this.image, srcX, srcY, frameWidth, FRAME_HEIGHT, this.x, this.y, frameWidth, FRAME_HEIGHT);
 
@@ -233,28 +269,60 @@ class Monster extends Entity {
 }
 
 function updateEnemy(enemy, player) {
+    var dx;
+    var dy;
+    var distance;
     if (DEBUG_turnOffEnemy_AI_ToAvoidFreeze) return;
 
     switch (enemy.state) {
         case BEHAVIOR_STATES.IDLE:
-            if (Math.random() < 0.005) {
+            dx = player.x - enemy.x;
+            dy = player.y - enemy.y;
+            distance = Math.sqrt(dx * dx + dy * dy);
+        
+            // If player is within range, start chasing
+            if (distance < TILE_W * 8) {
+                enemy.faceToward(player); 
+                enemy.chooseNewPath(player, collisionGrid);
+                enemy.state = BEHAVIOR_STATES.CHASE;
+            }
+            
+            // Otherwise maybe wander
+            else if (Math.random() < 0.005) {
                 enemy.funcwanderOrPatrol();
             }
-            break;
-
+        break;
         case BEHAVIOR_STATES.PATROL:
             enemy.followPatrolPath();
-            break;
-
+        break;
         case BEHAVIOR_STATES.CHASE:
-            enemy.followPath();
+            dx = player.x - enemy.x;
+            dy = player.y - enemy.y;
+            dist = Math.sqrt(dx * dx + dy * dy);
+            
+            // If player is too close, kite away
+            if (dist < TILE_W * 2) {
+                enemy.state = BEHAVIOR_STATES.KITE;
+            }
+            // If in firing range, stop moving and fire
+            else if (dist < TILE_W * 6) {
+                enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
+                enemy.isMoving = false;
+            }
+            // Otherwise keep chasing
+            else {
+                enemy.followPath();
+            }
+    
             if (!enemy.path || enemy.path.length === 0) {
                 enemy.state = BEHAVIOR_STATES.IDLE;
             }
-            break;
-
+        break;
+        case BEHAVIOR_STATES.KITE:
+            enemy.kiteAwayFrom(player);
+        break;
         case BEHAVIOR_STATES.LOST:
             enemy.funcwanderOrPatrol();
             break;
-    }
+        }
 }

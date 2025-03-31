@@ -210,9 +210,8 @@ function moveEverything() {
   }
 
   for (let enemy of enemies) {
-    if (!enemy.path || !enemy.path.length) {
+    if (!enemy.isMoving && (!enemy.path || enemy.path.length === 0)) {
       if (Math.random() < 0.01) {
-        // Lower chance for performance
         enemy.chooseNewPath(player, collisionGrid);
       }
     }
