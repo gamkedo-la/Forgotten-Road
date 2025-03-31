@@ -17,7 +17,7 @@ class GridElement {
 
 // A* Pathfinding Algorithm
 function findPath(startX, startY, endX, endY, collisionGrid) {
-  console.log("starting pathfinding from "+startX+","+startY+" to "+endX+","+endY);
+ // console.log("starting pathfinding from "+startX+","+startY+" to "+endX+","+endY);
   let openSet = [];
   let closedSet = [];
   let startNode = new GridElement(startX, startY, true);
@@ -50,7 +50,7 @@ function findPath(startX, startY, endX, endY, collisionGrid) {
               path.push(temp);
               temp = temp.parent;
           }
-          console.log("finished pathfinding! path found ok.");
+   //       console.log("finished pathfinding! path found ok.");
           return path.reverse();
       }
       

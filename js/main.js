@@ -180,12 +180,12 @@ function moveEverything() {
   }
   
   for (let enemy of enemies) {
-    if (!enemy.path || !enemy.path.length) {
-        if (Math.random() < 0.01) { // Lower chance for performance
+    if (!enemy.isMoving && (!enemy.path || enemy.path.length === 0)) {
+        if (Math.random() < 0.01) {
             enemy.chooseNewPath(player, collisionGrid);
         }
     }
-}
+  }
 
 
   for (let i = worldItems.length - 1; i >= 0; i--) {
