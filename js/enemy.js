@@ -141,7 +141,7 @@ class Monster extends Entity {
             const dist = Math.sqrt(dx * dx + dy * dy);
             const speed = this.speed;
     
-            // 👉 Update facing
+            // Update facing
             if (Math.abs(dx) > Math.abs(dy)) {
                 this.facing = dx > 0 ? "right" : "left";
             } else {
@@ -235,21 +235,30 @@ class Monster extends Entity {
             }
 
             frameWidth = this.width;
-            srcX = 32 + FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
+            srcX = this.width + FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
             srcY = this.getDirectionIndex() * this.height; 
             console.log(srcY);
         } else {
             this.walkTimer += deltaTime;
-            if (this.walkTimer > frameDuration) {
-                this.walkTimer = 0;
-                this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+        
+            let frame = 0;
+        
+            if (this.state !== BEHAVIOR_STATES.IDLE) {
+                if (this.walkTimer > frameDuration) {
+                    this.walkTimer = 0;
+                    this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+                }
+                frame = this.currentWalkFrame;
+            } else {
+                this.currentWalkFrame = 0; // Reset to ensure a consistent starting frame
             }
-
+        
             frameWidth = this.width;
-            srcX = this.currentWalkFrame * frameWidth;
+            srcX = frame * frameWidth;
             srcY = this.getDirectionIndex() * this.height;
-          //  console.log(srcY)
-        }
+        
+            console.log(`Enemy state: ${this.state}, facing: ${this.facing}, srcY: ${srcY}`);
+        } 
 
         ctx.drawImage(this.image, srcX, srcY, frameWidth, FRAME_HEIGHT, this.x, this.y, frameWidth, FRAME_HEIGHT);
 
