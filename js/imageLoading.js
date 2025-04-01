@@ -14,6 +14,7 @@ var leatherArmorIconPic = document.createElement("img");
 var healthPotionPic = document.createElement("img");
 var goblinPic = document.createElement("img");
 var koboldPic = document.createElement("img");
+var skeletonPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -45,6 +46,7 @@ function loadImages() {
         {varName: warriorPic, theFile: "warrior.png"},
         {varName: goblinPic, theFile: "goblin.png"},
         {varName: koboldPic, theFile: "Kobald.png"},
+        {varName: skeletonPic, theFile: "skeleton.png"},
         {varName: blacksmithShopPic, theFile: "BlackSmithShop.png"},
         {varName: alchemistShopPic, theFile: "BlackSmithShop.png"},
         {varName: pickUpItemPic, theFile: "pickupItems.png"},

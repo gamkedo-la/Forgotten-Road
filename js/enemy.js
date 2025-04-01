@@ -31,12 +31,23 @@ class Monster extends Entity {
         this.pathIndex = 0;
         this.speed = 1;
         this.combatType = combatType; // NEW LINE
-        if(name == "Kobold"){
-            this.image = koboldPic;
-        } else if (name == "Goblin"){
+        if (name === "Goblin") {
+            this.behavior = "melee";
             this.image = goblinPic;
+            this.maxHP = 20;
+            this.currentHP = 20;
+        } else if (name === "Kobold") {
+            this.behavior = "ranged";
+            this.image = koboldPic;
+            this.maxHP = 15;
+            this.currentHP = 15;
+        } else if (name === "Skeleton") {
+            this.behavior = "resilient";
+            this.image = skeletonPic;
+            this.maxHP = 25;
+            this.currentHP = 25;
         }
-    
+        
         this.patrolPath = [
             { x: Math.floor(this.x / TILE_W) + 1, y: Math.floor(this.y / TILE_H) },
             { x: Math.floor(this.x / TILE_W), y: Math.floor(this.y / TILE_H) + 1 },

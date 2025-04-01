@@ -28,14 +28,13 @@ kobold.state = BEHAVIOR_STATES.WANDER;
 kobold.placeAtRandomPosition(2);
 assignDefaultPatrol(kobold);
 
-enemies.push(goblin, kobold);
+const skeleton = new Monster("Skeleton", 0, 0, 40, 2, 0, "melee");
+skeleton.state = BEHAVIOR_STATES.PATROL;
+skeleton.canResurrect = true;
+skeleton.isUndead = true;
+skeleton.immuneToRanged = true;
 
-
-
-console.log(`${goblin.name} is lurking in the woods...`);
-goblin.attack(player);
-
-console.log(`${player.name} now has ${player.health} HP.`);
+enemies.push(goblin, kobold, skeleton);
 
 var insidebuilding = false;
 var projectiles = [];

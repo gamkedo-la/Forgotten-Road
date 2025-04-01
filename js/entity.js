@@ -31,28 +31,43 @@ class Entity {
     set y(value) { this._y = value; }
 
     takeDamage(amount) {
-        
+        // Skeleton takes reduced damage
+        if (this.type === "skeleton") {
+            amount = Math.floor(amount * 0.5);
+        }
+    
         this.currentHP -= amount;
         if (this.currentHP < 0) this.currentHP = 0;
-        console.log(`${this.name} has ${this.currentHP} HP left.`);
     
+        console.log(`${this.name} takes ${amount} damage!`);
+    
+        // Resurrection logic (only for skeletons)
+        if (this.currentHP <= 0) {
+            if (this.type === "skeleton" && Math.random() < 0.25) {
+                this.currentHP = 10;
+                console.log(`${this.name} reassembles itself with 10 HP!`);
+            } else {
+                console.log(`${this.name} has died!`);
+                this.die();
+            }
+        }
+    
+        // Visual feedback
         this.isFlashing = true;
         this.lastHitTime = Date.now();
     
-        if (this.currentHP <= 0) {
-            this.die();
-        }
-
-        // spawn floating text
+        console.log(`${this.name} has ${this.currentHP} HP left.`);
+    
+        // Spawn floating damage number
         const floatingDamageNumber = new TextEntity(`-${amount}`, this._x, this._y, "red", 0, -1);
         temp_ui_elements.push(floatingDamageNumber);
     }
+    
 
     heal(amount) {
         this.currentHP += amount;
         if (this.currentHP > this.maxHP) this.currentHP = this.maxHP;
-    }
-    
+    }    
     
     die() {
         if (this.isDead) return;
