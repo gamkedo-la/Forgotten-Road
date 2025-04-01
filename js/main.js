@@ -15,11 +15,22 @@ var worldItems = [];
 player.levelUp();
 
 const goblin = new Monster("Goblin", 32 * 9, 32 * 4, 32, 5, 20, 'melee');
+goblin.maxHealth = 30;
+goblin.health = 30;
+goblin.state = BEHAVIOR_STATES.PATROL;
+goblin.placeAtRandomPosition(5);
+assignDefaultPatrol(goblin);
+
 const kobold = new Monster("Kobold", 32 * 9, 32 * 4, 32, 5, 20, 'ranged');
+kobold.maxHealth = 20;
+kobold.health = 20;
+kobold.state = BEHAVIOR_STATES.PATROL;
+kobold.placeAtRandomPosition(2);
+assignDefaultPatrol(kobold);
+
 enemies.push(goblin, kobold);
 
-goblin.placeAtRandomPosition(5);
-kobold.placeAtRandomPosition(5);
+
 
 console.log(`${goblin.name} is lurking in the woods...`);
 goblin.attack(player);

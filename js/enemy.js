@@ -308,10 +308,35 @@ function updateEnemy(enemy, player) {
         } else if (Math.random() < 0.005) {
             enemy.funcwanderOrPatrol();
         }
-        break;
+    break;
     case BEHAVIOR_STATES.PATROL:
-        enemy.followPatrolPath();
-        break;
+        // If no path or path is empty, find next patrol point
+        if (!enemy.path || enemy.path.length === 0) {
+            const target = enemy.patrolPath[enemy.pathIndex];
+            const startX = Math.floor(enemy.x / TILE_W);
+            const startY = Math.floor(enemy.y / TILE_H);
+            const endX = target.x;
+            const endY = target.y;
+    
+            if (collisionGrid[endY]?.[endX] !== TILE_WALL) {
+                enemy.path = findPath(startX, startY, endX, endY, collisionGrid);
+            } else {
+                console.warn(`${enemy.name}'s patrol point is blocked`);
+            }
+    
+            // Cycle to next point for next round
+            enemy.pathIndex = (enemy.pathIndex + 1) % enemy.patrolPath.length;
+        } else {
+            enemy.followPath();
+        }
+    
+        // Look for player while patrolling
+        const distToPlayer = getDistance(enemy.x, enemy.y, player.x, player.y);
+        if (distToPlayer < TILE_W * 6) {
+            console.log(`${enemy.name} spotted the player!`);
+            enemy.state = BEHAVIOR_STATES.CHASE;
+        }
+    break;    
     case BEHAVIOR_STATES.CHASE:
         if (dist < TILE_W * 2) {
             enemy.state = BEHAVIOR_STATES.KITE;
@@ -358,3 +383,31 @@ function updateEnemy(enemy, player) {
     break;
     }
 }
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+  
+function assignDefaultPatrol(enemy) {
+    const tileX = Math.floor(enemy.x / TILE_W);
+    const tileY = Math.floor(enemy.y / TILE_H);
+    const path = [
+        { x: tileX + 1, y: tileY },
+        { x: tileX, y: tileY + 1 },
+        { x: tileX - 1, y: tileY },
+        { x: tileX, y: tileY - 1 },
+    ];
+    enemy.patrolPath = shuffle(path);
+}
+
+function getDistance(x1, y1, x2, y2) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+  
+  
