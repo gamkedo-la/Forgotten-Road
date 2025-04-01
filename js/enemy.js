@@ -30,7 +30,11 @@ class Monster extends Entity {
         this.state = BEHAVIOR_STATES.IDLE;
         this.pathIndex = 0;
         this.speed = 1;
-        this.combatType = combatType; // NEW LINE
+        this.combatType = combatType;
+        this.isDying = false;
+        this.deathFrame = 0;
+        this.maxDeathFrames = 8; 
+        this.removalStarted = false;
         if (name === "Goblin") {
             this.behavior = "melee";
             this.image = goblinPic;
@@ -280,45 +284,58 @@ class Monster extends Entity {
     }
 
     draw(deltaTime) {
-        let frameWidth, srcX, srcY;
-
-        if (this.state === "attacking") {
-            this.attackTimer += deltaTime;
-            if (this.attackTimer > frameDuration) {
-                this.attackTimer = 0;
-                this.currentAttackFrame++;
-                if (this.currentAttackFrame >= FRAMES_PER_ANIMATION) {
-                    this.currentAttackFrame = 0;
-                    this.state = "idle";
+        let frameWidth = this.width;
+        let srcX, srcY;
+    
+        // Skeleton dying animation
+        if (this.isDying && this.sprite === "dying") {
+            this.deathTimer += deltaTime;
+    
+            if (this.deathFrame < this.maxDeathFrames) {
+                if (this.deathTimer > frameDuration) {
+                    this.deathTimer = 0;
+                    this.deathFrame++;
                 }
             }
-
-            frameWidth = this.width;
-            srcX = this.width + FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION + this.currentAttackFrame * frameWidth;
-            srcY = this.getDirectionIndex() * this.height;
-        } else {
-            this.walkTimer += deltaTime;
-            let frame = 0;
-
-            if (this.state !== BEHAVIOR_STATES.IDLE) {
-                if (this.walkTimer > frameDuration) {
-                    this.walkTimer = 0;
-                    this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
-                }
-                frame = this.currentWalkFrame;
-            } else {
-                this.currentWalkFrame = 0;
-            }
-
-            frameWidth = this.width;
+    
+            // Clamp to final frame
+            const frame = Math.min(this.deathFrame, this.maxDeathFrames - 1);
             srcX = frame * frameWidth;
-            srcY = this.getDirectionIndex() * this.height;
+            srcY = 4 * this.height; 
+    
+            ctx.drawImage(this.image, srcX, srcY, this.width, this.height, this.x, this.y, this.width, this.height);
+    
+            // After reaching final frame, delay removal
+            if (this.deathFrame === this.maxDeathFrames && !this.removalStarted) {
+                this.removalStarted = true;
+                this.dropLoot();
+    
+                setTimeout(() => {
+                    const index = enemies.indexOf(this);
+                    if (index !== -1) {
+                        enemies.splice(index, 1);
+                        console.log(`${this.name} (skeleton) removed after animation.`);
+                    }
+                }, 3000);
+            }
+    
+            return; // skip normal draw
         }
-
-        ctx.drawImage(this.image, srcX, srcY, frameWidth, FRAME_HEIGHT, this.x, this.y, frameWidth, FRAME_HEIGHT);
-
-        if (this.isDead) {
-            colorText("Dead", this.x, this.y + 22, "white", fontSize = 12);
+    
+        // Normal walking / idle rendering
+        this.walkTimer += deltaTime;
+        if (this.walkTimer > frameDuration) {
+            this.walkTimer = 0;
+            this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+        }
+    
+        srcX = this.currentWalkFrame * frameWidth;
+        srcY = this.getDirectionIndex() * this.height;
+    
+        ctx.drawImage(this.image, srcX, srcY, this.width, this.height, this.x, this.y, this.width, this.height);
+    
+        if (this.isDead && !this.isDying) {
+            colorText("Dead", this.x, this.y + 22, "white", 12);
         }
     }
 }

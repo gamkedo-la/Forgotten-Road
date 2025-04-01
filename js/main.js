@@ -299,15 +299,8 @@ function drawEverything(deltaTime) {
     }
 
     // Alive enemy flash logic
-    const now = Date.now();
-    if (enemy.isFlashing && now - enemy.lastHitTime < enemy.flashDuration) {
-      // Flash yellow
-      ctx.fillStyle = enemy.flashColor;
-      ctx.fillRect(enemy.x, enemy.y, TILE_W, TILE_H);
-    } else {
-      enemy.isFlashing = false; // End flash
-      enemy.draw(deltaTime); // Normal rendering
-    }
+    enemy.draw(deltaTime); // Normal rendering
+  
   }
 
   projectiles.forEach((p) => p.draw(ctx));

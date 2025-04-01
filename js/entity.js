@@ -75,12 +75,20 @@ class Entity {
         this.isDead = true;
         this.deathTime = Date.now();
         console.log(`${this.name} has been defeated!`);
+    
+        if (this.type === "skeleton") {
+            this.sprite = "dying";
+            this.isDying = true;
+            this.deathFrame = 0;
+            this.maxDeathFrames = 8;
+            return; // animation will handle removal
+        }
+    
         this.sprite = "dead";
     
-        // Drop item
+        // Drop loot immediately for non-skeletons
         this.dropLoot();
     
-        // Delay removal
         setTimeout(() => {
             const index = enemies.indexOf(this);
             if (index !== -1) {
@@ -89,7 +97,7 @@ class Entity {
             }
         }, 5000);
     }
-
+    
     dropLoot() {
         const drops = [{ ...basicStaff }, { ...leatherArmor }, {...healthPotion}];
         const randomDrop = drops[Math.floor(Math.random() * drops.length)];
