@@ -12,6 +12,8 @@ var boltPic = document.createElement("img");
 var staffIconPic = document.createElement("img"); 
 var leatherArmorIconPic = document.createElement("img");
 var healthPotionPic = document.createElement("img");
+var goblinPic = document.createElement("img");
+var koboldPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -41,13 +43,14 @@ function loadImages() {
         {varName: townMapPic, theFile: "townMap.png"},
         {varName: wizardPic, theFile: "wizard.png"},
         {varName: warriorPic, theFile: "warrior.png"},
+        {varName: goblinPic, theFile: "goblin.png"},
+        {varName: koboldPic, theFile: "Kobald.png"},
         {varName: blacksmithShopPic, theFile: "BlackSmithShop.png"},
         {varName: alchemistShopPic, theFile: "BlackSmithShop.png"},
         {varName: pickUpItemPic, theFile: "pickupItems.png"},
         {varName: heartFullPic, theFile: "fullHeart.png"},
         {varName: heartHalfPic, theFile: "halfHeart.png"},
         {varName: heartEmptyPic, theFile: "noHeart.png"},
-        {varName: enemyPic, theFile: "Kobald.png"},
         {varName: boltPic, theFile: "bolt.png"},
         {varName: staffIconPic, theFile: "staffIcon.png"},
         {varName: leatherArmorIconPic, theFile: "armorIcon.png"},

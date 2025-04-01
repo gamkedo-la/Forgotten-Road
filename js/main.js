@@ -5,21 +5,21 @@ var turnPathFindingDrawingOn = false;
 const PLAYER_MOVE_SPEED = 4;
 let lastFrameTime = performance.now();
 
-console.log("============ The Forgotten Road ============\nInitializing...");
-
 // Player and enemy setup
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
 player.addItemToInventory(basicStaff);
 player.addItemToInventory(leatherArmor);
-var worldItems = []; // Holds items dropped in the game world
+var worldItems = []; 
 
 player.levelUp();
 
-const goblin = new Monster("Goblin", 32 * 9, 32 * 4, 32, 5, 20);
-enemies.push(goblin);
+const goblin = new Monster("Goblin", 32 * 9, 32 * 4, 32, 5, 20, 'melee');
+const kobold = new Monster("Kobold", 32 * 9, 32 * 4, 32, 5, 20, 'ranged');
+enemies.push(goblin, kobold);
 
 goblin.placeAtRandomPosition(5);
+kobold.placeAtRandomPosition(5);
 
 console.log(`${goblin.name} is lurking in the woods...`);
 goblin.attack(player);
@@ -207,14 +207,6 @@ function moveEverything() {
   // move enemies on optional path
   for (let enemy of enemies) {
     updateEnemy(enemy, player);
-  }
-
-  for (let enemy of enemies) {
-    if (!enemy.isMoving && (!enemy.path || enemy.path.length === 0)) {
-      if (Math.random() < 0.01) {
-        enemy.chooseNewPath(player, collisionGrid);
-      }
-    }
   }
 
   for (let i = worldItems.length - 1; i >= 0; i--) {
