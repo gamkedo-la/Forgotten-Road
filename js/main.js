@@ -32,7 +32,7 @@ var projectiles = [];
 // Game state
 const gameState = {
   buildings: {
-    house: {
+    blacksmithShop: {
       x: 32,
       y: 0,
       sX: 0,
@@ -47,7 +47,7 @@ const gameState = {
         "You're in the blacksmith shop! You can interact with NPCs or buy items.",
       insidebuilding: false,
     },
-    house2: {
+    alchemistShop: {
       x: 32 * 18,
       y: 5 * 32,
       sX: 0,
@@ -134,7 +134,7 @@ function imageLoadingDoneSoStartGame() {
 }
 
 function drawBuildings() {
-  Object.keys(gameState.buildings).forEach((buildingKey) => {
+  for (buildingKey in gameState.buildings) {
     ctx.drawImage(
       gameState.buildings[buildingKey].image,
       gameState.buildings[buildingKey].sX,
@@ -146,17 +146,17 @@ function drawBuildings() {
       gameState.buildings[buildingKey].width,
       gameState.buildings[buildingKey].height
     );
-  });
+  }
 }
 
 function checkBuildingCollisions() {
-  Object.keys(gameState.buildings).forEach((buildingKey) => {
+  for (buildingKey in gameState.buildings) {
     checkCollision(
       player,
       gameState.buildings[buildingKey],
       gameState.buildings[buildingKey].buildingMessage
     );
-  });
+  }
 }
 
 function checkCollision(character, building, message) {
