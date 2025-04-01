@@ -4,7 +4,8 @@ const BEHAVIOR_STATES = {
     CHASE: "chase",
     LOST: "lost",
     KITE: "kite",
-    FLEE: "flee"
+    FLEE: "flee",
+    WANDER: "wander"
 };
 
 var DEBUG_turnOffEnemy_AI_ToAvoidFreeze = false;
@@ -111,6 +112,32 @@ class Monster extends Entity {
         console.log(`${this.name} fires a bolt at ${player.name}`);
     }
 
+    canSeePlayer(player, visionRadius = 6) {
+        const dx = player.x - this.x;
+        const dy = player.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+    
+        if (dist > visionRadius * TILE_W) {
+            return false; // out of range
+        }
+    
+        const steps = Math.ceil(dist / TILE_W);
+        for (let i = 1; i < steps; i++) {
+            const checkX = Math.floor(this.x + (dx * i) / steps);
+            const checkY = Math.floor(this.y + (dy * i) / steps);
+    
+            const tileCol = Math.floor(checkX / TILE_W);
+            const tileRow = Math.floor(checkY / TILE_H);
+    
+            if (collisionGrid[tileRow]?.[tileCol] === TILE_WALL) {
+                return false; // blocked by wall
+            }
+        }
+    
+        return true; // no obstructions
+    }
+    
+
     moveAwayFrom(target) {
         const dx = this.x - target.x;
         const dy = this.y - target.y;
@@ -160,7 +187,7 @@ class Monster extends Entity {
 
     followPath() {
         if (!this.path || this.path.length === 0) {
-            console.warn(`${this.name} has no path to follow`);
+       //     console.warn(`${this.name} has no path to follow`);
             return;
         }
     
@@ -185,7 +212,7 @@ class Monster extends Entity {
             this.y += (dy / dist) * speed;
         }
     
-        console.log(`${this.name} is following path, ${this.path.length} steps remaining`);
+      //  console.log(`${this.name} is following path, ${this.path.length} steps remaining`);
     }
     
 
@@ -301,13 +328,12 @@ function updateEnemy(enemy, player) {
 
     switch (enemy.state) {
     case BEHAVIOR_STATES.IDLE:
-        if (dist < TILE_W * 8) {
-            enemy.faceToward(player);
-            enemy.chooseNewPath(player, collisionGrid);
+        if (enemy.canSeePlayer(player)) {
+            console.log(`${enemy.name} spots the player while idle!`);
             enemy.state = BEHAVIOR_STATES.CHASE;
-        } else if (Math.random() < 0.005) {
-            enemy.funcwanderOrPatrol();
         }
+    break;
+
     break;
     case BEHAVIOR_STATES.PATROL:
         // If no path or path is empty, find next patrol point
@@ -331,13 +357,13 @@ function updateEnemy(enemy, player) {
         }
     
         // Look for player while patrolling
-        const distToPlayer = getDistance(enemy.x, enemy.y, player.x, player.y);
-        if (distToPlayer < TILE_W * 6) {
-            console.log(`${enemy.name} spotted the player!`);
+        if (enemy.canSeePlayer(player)) {
+            console.log(`${enemy.name} sees the player!`);
             enemy.state = BEHAVIOR_STATES.CHASE;
-        }
+        }        
     break;    
     case BEHAVIOR_STATES.CHASE:
+        console.log(`${enemy.name} is chasing the player!`);
         if (dist < TILE_W * 2) {
             enemy.state = BEHAVIOR_STATES.KITE;
         } else if (dist < TILE_W * 6) {
@@ -362,6 +388,7 @@ function updateEnemy(enemy, player) {
         }
         break;
     case BEHAVIOR_STATES.KITE:
+        console.log(`${enemy.name} is kiting`);
         if (dist < TILE_W * 2) {
             if (enemy.combatType === "ranged") {
                 enemy.state = BEHAVIOR_STATES.KITE;
@@ -376,9 +403,46 @@ function updateEnemy(enemy, player) {
             }
         }   
     case BEHAVIOR_STATES.LOST:
+        console.log(`${enemy.name} is lost!`);
         enemy.funcwanderOrPatrol();
         break;
     case BEHAVIOR_STATES.FLEE:
+        console.log(`${enemy.name} is fleeing!`);
+        enemy.moveAwayFrom(player);
+    break;
+    case BEHAVIOR_STATES.WANDER:
+        console.log(`${enemy.name} is wandering!`);
+        if (!enemy.path || enemy.path.length === 0) {
+            const dir = Math.floor(Math.random() * 4);
+            const dx = [1, -1, 0, 0][dir];
+            const dy = [0, 0, 1, -1][dir];
+
+            const newX = Math.floor(enemy.x / TILE_W) + dx;
+            const newY = Math.floor(enemy.y / TILE_H) + dy;
+
+            if (
+                collisionGrid[newY] &&
+                collisionGrid[newY][newX] !== TILE_WALL
+            ) {
+                enemy.path = findPath(
+                    Math.floor(enemy.x / TILE_W),
+                    Math.floor(enemy.y / TILE_H),
+                    newX,
+                    newY,
+                    collisionGrid
+                );
+            }
+        } else {
+            enemy.followPath();
+        }
+        // Line of sight check
+        if (enemy.canSeePlayer(player)) {
+            console.log(`${enemy.name} sees the player while wandering!`);
+            enemy.state = BEHAVIOR_STATES.CHASE;
+        }
+    break;
+    default:
+        console.log(`${enemy.name} has no behavor state!`);
         enemy.moveAwayFrom(player);
     break;
     }
