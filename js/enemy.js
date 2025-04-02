@@ -50,7 +50,16 @@ class Monster extends Entity {
             this.image = skeletonPic;
             this.maxHP = 25;
             this.currentHP = 25;
+        } else if (name === "Orc") {
+            this.behavior = "melee";
+            this.image = orcPic;
+            this.maxHP = 40;
+            this.currentHP = 40;
+            this.width = 40;
+            this.height = 40;
+            this.speed = 0.8; 
         }
+        
         
         this.patrolPath = [
             { x: Math.floor(this.x / TILE_W) + 1, y: Math.floor(this.y / TILE_H) },

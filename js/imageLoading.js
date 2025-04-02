@@ -15,6 +15,7 @@ var healthPotionPic = document.createElement("img");
 var goblinPic = document.createElement("img");
 var koboldPic = document.createElement("img");
 var skeletonPic = document.createElement("img");
+var orcPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -47,6 +48,7 @@ function loadImages() {
         {varName: goblinPic, theFile: "goblin.png"},
         {varName: koboldPic, theFile: "Kobald.png"},
         {varName: skeletonPic, theFile: "skeleton.png"},
+        {varName: orcPic, theFile: "orc.png"},
         {varName: blacksmithShopPic, theFile: "BlackSmithShop.png"},
         {varName: alchemistShopPic, theFile: "BlackSmithShop.png"},
         {varName: pickUpItemPic, theFile: "pickupItems.png"},
@@ -57,6 +59,7 @@ function loadImages() {
         {varName: staffIconPic, theFile: "staffIcon.png"},
         {varName: leatherArmorIconPic, theFile: "armorIcon.png"},
         {varName: healthPotionPic, theFile: "healthPotion.png"},
+
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_WALL, theFile: "wall.png", sX: "0", sY: "0",options: 0},

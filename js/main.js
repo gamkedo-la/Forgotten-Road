@@ -8,11 +8,7 @@ let lastFrameTime = performance.now();
 // Player and enemy setup
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
-player.addItemToInventory(basicStaff);
-player.addItemToInventory(leatherArmor);
 var worldItems = []; 
-
-player.levelUp();
 
 const goblin = new Monster("Goblin", 32 * 9, 32 * 4, 32, 5, 20, 'melee');
 goblin.maxHealth = 30;
@@ -28,13 +24,22 @@ kobold.state = BEHAVIOR_STATES.WANDER;
 kobold.placeAtRandomPosition(2);
 assignDefaultPatrol(kobold);
 
+const orc = new Monster("Orc", 32 * 5, 32 * 6, 40, 10, 30, 'melee');
+orc.width = 40;
+orc.height = 40;
+orc.maxHealth = 40;
+orc.health = 40;
+orc.state = BEHAVIOR_STATES.CHASE;
+orc.image = orcPic; // make sure `orcPic` is loaded in `loadImages()`
+enemies.push(orc);
+
 const skeleton = new Monster("Skeleton", 0, 0, 40, 2, 0, "melee");
 skeleton.state = BEHAVIOR_STATES.PATROL;
 skeleton.canResurrect = true;
 skeleton.isUndead = true;
 skeleton.immuneToRanged = true;
 
-enemies.push(goblin, kobold, skeleton);
+enemies.push(goblin, kobold, skeleton, orc);
 
 var insidebuilding = false;
 var projectiles = [];
