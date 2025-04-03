@@ -1,5 +1,4 @@
-// Constants & Global Setup
-var canvas, ctx
+var canvas, ctx, collisionCanvas, collisionCtx;
 const enemies = [];
 const temp_ui_elements = [];
 const PLAYER_MOVE_SPEED = 4;
@@ -11,14 +10,14 @@ let turnPathFindingDrawingOn = false;
 let insidebuilding = false;
 let projectiles = [];
 let worldItems = [];
-let bgCanvas, bgCtx;
 
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
 
-
+// ========================
 // Building Setup
+// ========================
 const gameState = {
   buildings: {
     blacksmithShop: {
@@ -52,56 +51,19 @@ const gameState = {
   },
 };
 
-// Enemy Setup
-function setupEnemies() {
-  const goblin = new Monster("Goblin", 32 * 9, 32 * 4, 32, 5, 20, 'melee');
-  goblin.maxHealth = 30;
-  goblin.health = 30;
-  goblin.state = BEHAVIOR_STATES.IDLE;
-  goblin.placeAtRandomPosition(5);
-  assignDefaultPatrol(goblin);
-
-  const kobold = new Monster("Kobold", 32 * 9, 32 * 4, 32, 5, 20, 'ranged');
-  kobold.maxHealth = 20;
-  kobold.health = 20;
-  kobold.state = BEHAVIOR_STATES.WANDER;
-  kobold.placeAtRandomPosition(2);
-  assignDefaultPatrol(kobold);
-
-  const orc = new Monster("Orc", 32 * 5, 32 * 6, 40, 10, 30, 'melee');
-  orc.maxHealth = 40;
-  orc.health = 40;
-  orc.state = BEHAVIOR_STATES.CHASE;
-  orc.image = orcPic;
-
-  const skeleton = new Monster("Skeleton", 0, 0, 40, 2, 0, "melee");
-  skeleton.state = BEHAVIOR_STATES.PATROL;
-  skeleton.canResurrect = true;
-  skeleton.isUndead = true;
-  skeleton.immuneToRanged = true;
-
-  enemies.push(goblin, kobold, orc, skeleton);
-}
 
 // Initialization
 window.onload = function () {
   canvas = document.getElementById("gameCanvas");
   ctx = canvas.getContext("2d");
-  setupEnemies();
+  //setupCollisionCanvas();
   loadImages();
 };
 
 function imageLoadingDoneSoStartGame() {
   console.log("All images downloaded. Starting game!");
   SetupCollisionGridFromBackground();
-  bgCanvas = document.createElement('canvas');
-  bgCanvas.width = canvas.width;
-  bgCanvas.height = canvas.height;
-  bgCtx = bgCanvas.getContext('2d');
-
-  // Draw background ONCE
-  drawBackground(bgCtx);
-
+  spawnMonstersFromMap();
   requestAnimationFrame(drawGameFrame);
 }
 
@@ -130,7 +92,7 @@ function updateGameState(deltaTime) {
 
 function renderGameFrame(deltaTime) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bgCanvas,0,0);
+  //ctx.drawImage(bgCanvas,0,0);
 
   drawBackground();
   if (turnPathFindingDrawingOn) drawPathingFindingTiles();

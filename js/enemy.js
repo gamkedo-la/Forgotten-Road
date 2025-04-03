@@ -511,4 +511,108 @@ function getDistance(x1, y1, x2, y2) {
     return Math.sqrt(dx * dx + dy * dy);
 }
   
+function spawnMonstersFromMap() {
+    for (let row = 0; row < backgroundGrid.length; row++) {
+        for (let col = 0; col < backgroundGrid[row].length; col++) {
+            const tile = backgroundGrid[row][col];
+            const x = col * TILE_W;
+            const y = row * TILE_H;
+    
+            if (tile === TILE_GOBLIN_SPAWN) {
+            const goblin = createMonster({
+                name: "Goblin",
+                x,
+                y,
+                damage: 5,
+                maxHealth: 30,
+                type: "melee",
+                state: BEHAVIOR_STATES.IDLE
+            });
+            enemies.push(goblin);
+            backgroundGrid[row][col] = TILE_GRASS;
+            }
+    
+            if (tile === TILE_KOBOLD_SPAWN) {
+            const kobold = createMonster({
+                name: "Kobold",
+                x,
+                y,
+                damage: 5,
+                maxHealth: 20,
+                type: "ranged",
+                state: BEHAVIOR_STATES.WANDER,
+                patrolZone: 2
+            });
+            enemies.push(kobold);
+            backgroundGrid[row][col] = TILE_GRASS;
+            }
+    
+            if (tile === TILE_ORC_SPAWN) {
+            const orc = createMonster({
+                name: "Orc",
+                x,
+                y,
+                size: 40,
+                damage: 10,
+                maxHealth: 40,
+                type: "melee",
+                state: BEHAVIOR_STATES.CHASE,
+                image: orcPic
+            });
+            enemies.push(orc);
+            backgroundGrid[row][col] = TILE_GRASS;
+            }
+    
+            if (tile === TILE_SKELETON_SPAWN) {
+            const skeleton = createMonster({
+                name: "Skeleton",
+                x,
+                y,
+                size: 40,
+                damage: 2,
+                maxHealth: 20,
+                type: "melee",
+                state: BEHAVIOR_STATES.PATROL,
+                extra: {
+                canResurrect: true,
+                isUndead: true,
+                immuneToRanged: true
+                }
+            });
+            enemies.push(skeleton);
+            backgroundGrid[row][col] = TILE_GRASS;
+            }
+        }
+    }
+}
+
+// Enemy Factory
+function createMonster({
+    name,
+    x,
+    y,
+    size = 32,
+    damage,
+    maxHealth,
+    type,
+    state = BEHAVIOR_STATES.IDLE,
+    patrolZone = null,
+    image = null,
+    extra = {}
+  }) {
+    const monster = new Monster(name, x, y, size, damage, maxHealth, type);
+    monster.maxHealth = maxHealth;
+    monster.health = maxHealth;
+    monster.state = state;
   
+    if (patrolZone) monster.placeAtRandomPosition(patrolZone);
+    if (image) monster.image = image;
+  
+    Object.assign(monster, extra);
+  
+    if (state === BEHAVIOR_STATES.PATROL || state === BEHAVIOR_STATES.WANDER) {
+      assignDefaultPatrol(monster);
+    }
+  
+    return monster;
+} 
