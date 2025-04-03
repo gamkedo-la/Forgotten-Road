@@ -1,7 +1,5 @@
-// ========================
 // Constants & Global Setup
-// ========================
-var canvas, ctx, collisionCanvas, collisionCtx;
+var canvas, ctx
 const enemies = [];
 const temp_ui_elements = [];
 const PLAYER_MOVE_SPEED = 4;
@@ -19,9 +17,8 @@ let bgCanvas, bgCtx;
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
 
-// ========================
+
 // Building Setup
-// ========================
 const gameState = {
   buildings: {
     blacksmithShop: {
@@ -55,9 +52,7 @@ const gameState = {
   },
 };
 
-// ========================
 // Enemy Setup
-// ========================
 function setupEnemies() {
   const goblin = new Monster("Goblin", 32 * 9, 32 * 4, 32, 5, 20, 'melee');
   goblin.maxHealth = 30;
@@ -92,8 +87,6 @@ function setupEnemies() {
 window.onload = function () {
   canvas = document.getElementById("gameCanvas");
   ctx = canvas.getContext("2d");
-
-  setupCollisionCanvas();
   setupEnemies();
   loadImages();
 };
@@ -249,34 +242,6 @@ function checkCollision(character, building, message) {
     building.sX = 0;
     building.insidebuilding = false;
   }
-}
-
-function setupCollisionCanvas() {
-  collisionCanvas = document.createElement("canvas");
-  collisionCanvas.width = canvas.width;
-  collisionCanvas.height = canvas.height;
-  collisionCanvas.style.position = "absolute";
-  collisionCanvas.style.pointerEvents = "none";
-  collisionCanvas.style.opacity = 0.5;
-  collisionCanvas.style.zIndex = 10;
-
-  const rect = canvas.getBoundingClientRect();
-  collisionCanvas.style.top = `${rect.top}px`;
-  collisionCanvas.style.left = `${rect.left}px`;
-  collisionCanvas.style.width = `${rect.width}px`;
-  collisionCanvas.style.height = `${rect.height}px`;
-
-  document.body.appendChild(collisionCanvas);
-  collisionCtx = collisionCanvas.getContext("2d");
-}
-
-function clearCollisionCanvas() {
-  collisionCtx.clearRect(0, 0, collisionCanvas.width, collisionCanvas.height);
-}
-
-function drawCollisionBox(x, y, width, height) {
-  collisionCtx.fillStyle = "rgba(123, 0, 255, 0.8)";
-  collisionCtx.fillRect(x, y, width, height);
 }
 
 function isCollisionAt(x, y) {
