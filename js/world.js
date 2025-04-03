@@ -146,19 +146,17 @@ function precomputeBackground() {
     backgroundNeedsUpdate = false; // Reset update flag after computing
 }
 
-function drawBackground() {
-    if (backgroundNeedsUpdate) {
-        precomputeBackground(); // Only update if needed
-    }
-
+function drawBackground(context = ctx) {
+    if (backgroundNeedsUpdate) precomputeBackground();
+  
     for (let row = 0; row < TILE_ROWS; row++) {
-        for (let col = 0; col < TILE_COLS; col++) {
-      
-            let { sX, sY, tileType } = cachedBackgroundGrid[row][col];
-            drawImageTile(col, row, sX, sY, tileType);
-        }
+      for (let col = 0; col < TILE_COLS; col++) {
+        let { sX, sY, tileType } = cachedBackgroundGrid[row][col];
+        drawImageTile(col, row, sX, sY, tileType, context);
+      }
     }
 }
+  
 
 // Call this whenever backgroundGrid changes
 function updateBackground() {
@@ -217,20 +215,17 @@ function checkTileTypeForRandomization(tileType) {
 }
 
 
-function drawImageTile(col, row, sX, sY, tileType) {   
-    let tileImage = tilePics[tileType]; // Fetch the correct image from tilePics
-
-    if (!tileImage) {
-        console.error("Invalid tileType or missing image:", tileType);
-        return;
-    }
-    
-    if (tileType==TILE_TREE) { // 64x64 double sized tile
-        ctx.drawImage(tileImage, col * TILE_W - 32, row * TILE_H -32);
-    } else { // normal 32x32 tile
-        ctx.drawImage(tileImage, sX, sY, 32, 32, col * TILE_W, row * TILE_H, TILE_W, TILE_H);
+function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
+    let tileImage = tilePics[tileType];
+    if (!tileImage) return;
+  
+    if (tileType == TILE_TREE) {
+      context.drawImage(tileImage, col * TILE_W - 32, row * TILE_H - 32);
+    } else {
+      context.drawImage(tileImage, sX, sY, 32, 32, col * TILE_W, row * TILE_H, TILE_W, TILE_H);
     }
 }
+  
 
 var grid = []; // array of GridElement instances, gets initialized based on tileGrid
 const NOTHING = 20;
