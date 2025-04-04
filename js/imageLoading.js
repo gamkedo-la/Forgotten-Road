@@ -16,7 +16,7 @@ var goblinPic = document.createElement("img");
 var koboldPic = document.createElement("img");
 var skeletonPic = document.createElement("img");
 var orcPic = document.createElement("img");
-
+var wraithPic = document.createElement("img"); 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
 
@@ -49,6 +49,7 @@ function loadImages() {
         {varName: koboldPic, theFile: "Kobald.png"},
         {varName: skeletonPic, theFile: "skeleton.png"},
         {varName: orcPic, theFile: "orc.png"},
+        {varName: wraithPic, theFile: "skeleton.png"}, //holding until wraith pic
         {varName: blacksmithShopPic, theFile: "BlackSmithShop.png"},
         {varName: alchemistShopPic, theFile: "BlackSmithShop.png"},
         {varName: pickUpItemPic, theFile: "pickupItems.png"},

@@ -58,9 +58,18 @@ class Monster extends Entity {
             this.width = 40;
             this.height = 40;
             this.speed = 0.8; 
+        } else if (name === "Wraith") {
+            this.behavior = "ghost";
+            this.image = wraithPic;
+            this.maxHP = 20;
+            this.currentHP = 20;
+            this.width = 32;
+            this.height = 32;
+            this.speed = 1.5;
+            this.canPhase = true;
+            this.opacity = 0.5;
         }
-        
-        
+                
         this.patrolPath = [
             { x: Math.floor(this.x / TILE_W) + 1, y: Math.floor(this.y / TILE_H) },
             { x: Math.floor(this.x / TILE_W), y: Math.floor(this.y / TILE_H) + 1 },
@@ -296,6 +305,11 @@ class Monster extends Entity {
         let frameWidth = this.width;
         let srcX, srcY;
     
+        const isGhost = this.behavior === "ghost";
+    
+        if (isGhost) ctx.save(); // ✅ Save before changing opacity
+        if (isGhost) ctx.globalAlpha = this.opacity;
+    
         // Skeleton dying animation
         if (this.isDying && this.sprite === "dying") {
             this.deathTimer += deltaTime;
@@ -307,14 +321,12 @@ class Monster extends Entity {
                 }
             }
     
-            // Clamp to final frame
             const frame = Math.min(this.deathFrame, this.maxDeathFrames - 1);
             srcX = frame * frameWidth;
-            srcY = 4 * this.height; 
+            srcY = 4 * this.height;
     
             ctx.drawImage(this.image, srcX, srcY, this.width, this.height, this.x, this.y, this.width, this.height);
     
-            // After reaching final frame, delay removal
             if (this.deathFrame === this.maxDeathFrames && !this.removalStarted) {
                 this.removalStarted = true;
                 this.dropLoot();
@@ -328,7 +340,8 @@ class Monster extends Entity {
                 }, 3000);
             }
     
-            return; // skip normal draw
+            if (isGhost) ctx.restore(); // ✅ Restore opacity after drawing
+            return;
         }
     
         // Normal walking / idle rendering
@@ -346,7 +359,10 @@ class Monster extends Entity {
         if (this.isDead && !this.isDying) {
             colorText("Dead", this.x, this.y + 22, "white", 12);
         }
+    
+        if (isGhost) ctx.restore(); // ✅ Ensure it's always reset
     }
+    
 }
 
 function updateEnemy(enemy, player) {
@@ -358,7 +374,17 @@ function updateEnemy(enemy, player) {
             enemy.state = BEHAVIOR_STATES.FLEE;
         }
     }
-    
+    if (enemy.canPhase) {
+        //Sskip pathfinding, move directly toward player
+        const dx = player.x - enemy.x;
+        const dy = player.y - enemy.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        enemy.x += (dx / dist) * enemy.speed;
+        enemy.y += (dy / dist) * enemy.speed;
+        enemy.faceToward(player);
+        return;
+    }
+        
     const dx = player.x - enemy.x;
     const dy = player.y - enemy.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
@@ -511,81 +537,6 @@ function getDistance(x1, y1, x2, y2) {
     return Math.sqrt(dx * dx + dy * dy);
 }
   
-function spawnMonstersFromMap() {
-    for (let row = 0; row < backgroundGrid.length; row++) {
-        for (let col = 0; col < backgroundGrid[row].length; col++) {
-            const tile = backgroundGrid[row][col];
-            const x = col * TILE_W;
-            const y = row * TILE_H;
-    
-            if (tile === TILE_GOBLIN_SPAWN) {
-            const goblin = createMonster({
-                name: "Goblin",
-                x,
-                y,
-                damage: 5,
-                maxHealth: 30,
-                type: "melee",
-                state: BEHAVIOR_STATES.IDLE
-            });
-            enemies.push(goblin);
-            backgroundGrid[row][col] = TILE_GRASS;
-            }
-    
-            if (tile === TILE_KOBOLD_SPAWN) {
-            const kobold = createMonster({
-                name: "Kobold",
-                x,
-                y,
-                damage: 5,
-                maxHealth: 20,
-                type: "ranged",
-                state: BEHAVIOR_STATES.WANDER,
-                patrolZone: 2
-            });
-            enemies.push(kobold);
-            backgroundGrid[row][col] = TILE_GRASS;
-            }
-    
-            if (tile === TILE_ORC_SPAWN) {
-            const orc = createMonster({
-                name: "Orc",
-                x,
-                y,
-                size: 40,
-                damage: 10,
-                maxHealth: 40,
-                type: "melee",
-                state: BEHAVIOR_STATES.CHASE,
-                image: orcPic
-            });
-            enemies.push(orc);
-            backgroundGrid[row][col] = TILE_GRASS;
-            }
-    
-            if (tile === TILE_SKELETON_SPAWN) {
-            const skeleton = createMonster({
-                name: "Skeleton",
-                x,
-                y,
-                size: 40,
-                damage: 2,
-                maxHealth: 20,
-                type: "melee",
-                state: BEHAVIOR_STATES.PATROL,
-                extra: {
-                canResurrect: true,
-                isUndead: true,
-                immuneToRanged: true
-                }
-            });
-            enemies.push(skeleton);
-            backgroundGrid[row][col] = TILE_GRASS;
-            }
-        }
-    }
-}
-
 // Enemy Factory
 function createMonster({
     name,
@@ -600,7 +551,7 @@ function createMonster({
     image = null,
     extra = {}
   }) {
-    const monster = new Monster(name, x, y, size, damage, maxHealth, type);
+    const monster = new Monster(name, col * TILE_W, row * TILE_H, size, damage, maxHealth, type);
     monster.maxHealth = maxHealth;
     monster.health = maxHealth;
     monster.state = state;

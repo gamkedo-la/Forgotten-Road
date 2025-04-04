@@ -98,6 +98,10 @@ function spawnMonstersFromMap() {
         state: BEHAVIOR_STATES.PATROL,
         extra: { canResurrect: true, isUndead: true, immuneToRanged: true }
       });
+    } else if (tile === TILE_WRAITH_SPAWN) {
+      monster = createMonster({
+        name: "Wraith", x, y, damage: 5, maxHealth: 20, type: "melee", state: BEHAVIOR_STATES.CHASE, image: wraithPic
+      });
     }
 
     if (monster) enemies.push(monster);

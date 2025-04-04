@@ -15,6 +15,7 @@ const TILE_GOBLIN_SPAWN = 90;
 const TILE_ORC_SPAWN = 91;
 const TILE_KOBOLD_SPAWN = 92;
 const TILE_SKELETON_SPAWN = 93;
+const TILE_WRAITH_SPAWN = 94;
 
 // Background grid (visual representation)
 var backgroundGrid = [
@@ -22,7 +23,7 @@ var backgroundGrid = [
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [4, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 3, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 3, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0,94, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0],
     [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
     [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
@@ -78,7 +79,8 @@ function getMonsterSpawnTiles() {
         tile === TILE_GOBLIN_SPAWN ||
         tile === TILE_ORC_SPAWN ||
         tile === TILE_KOBOLD_SPAWN ||
-        tile === TILE_SKELETON_SPAWN
+        tile === TILE_SKELETON_SPAWN ||
+        tile === TILE_WRAITH_SPAWN
       ) {
         spawns.push({ tile, col, row });
         backgroundGrid[row][col] = TILE_GRASS;
