@@ -25,7 +25,15 @@ gameCanvas.addEventListener("mousemove", (event) => {
 
 gameCanvas.addEventListener("mousedown", (event) => {
     mouse.clicked = true;
-    if (music.currentTime==0) music.play(); // start the music
+    if (music.currentTime==0) {
+        console.log("playing music and queueing up intro voiceovers");
+        music.play(); // start the music now
+        var delay = 4000;
+        setTimeout("intro_voiceover_1.play()",delay);
+        setTimeout("intro_voiceover_2.play()",delay+25000);
+        setTimeout("intro_voiceover_3.play()",delay+25000+18000);
+        setTimeout("intro_voiceover_4.play()",delay+25000+18000+15000);
+    }
 });
 
 gameCanvas.addEventListener("click", (event) => {
