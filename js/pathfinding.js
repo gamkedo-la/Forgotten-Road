@@ -127,3 +127,9 @@ function movePlayerAlongPath(player, path) {
       player.y = nextTile.y * TILE_H;
   }
 }
+function isWalkable(row, col) {
+    return (
+        collisionGrid[row] &&
+        collisionGrid[row][col] !== TILE_WALL
+    );
+}
