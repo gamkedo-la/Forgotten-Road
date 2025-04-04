@@ -95,6 +95,7 @@ class Player extends Entity {
         enemies.forEach(enemy => {
             if (!enemy.isDead && dist(enemy.x, enemy.y, targetX, targetY) < attackRadius) {
                 enemy.takeDamage(10 + bonusDamage);
+                camera.applyShake(4,200);
                 console.log(`You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`);
                 attacked = true;
     

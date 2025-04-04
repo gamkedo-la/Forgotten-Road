@@ -13,6 +13,7 @@ let worldItems = [];
 
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
+camera.followTarget = player;
 
 // Building Setup
 const gameState = {
@@ -129,11 +130,18 @@ function drawGameFrame(currentTime) {
 
   check_gamepad();
   updateGameState(deltaTime);
-  renderGameFrame(deltaTime);
+
+  // ✅ Add this before rendering
+  camera.update(deltaTime);
+  ctx.save();
+    camera.applyTransform(ctx);
+    renderGameFrame(deltaTime);
+  ctx.restore(); // ✅ restore after all drawing
 
   requestAnimationFrame(drawGameFrame);
   mouse.clicked = false;
 }
+
 
 function updateGameState(deltaTime) {
   handlePauseInput();
