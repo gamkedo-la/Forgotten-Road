@@ -74,9 +74,9 @@ class Player extends Entity {
         if (this.isAttacking || this.isMoving) return;
     
         this.isAttacking = true;
-
+    
         let bonusDamage = this.getEquippedBonusDamage();
-        
+    
         // Determine target tile based on facing direction
         let targetX = this.x;
         let targetY = this.y;
@@ -90,15 +90,20 @@ class Player extends Entity {
         }
     
         let attacked = false;
-        
+    
+        // ✅ Only one forEach loop
         enemies.forEach(enemy => {
             if (!enemy.isDead && dist(enemy.x, enemy.y, targetX, targetY) < attackRadius) {
                 enemy.takeDamage(10 + bonusDamage);
                 console.log(`You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`);
                 attacked = true;
+    
+                // Knockback using enemy's method
+                const dx = enemy.x - this.x;
+                const dy = enemy.y - this.y;
+                enemy.knockback(dx, dy, 10); // Knockback strength
             }
         });
-        
     
         if (!attacked) {
             console.log("You swing... but hit nothing.");
@@ -109,17 +114,6 @@ class Player extends Entity {
         }, 300);
     }
     
-    takeDamage(amount) {
-        this.currentHP -= amount;
-        if (this.currentHP <= 0) {
-            this.currentHP = 0;
-            console.log(`${this.name} has died!`);
-            this.state = "dead";
-        } else {
-            console.log(`${this.name} takes ${amount} damage! HP is now ${this.currentHP}`);
-        }
-    }
-
     addItemToInventory(item) {
         if (item.stackable) {
             const existing = this.inventory.find(i => i.id === item.id);

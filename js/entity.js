@@ -62,6 +62,15 @@ class Entity {
         const floatingDamageNumber = new TextEntity(`-${amount}`, this._x, this._y, "red", 0, -1);
         temp_ui_elements.push(floatingDamageNumber);
     }
+
+    knockback(dx, dy, strength = 10) {
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 0) {
+            this.x += (dx / dist) * strength;
+            this.y += (dy / dist) * strength;
+        }
+    }
+    
     
 
     heal(amount) {
