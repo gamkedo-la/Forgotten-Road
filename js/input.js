@@ -25,6 +25,7 @@ gameCanvas.addEventListener("mousemove", (event) => {
 
 gameCanvas.addEventListener("mousedown", (event) => {
     mouse.clicked = true;
+    if (music.currentTime==0) music.play(); // start the music
 });
 
 gameCanvas.addEventListener("click", (event) => {
