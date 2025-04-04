@@ -30,9 +30,9 @@ gameCanvas.addEventListener("mousedown", (event) => {
         music.play(); // start the music now
         var delay = 4000;
         setTimeout("intro_voiceover_1.play()",delay);
-        setTimeout("intro_voiceover_2.play()",delay+25000);
-        setTimeout("intro_voiceover_3.play()",delay+25000+18000);
-        setTimeout("intro_voiceover_4.play()",delay+25000+18000+15000);
+        setTimeout("intro_voiceover_2.play()",delay+26000);
+        setTimeout("intro_voiceover_3.play()",delay+26000+19000);
+        setTimeout("intro_voiceover_4.play()",delay+26000+19000+16000);
     }
 });
 
