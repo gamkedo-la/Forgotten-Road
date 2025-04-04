@@ -13,11 +13,8 @@ let worldItems = [];
 
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
-console.log(player.name, "has", player.health, "HP and", player.gold, "gold.");
 
-// ========================
 // Building Setup
-// ========================
 const gameState = {
   buildings: {
     blacksmithShop: {
@@ -51,12 +48,66 @@ const gameState = {
   },
 };
 
+// Enemy Factory and Spawning
+function createMonster({
+  name,
+  x,
+  y,
+  size = 32,
+  damage,
+  maxHealth,
+  type,
+  state = BEHAVIOR_STATES.IDLE,
+  patrolZone = null,
+  image = null,
+  extra = {}
+}) {
+  const monster = new Monster(name, x, y, size, damage, maxHealth, type);
+  monster.maxHealth = maxHealth;
+  monster.health = maxHealth;
+  monster.state = state;
+
+  if (patrolZone) monster.placeAtRandomPosition(patrolZone);
+  if (image) monster.image = image;
+  Object.assign(monster, extra);
+
+  if (state === BEHAVIOR_STATES.PATROL || state === BEHAVIOR_STATES.WANDER) {
+    assignDefaultPatrol(monster);
+  }
+
+  return monster;
+}
+
+function spawnMonstersFromMap() {
+  const spawns = getMonsterSpawnTiles();
+
+  spawns.forEach(({ tile, col, row }) => {
+    const x = col * TILE_W;
+    const y = row * TILE_H;
+    let monster;
+
+    if (tile === TILE_GOBLIN_SPAWN) {
+      monster = createMonster({ name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee" });
+    } else if (tile === TILE_KOBOLD_SPAWN) {
+      monster = createMonster({ name: "Kobold", x, y, damage: 5, maxHealth: 20, type: "ranged", state: BEHAVIOR_STATES.WANDER });
+    } else if (tile === TILE_ORC_SPAWN) {
+      monster = createMonster({ name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40 });
+    } else if (tile === TILE_SKELETON_SPAWN) {
+      monster = createMonster({
+        name: "Skeleton", x, y, damage: 2, maxHealth: 20, type: "melee", size: 40,
+        state: BEHAVIOR_STATES.PATROL,
+        extra: { canResurrect: true, isUndead: true, immuneToRanged: true }
+      });
+    }
+
+    if (monster) enemies.push(monster);
+  });
+}
 
 // Initialization
 window.onload = function () {
   canvas = document.getElementById("gameCanvas");
   ctx = canvas.getContext("2d");
-  //setupCollisionCanvas();
   loadImages();
 };
 
@@ -92,8 +143,6 @@ function updateGameState(deltaTime) {
 
 function renderGameFrame(deltaTime) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //ctx.drawImage(bgCanvas,0,0);
-
   drawBackground();
   if (turnPathFindingDrawingOn) drawPathingFindingTiles();
   drawBuildings();
@@ -112,7 +161,6 @@ function renderGameFrame(deltaTime) {
   player.drawHearts();
 }
 
-// Utility & Helpers
 function handlePauseInput() {
   if (keys.pause && !pressedPause) {
     paused = !paused;
