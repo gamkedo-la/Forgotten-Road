@@ -1,3 +1,36 @@
+// === Global item templates ===
+
+var basicStaff = {
+    id: "basic_staff",
+    name: "Basic Staff",
+    type: "weapon",
+    damage: 5,
+    sprite: staffIconPic, // this should already be loaded in imageLoading.js
+    stackable: true,
+    quantity: 1
+};
+
+var leatherArmor = {
+    id: "leather_armor",
+    name: "Leather Armor",
+    type: "armor",
+    defense: 2,
+    sprite: leatherArmorIconPic,
+    stackable: false,
+    quantity: 1
+};
+
+var healthPotion = {
+    id: "health_potion",
+    name: "Health Potion",
+    type: "consumable",
+    use: "heal",
+    amount: 5,
+    sprite: healthPotionPic,
+    stackable: true,
+    quantity: 1
+};
+
 function drawBackpackUI(ctx, player) {
     let startX = 600;
     let startY = 10;

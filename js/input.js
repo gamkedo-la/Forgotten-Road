@@ -78,15 +78,16 @@ document.addEventListener('keydown', (event) => {
     if (event.key === 'p') {
         keys.pause = true;
     }
-
     if (event.key === 'f') {
-        player.staffAttack(enemies);
-        player.state = "attacking";
-        player.currentAttackFrame = 0;
-        player.attackTimer = 0;
+        if (!player.isAttacking) {
+            player.staffAttack(enemies);
+            player.state = "attacking";
+            player.currentAttackFrame = 0;
+            player.attackTimer = 0;
+        }
     }
     if(event.key === '1'){
-        keys.userPotion = true;
+        keys.usePotion = true;
     }
 });
 
@@ -112,9 +113,9 @@ document.addEventListener('keyup', (event) => {
         projectiles.push(bolt);
         //console.log("Fired crossbow bolt!");
     }
-    if (event === "1"){
-        keys.usePotion = false;
-    }
+    if (event.key === '1') {
+        keys.usePotion = true;
+    }    
 });
 
 // Function to handle player movement

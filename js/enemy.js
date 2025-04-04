@@ -375,7 +375,7 @@ function updateEnemy(enemy, player) {
         }
     }
     if (enemy.canPhase) {
-        //Sskip pathfinding, move directly toward player
+        //Skip pathfinding, move directly toward player
         const dx = player.x - enemy.x;
         const dy = player.y - enemy.y;
         const dist = Math.sqrt(dx * dx + dy * dy);

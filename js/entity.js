@@ -32,7 +32,7 @@ class Entity {
 
     takeDamage(amount) {
         // Skeleton takes reduced damage
-        if (this.type === "skeleton") {
+        if (this.type === "Skeleton") {
             amount = Math.floor(amount * 0.5);
         }
     
@@ -43,7 +43,7 @@ class Entity {
     
         // Resurrection logic (only for skeletons)
         if (this.currentHP <= 0) {
-            if (this.type === "skeleton" && Math.random() < 0.25) {
+            if (this.type === "Skeleton" && Math.random() < 0.25) {
                 this.currentHP = 10;
                 console.log(`${this.name} reassembles itself with 10 HP!`);
             } else {
@@ -76,7 +76,7 @@ class Entity {
         this.deathTime = Date.now();
         console.log(`${this.name} has been defeated!`);
     
-        if (this.type === "skeleton") {
+        if (this.type === "Skeleton") {
             this.sprite = "dying";
             this.isDying = true;
             this.deathFrame = 0;
