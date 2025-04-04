@@ -8,9 +8,10 @@ const keys = {
     right: false,
     action: false,
     pause: false,
+    usePotion: false
 };
 
-var mouse = {x: 0, y: 0, hoverObjects: null};
+var mouse = { x: 0, y: 0, clicked: false, hoverObjects: null };
 
 gameCanvas.addEventListener("mousemove", (event) => {
     const rect = gameCanvas.getBoundingClientRect();
@@ -21,6 +22,10 @@ gameCanvas.addEventListener("mousemove", (event) => {
 
     //mouse.hoverObject - write a function to identify objects
 })
+
+gameCanvas.addEventListener("mousedown", (event) => {
+    mouse.clicked = true;
+});
 
 gameCanvas.addEventListener("click", (event) => {
     const rect = gameCanvas.getBoundingClientRect();
@@ -71,6 +76,9 @@ document.addEventListener('keydown', (event) => {
         player.currentAttackFrame = 0;
         player.attackTimer = 0;
     }
+    if(event.key === '1'){
+        keys.userPotion = true;
+    }
 });
 
 document.addEventListener('keyup', (event) => {
@@ -94,6 +102,9 @@ document.addEventListener('keyup', (event) => {
         const bolt = new Projectile(projX, projY, player.facing);
         projectiles.push(bolt);
         //console.log("Fired crossbow bolt!");
+    }
+    if (event === "1"){
+        keys.usePotion = false;
     }
 });
 

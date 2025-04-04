@@ -120,13 +120,41 @@ class Player extends Entity {
     }
 
     addItemToInventory(item) {
+        if (item.stackable) {
+            const existing = this.inventory.find(i => i.id === item.id);
+            if (existing) {
+                existing.quantity += item.quantity || 1;
+                console.log(`Stacked ${item.name}. New quantity: ${existing.quantity}`);
+                return;
+            }
+        }
+    
         if (this.inventory.length < 20) {
-            this.inventory.push(item);
+            this.inventory.push({ ...item });
             console.log(`${item.name} added to backpack.`);
         } else {
             console.log("Backpack is full!");
         }
     }
+
+    useItem(item) {
+        if (item.use === "heal" && this.currentHP < this.maxHP) {
+            this.currentHP = Math.min(this.maxHP, this.currentHP + item.amount);
+            console.log(`Healed for ${item.amount}. HP: ${this.currentHP}`);
+    
+            if (item.stackable) {
+                item.quantity--;
+                if (item.quantity <= 0) {
+                    this.inventory = this.inventory.filter(i => i !== item);
+                }
+            } else {
+                this.inventory = this.inventory.filter(i => i !== item);
+            }
+        } else {
+            console.log("Nothing happened.");
+        }
+    }
+    
     
     equipItem(item) {
         if (item.type && this.equipment.hasOwnProperty(item.type)) {

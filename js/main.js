@@ -132,6 +132,7 @@ function drawGameFrame(currentTime) {
   renderGameFrame(deltaTime);
 
   requestAnimationFrame(drawGameFrame);
+  mouse.clicked = false;
 }
 
 function updateGameState(deltaTime) {
@@ -139,6 +140,7 @@ function updateGameState(deltaTime) {
   if (paused) return;
 
   handlePlayerMovement();
+  handleQuickUseKeys();
   updateEnemiesAndProjectiles(deltaTime);
   handleItemPickups();
   checkBuildingCollisions();
@@ -202,6 +204,15 @@ function handleItemPickups() {
       }
       worldItems.splice(i, 1);
     }
+  }
+}
+
+function handleQuickUseKeys() {
+  if (keys.usePotion) {
+      const potion = player.inventory.find(i => i.type === "consumable");
+      if (potion) {
+          player.useItem(potion);
+      }
   }
 }
 

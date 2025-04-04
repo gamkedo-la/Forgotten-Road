@@ -1,34 +1,9 @@
-const basicStaff = {
-    id: "basic_staff",
-    name: "Basic Staff",
-    type: "weapon",
-    damage: 5,
-    sprite: staffIconPic
-};
-
-const leatherArmor = {
-    id: "leather_armor",
-    name: "Leather Armor",
-    type: "armor",
-    defense: 2,
-    sprite: leatherArmorIconPic
-};
-
-const healthPotion = {
-    id: "health_potion",
-    name: "Health Potion",
-    type: "consumable",
-    use: "heal",
-    amount: 5,
-    sprite: healthPotionPic
-};
-
 function drawBackpackUI(ctx, player) {
-    const startX = 600;
-    const startY = 10;
-    const slotSize = 32;
-    const padding = 4;
-    const cols = 5;
+    let startX = 600;
+    let startY = 10;
+    let slotSize = 32;
+    let padding = 4;
+    let cols = 5;
 
     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     ctx.fillRect(
@@ -54,7 +29,7 @@ function drawBackpackUI(ctx, player) {
             ctx.fillRect(x, y, slotSize, slotSize);
         }
 
-        // Split item name into two lines if needed
+        // Split item name into two lines
         const words = item.name.split(" ");
         let firstLine = item.name;
         let secondLine = "";
@@ -75,13 +50,35 @@ function drawBackpackUI(ctx, player) {
             ctx.fillText(secondLine, centerX - secondWidth / 2, y + slotSize + 20);
         }
 
-        // Hover detection using your global mouse object
+        // Hover detection
         if (
             mouse.x >= x && mouse.x <= x + slotSize &&
             mouse.y >= y && mouse.y <= y + slotSize
         ) {
             hoveredItem = item;
         }
+
+        // Click detection
+        if (
+            mouse.clicked &&
+            mouse.x >= x && mouse.x <= x + slotSize &&
+            mouse.y >= y && mouse.y <= y + slotSize
+        ) {
+            if (item.type === "consumable") {
+                player.useItem(item);
+            } else {
+                player.equipItem(item);
+            }
+        }
+
+        // Draw stack quantity
+        if (item.stackable && item.quantity > 1) {
+            ctx.fillStyle = "white";
+            ctx.font = "10px Arial";
+            ctx.textAlign = "right";
+            ctx.fillText(`x${item.quantity}`, x + slotSize - 2, y + slotSize - 2);
+        }
+        ctx.textAlign = "start";
     });
 
     // Draw tooltip if hovering
@@ -100,4 +97,3 @@ function drawBackpackUI(ctx, player) {
         ctx.fillText(tooltipText, tooltipX + padding, tooltipY + 14);
     }
 }
-
