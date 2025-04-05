@@ -1,4 +1,5 @@
 var canvas, ctx, collisionCanvas, collisionCtx;
+var playState = "playing"; 
 const enemies = [];
 const temp_ui_elements = [];
 const PLAYER_MOVE_SPEED = 4;
@@ -131,12 +132,12 @@ function drawGameFrame(currentTime) {
   check_gamepad();
   updateGameState(deltaTime);
 
-  // ✅ Add this before rendering
+  // Add this before rendering
   camera.update(deltaTime);
   ctx.save();
     camera.applyTransform(ctx);
     renderGameFrame(deltaTime);
-  ctx.restore(); // ✅ restore after all drawing
+  ctx.restore(); // restore after all drawing
 
   requestAnimationFrame(drawGameFrame);
   mouse.clicked = false;
@@ -173,10 +174,14 @@ function renderGameFrame(deltaTime) {
   if (paused) drawPauseOverlay();
 
   player.drawHearts();
+  
+  if (playState === "gameover") {
+    drawGameOverScreen();
+  }
 }
 
 function handlePauseInput() {
-  if (keys.pause && !pressedPause) {
+  if (keys.pause && !pressedPause || playState === "gameover") {
     paused = !paused;
     pressedPause = true;
   }

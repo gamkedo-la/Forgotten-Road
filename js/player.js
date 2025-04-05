@@ -222,8 +222,7 @@ class Player extends Entity {
     
         if (this.currentHP <= 0 && this.state !== "dead") {
             this.state = "dead";
-            console.log(`${this.name} has died!`);
-            //need to add game over 
+            playState = "gameover";
         }
     }
     
@@ -247,7 +246,6 @@ class Player extends Entity {
             }
         }
     }
-    
     
     draw(deltaTime) {
         let frameWidth, srcX, srcY;

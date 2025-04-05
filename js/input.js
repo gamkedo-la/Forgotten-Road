@@ -106,6 +106,9 @@ document.addEventListener('keyup', (event) => {
     if (event.key === 'p') {
         keys.pause = false;
     }
+    if (event.key === 'r' && playState === "gameover") {
+        restartGame();
+    }    
     if (event.key === 'r') {
         const projX = player.x + TILE_W / 4;
         const projY = player.y + TILE_H / 4;
