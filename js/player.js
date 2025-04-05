@@ -214,6 +214,19 @@ class Player extends Entity {
         }
     }
 
+    takeDamage(amount) {
+        this.currentHP -= amount;
+        if (this.currentHP < 0) this.currentHP = 0;
+    
+        console.log(`${this.name} takes ${amount} damage! HP: ${this.currentHP}`);
+    
+        if (this.currentHP <= 0 && this.state !== "dead") {
+            this.state = "dead";
+            console.log(`${this.name} has died!`);
+            //need to add game over 
+        }
+    }
+    
     drawHearts() {
         var heartSize = 24; // pixels
         var spacing = 3;    // pixels between hearts

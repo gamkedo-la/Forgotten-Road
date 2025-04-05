@@ -426,49 +426,56 @@ function updateEnemy(enemy, player) {
         }        
     break;    
     case BEHAVIOR_STATES.CHASE:
-        console.log(`${enemy.name} is chasing the player!`);
-        if (dist < TILE_W * 2) {
-            enemy.state = BEHAVIOR_STATES.KITE;
-        } else if (dist < TILE_W * 6) {
+        if (dist < TILE_W * 1.5) {
+            if (enemy.combatType === "melee") {
+                enemy.state = BEHAVIOR_STATES.KITE;
+            }
+        }
+
+        if (enemy.combatType === "ranged" && dist < TILE_W * 6) {
             const prevProjectileCount = projectiles.length;
             enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
             const didFire = projectiles.length > prevProjectileCount;
-        
-            if (didFire) {
-                enemy.isMoving = false;
-            } else {
-                enemy.followPath(); // keep moving if didn't fire
+
+            if (!didFire) {
+                enemy.followPath();
             }
         } else {
             enemy.followPath();
-            if (!enemy.path || enemy.path.length === 0) {
-                if (dist < TILE_W * 8) {
-                    enemy.chooseNewPath(player, collisionGrid);
-                } else {
-                    enemy.state = BEHAVIOR_STATES.IDLE;
-                }
+        }
+
+        // Pathfinding refresh
+        if (!enemy.path || enemy.path.length === 0) {
+            if (dist < TILE_W * 8) {
+                enemy.chooseNewPath(player, collisionGrid);
+            } else {
+                enemy.state = BEHAVIOR_STATES.IDLE;
             }
         }
-        break;
+    break;
     case BEHAVIOR_STATES.KITE:
+    if (enemy.combatType === "ranged") {
         console.log(`${enemy.name} is kiting`);
-        if (dist < TILE_W * 2) {
-            if (enemy.combatType === "ranged") {
-                enemy.state = BEHAVIOR_STATES.KITE;
-            } else {
+        enemy.kiteAwayFrom(player);
+    } else {
+        if (dist < TILE_W * 1.2) {
+            const now = performance.now();
+            if (now - enemy.lastAttackTime > enemy.cooldownTime) {
                 enemy.faceToward(player);
-                const now = performance.now();
-                if (now - enemy.lastAttackTime > enemy.cooldownTime) {
-                    player.health -= enemy.damage;
-                    enemy.lastAttackTime = now;
-                    console.log(`${enemy.name} strikes ${player.name} in melee!`);
-                }
+                player.takeDamage(enemy.damage); // Use proper damage method
+                enemy.lastAttackTime = now;
+                console.log(`${enemy.name} strikes ${player.name} in melee!`);
             }
-        }   
+        } else {
+            enemy.chooseNewPath(player, collisionGrid); // chase again if out of range
+            enemy.state = BEHAVIOR_STATES.CHASE;
+        }
+    }
+    break;
     case BEHAVIOR_STATES.LOST:
         console.log(`${enemy.name} is lost!`);
         enemy.funcwanderOrPatrol();
-        break;
+    break;
     case BEHAVIOR_STATES.FLEE:
         console.log(`${enemy.name} is fleeing!`);
         enemy.moveAwayFrom(player);
@@ -505,6 +512,7 @@ function updateEnemy(enemy, player) {
         }
     break;
     default:
+        //safeguard
         console.log(`${enemy.name} has no behavor state!`);
         enemy.moveAwayFrom(player);
     break;
