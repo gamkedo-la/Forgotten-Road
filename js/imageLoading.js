@@ -66,7 +66,8 @@ function loadImages() {
         {tileType: TILE_WALL, theFile: "wall.png", sX: "0", sY: "0",options: 0},
         {tileType: TILE_ROAD, theFile: "road.png", sX: "0", sY: "0",options: 0},
         {tileType: TILE_FLOOR, theFile: "grass.png", sX: "0", sY: "32*2",options: 0},
-        {tileType: TILE_TREE, theFile: "tree.png", sX: "0", sY: "0",options: 0}
+        {tileType: TILE_TREE, theFile: "tree.png", sX: "0", sY: "0",options: 0},
+        {tileType: TILE_WATER, theFile: "water.png", sX: "0", sY: "0",options: 0},
     ];
     
     picsToLoad = imageList.length;
