@@ -59,7 +59,7 @@ class Entity {
         console.log(`${this.name} has ${this.currentHP} HP left.`);
     
         // Spawn floating damage number
-        const floatingDamageNumber = new TextEntity(`-${amount}`, this._x, this._y, "red", 0, -1);
+        const floatingDamageNumber = new TextEntity(`-${amount}`, this._x, this._y, "red", 0, -20, 2);
         temp_ui_elements.push(floatingDamageNumber);
     }
 
