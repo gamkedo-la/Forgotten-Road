@@ -21,7 +21,7 @@ const gameState = {
   buildings: {
     blacksmithShop: {
       x: 32,
-      y: 0,
+      y: 1*32,
       sX: 0,
       sY: 0,
       sW: 32 * 6,
