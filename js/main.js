@@ -263,17 +263,21 @@ function drawBuildings() {
 }
 
 function drawStaminaBar() {
-  const x = 5;
-  const y = 75;
-  const width = 110;
-  const height = 12;
-  const fillWidth = (player.currentStamina / player.maxStamina) * width;
+
+  let barColor = "green";
+  if (player.currentStamina < 30) barColor = "orange";
+  if (player.currentStamina < 10) barColor = "red";
+  let x = 5;
+  let y = 75;
+  let width = 110;
+  let height = 12;
+  let fillWidth = (player.currentStamina / player.maxStamina) * width;
 
   colorRect(x, y, width, height, "rgba(0, 0, 0, 0.5)");
 
-  colorRect(x, y, fillWidth, height, "yellow");
+  colorRect(x, y, fillWidth, height, barColor);
 
-  drawTextWithShadow("Stamina", x + 2, y + 10, "white", "12px Arial", "left");
+  drawTextWithShadow("Stamina", x + 2, y + 10, 'white', "12px Arial", "left");
 }
 
 
