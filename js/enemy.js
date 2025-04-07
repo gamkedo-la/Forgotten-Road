@@ -24,7 +24,6 @@ class Monster extends Entity {
         this.currentWalkFrame = 0;
         this.walkTimer = 0;
         this.attackTimer = 0;
-        //this.image = enemyPic;
         this.lastPathTime = 0;
         this.pathCooldown = 1000;
         this.state = BEHAVIOR_STATES.IDLE;
@@ -35,6 +34,7 @@ class Monster extends Entity {
         this.deathFrame = 0;
         this.maxDeathFrames = 8; 
         this.removalStarted = false;
+        this.isMindless = false;
         if (name === "Goblin") {
             this.behavior = "melee";
             this.image = goblinPic;
@@ -68,7 +68,15 @@ class Monster extends Entity {
             this.speed = 1.5;
             this.canPhase = true;
             this.opacity = 0.5;
+        } else if (name === "Ghoul") {
+            this.behavior = "swarm";
+            this.image = ghoulPic;
+            this.maxHP = 20;
+            this.currentHP = 20;
+            this.speed = 0.4; 
+            this.isMindless = true;
         }
+    
                 
         this.patrolPath = [
             { x: Math.floor(this.x / TILE_W) + 1, y: Math.floor(this.y / TILE_H) },
@@ -384,6 +392,30 @@ function updateEnemy(enemy, player) {
         enemy.faceToward(player);
         return;
     }
+    if (enemy.name === "Ghoul" && enemy.isMindless) {
+        const dx = player.x - enemy.x;
+        const dy = player.y - enemy.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+    
+        if (dist > 0) {
+            enemy.x += (dx / dist) * enemy.speed;
+            enemy.y += (dy / dist) * enemy.speed;
+        }
+    
+        enemy.faceToward(player);
+
+        if (dist < TILE_W) {
+            const now = performance.now();
+            if (now - enemy.lastAttackTime > enemy.cooldownTime) {
+                player.takeDamage(enemy.damage);
+                enemy.lastAttackTime = now;
+                console.log("Ghoul bites!");
+            }
+        }
+    
+        return;
+    }
+    
         
     const dx = player.x - enemy.x;
     const dy = player.y - enemy.y;
@@ -559,7 +591,7 @@ function createMonster({
     image = null,
     extra = {}
   }) {
-    const monster = new Monster(name, col * TILE_W, row * TILE_H, size, damage, maxHealth, type);
+    monster = new Monster(name, x, y, size, damage, maxHealth, type);
     monster.maxHealth = maxHealth;
     monster.health = maxHealth;
     monster.state = state;

@@ -14,6 +14,7 @@ var leatherArmorIconPic = document.createElement("img");
 var healthPotionPic = document.createElement("img");
 var goblinPic = document.createElement("img");
 var koboldPic = document.createElement("img");
+var ghoulPic = document.createElement('img');
 var skeletonPic = document.createElement("img");
 var orcPic = document.createElement("img");
 var wraithPic = document.createElement("img"); 
@@ -48,6 +49,7 @@ function loadImages() {
         {varName: goblinPic, theFile: "goblin.png"},
         {varName: koboldPic, theFile: "Kobald.png"},
         {varName: skeletonPic, theFile: "skeleton.png"},
+        {varName: ghoulPic, theFile: "Ghoul.png"},
         {varName: orcPic, theFile: "orc.png"},
         {varName: wraithPic, theFile: "skeleton.png"}, //holding until wraith pic
         {varName: blacksmithShopPic, theFile: "BlackSmithShop.png"},

@@ -64,7 +64,7 @@ function createMonster({
   image = null,
   extra = {}
 }) {
-  const monster = new Monster(name, x, y, size, damage, maxHealth, type);
+  var monster = new Monster(name, x, y, size, damage, maxHealth, type);
   monster.maxHealth = maxHealth;
   monster.health = maxHealth;
   monster.state = state;
@@ -81,33 +81,50 @@ function createMonster({
 }
 
 function spawnMonstersFromMap() {
-  const spawns = getMonsterSpawnTiles();
+    const spawns = getMonsterSpawnTiles();
 
-  spawns.forEach(({ tile, col, row }) => {
-    const x = col * TILE_W;
-    const y = row * TILE_H;
-    let monster;
+    spawns.forEach(({ tile, col, row }) => {
+      const x = col * TILE_W;
+      const y = row * TILE_H;
+      let monster;
 
-    if (tile === TILE_GOBLIN_SPAWN) {
-      monster = createMonster({ name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee" });
-    } else if (tile === TILE_KOBOLD_SPAWN) {
-      monster = createMonster({ name: "Kobold", x, y, damage: 5, maxHealth: 20, type: "ranged", state: BEHAVIOR_STATES.WANDER });
-    } else if (tile === TILE_ORC_SPAWN) {
-      monster = createMonster({ name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40 });
-    } else if (tile === TILE_SKELETON_SPAWN) {
-      monster = createMonster({
-        name: "Skeleton", x, y, damage: 2, maxHealth: 20, type: "melee", size: 40,
-        state: BEHAVIOR_STATES.PATROL,
-        extra: { canResurrect: true, isUndead: true, immuneToRanged: true }
-      });
-    } else if (tile === TILE_WRAITH_SPAWN) {
-      monster = createMonster({
-        name: "Wraith", x, y, damage: 5, maxHealth: 20, type: "melee", state: BEHAVIOR_STATES.CHASE, image: wraithPic
-      });
-    }
+      if (tile === TILE_GOBLIN_SPAWN) {
+        monster = createMonster({ name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee" });
+      } else if (tile === TILE_KOBOLD_SPAWN) {
+        monster = createMonster({ name: "Kobold", x, y, damage: 5, maxHealth: 20, type: "ranged", state: BEHAVIOR_STATES.WANDER });
+      } else if (tile === TILE_ORC_SPAWN) {
+        monster = createMonster({ name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40 });
+      } else if (tile === TILE_SKELETON_SPAWN) {
+        monster = createMonster({
+          name: "Skeleton", x, y, damage: 2, maxHealth: 20, type: "melee", size: 40,
+          state: BEHAVIOR_STATES.PATROL,
+          extra: { canResurrect: true, isUndead: true, immuneToRanged: true }
+        });
+      } else if (tile === TILE_WRAITH_SPAWN) {
+        monster = createMonster({
+          name: "Wraith", x, y, damage: 5, maxHealth: 20, type: "melee", state: BEHAVIOR_STATES.CHASE, image: wraithPic
+        });
+      } else if (tile === TILE_GHOUL_SPAWN){
+        for (let i = 0; i < 5; i++) {
+          const offsetX = Math.random() * 32 * 2;
+          const offsetY = Math.random() * 32 * 2;
+          const ghoul = createMonster({
+            name: "Ghoul", 
+            x: x + offsetX, 
+            y: y + offsetY, 
+            damage: 3, 
+            maxHealth: 15, 
+            type: "melee", 
+            state: BEHAVIOR_STATES.CHASE, 
+            image: ghoulPic  
+          });
+          enemies.push(ghoul);
+        }
+        return;
+      }
 
-    if (monster) enemies.push(monster);
-  });
+      if (monster) enemies.push(monster);
+    });
 }
 
 // Initialization
