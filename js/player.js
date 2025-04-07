@@ -23,6 +23,7 @@ class Player extends Entity {
         this.speed = 2;
         this.maxStamina = 100;
         this.currentStamina = 100;
+        this.staminaRegenRate = 10;
         this.isSprinting = false;
         this.isMoving = false;
         this.path = [];

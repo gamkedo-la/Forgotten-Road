@@ -147,8 +147,8 @@ function drawGameFrame(currentTime) {
 function updateGameState(deltaTime) {
   handlePauseInput();
   if (paused) return;
-
   handlePlayerMovement();
+  player.regenStamina(deltaTime);
   handleQuickUseKeys();
   updateEnemiesAndProjectiles(deltaTime);
   handleItemPickups();
