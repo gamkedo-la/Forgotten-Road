@@ -174,6 +174,7 @@ function renderGameFrame(deltaTime) {
   if (paused) drawPauseOverlay();
 
   player.drawHearts();
+  drawStaminaBar();
   
   if (playState === "gameover") {
     drawGameOverScreen();
@@ -260,6 +261,21 @@ function drawBuildings() {
     ctx.drawImage(b.image, b.sX, b.sY, b.sW, b.sH, b.x, b.y, b.width, b.height);
   }
 }
+
+function drawStaminaBar() {
+  const x = 5;
+  const y = 75;
+  const width = 110;
+  const height = 12;
+  const fillWidth = (player.currentStamina / player.maxStamina) * width;
+
+  colorRect(x, y, width, height, "rgba(0, 0, 0, 0.5)");
+
+  colorRect(x, y, fillWidth, height, "yellow");
+
+  drawTextWithShadow("Stamina", x + 2, y + 10, "white", "12px Arial", "left");
+}
+
 
 function checkBuildingCollisions() {
   for (let key in gameState.buildings) {

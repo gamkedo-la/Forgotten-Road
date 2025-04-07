@@ -21,6 +21,9 @@ class Player extends Entity {
         this.height = 34;
         this.path = [];
         this.speed = 2;
+        this.maxStamina = 100;
+        this.currentStamina = 100;
+        this.isSprinting = false;
         this.isMoving = false;
         this.path = [];
         this.moveTarget = null; // pixel coordinates to walk to
@@ -40,7 +43,6 @@ class Player extends Entity {
             armor: null,
             accessory: null
         };
-
     }
 
     // Getters
@@ -70,14 +72,33 @@ class Player extends Entity {
         }
     }  
 
+    useStamina(amount){
+        this.currentStamina = Math.max(0,this.currentStamina - amount);
+    }
+
+    canPerformAction(cost) {
+        return this.currentStamina >= cost;
+    }
+
+    regenStamina(deltaTime) {
+        if (!this.isSprinting && !this.isAttacking) {
+            this.currentStamina = Math.min(this.maxStamina, this.currentStamina + this.staminaRegenRate * deltaTime);
+        }
+    }
+
     staffAttack(enemies) {
         if (this.isAttacking || this.isMoving) return;
-    
+
+        const STAMINA_COST = 15;
+        if (!this.canPerformAction(STAMINA_COST)) {
+            console.log("Too exhausted to swing!");
+            return;
+        }
+        this.useStamina(STAMINA_COST);
         this.isAttacking = true;
-    
+
         let bonusDamage = this.getEquippedBonusDamage();
-    
-        // Determine target tile based on facing direction
+
         let targetX = this.x;
         let targetY = this.y;
         let attackRange = TILE_W;
@@ -88,32 +109,31 @@ class Player extends Entity {
             case "left":  targetX -= attackRange; break;
             case "right": targetX += attackRange; break;
         }
-    
+
         let attacked = false;
-    
-        // ✅ Only one forEach loop
+
         enemies.forEach(enemy => {
             if (!enemy.isDead && dist(enemy.x, enemy.y, targetX, targetY) < attackRadius) {
                 enemy.takeDamage(10 + bonusDamage);
                 camera.applyShake(4,200);
                 console.log(`You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`);
                 attacked = true;
-    
-                // Knockback using enemy's method
                 const dx = enemy.x - this.x;
                 const dy = enemy.y - this.y;
-                enemy.knockback(dx, dy, 10); // Knockback strength
+                enemy.knockback(dx, dy, 10);
             }
         });
-    
+
         if (!attacked) {
             console.log("You swing... but hit nothing.");
         }
-    
+
         setTimeout(() => {
             this.isAttacking = false;
         }, 300);
     }
+
+
     
     addItemToInventory(item) {
         if (item.stackable) {
