@@ -66,7 +66,8 @@ function SetupCollisionGridFromBackground() {
       collisionGrid[row][col].name = `${col},${row}`;
       collisionGrid[row][col].idx = idxHere;
       collisionGrid[row][col].elementType = tileType;
-      collisionGrid[row][col].isWalkable = (tileType !== TILE_WALL);
+      collisionGrid[row][col].isWalkable = (tileType !== TILE_WALL &&
+                                            tileType !== TILE_CLIFF);
     }
   }
 }
@@ -137,21 +138,36 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
 }
 
 function checkTileTypeForConnectors(tileType, x, y) {
-  if (tileType !== TILE_ROAD) return null;
+  if (tileType === TILE_ROAD) {
+    const above = y > 0 && backgroundGrid[y - 1][x] === TILE_ROAD;
+    const below = y < backgroundGrid.length - 1 && backgroundGrid[y + 1][x] === TILE_ROAD;
+    const left = x > 0 && backgroundGrid[y][x - 1] === TILE_ROAD;
+    const right = x < backgroundGrid[0].length - 1 && backgroundGrid[y][x + 1] === TILE_ROAD;
 
-  const above = y > 0 && backgroundGrid[y - 1][x] === TILE_ROAD;
-  const below = y < backgroundGrid.length - 1 && backgroundGrid[y + 1][x] === TILE_ROAD;
-  const left = x > 0 && backgroundGrid[y][x - 1] === TILE_ROAD;
-  const right = x < backgroundGrid[0].length - 1 && backgroundGrid[y][x + 1] === TILE_ROAD;
+    if (above && below) return { sX: 32, sY: 32 };
+    if (left && right) return { sX: 0, sY: 32 };
+    if (above && right) return { sX: 0, sY: 64 };
+    if (above && left) return { sX: 64, sY: 64 };
+    if (below && right) return { sX: 0, sY: 0 };
+    if (below && left) return { sX: 64, sY: 0 };
 
-  if (above && below) return { sX: 32, sY: 32 };
-  if (left && right) return { sX: 0, sY: 32 };
-  if (above && right) return { sX: 0, sY: 64 };
-  if (above && left) return { sX: 64, sY: 64 };
-  if (below && right) return { sX: 0, sY: 0 };
-  if (below && left) return { sX: 64, sY: 0 };
+    return { sX: 32, sY: 32 }; 
+  }
 
-  return { sX: 32, sY: 32 }; // default road tile
+  if (tileType === TILE_CLIFF) {
+    const leftIsGrass = x > 0 && backgroundGrid[y][x - 1] === TILE_GRASS;
+    const rightIsGrass = x < backgroundGrid[0].length - 1 && backgroundGrid[y][x + 1] === TILE_GRASS;
+
+    if (leftIsGrass && !rightIsGrass) {
+      return { sX: 0, sY: 0 }; // opens to grass on the left
+    } else if (!leftIsGrass && rightIsGrass) {
+      return { sX: 64, sY: 0 }; // opens to grass on the right
+    } else {
+      return { sX: 32, sY: 0 }; // default center cliff
+    }
+  }
+
+  return null;
 }
 
 function checkTileTypeForRandomization(tileType) {
