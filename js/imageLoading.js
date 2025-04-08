@@ -51,7 +51,7 @@ function loadImages() {
         {varName: skeletonPic, theFile: "skeleton.png"},
         {varName: ghoulPic, theFile: "Ghoul.png"},
         {varName: orcPic, theFile: "orc.png"},
-        {varName: wraithPic, theFile: "skeleton.png"}, //holding until wraith pic
+        {varName: wraithPic, theFile: "Wraith.png"},
         {varName: blacksmithShopPic, theFile: "BlackSmithShop.png"},
         {varName: alchemistShopPic, theFile: "BlackSmithShop.png"},
         {varName: pickUpItemPic, theFile: "pickupItems.png"},
