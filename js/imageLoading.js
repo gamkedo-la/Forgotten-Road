@@ -18,6 +18,7 @@ var ghoulPic = document.createElement('img');
 var skeletonPic = document.createElement("img");
 var orcPic = document.createElement("img");
 var wraithPic = document.createElement("img"); 
+var oldManPic = document.createElement("img");
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
 
@@ -62,6 +63,7 @@ function loadImages() {
         {varName: staffIconPic, theFile: "staffIcon.png"},
         {varName: leatherArmorIconPic, theFile: "armorIcon.png"},
         {varName: healthPotionPic, theFile: "healthPotion.png"},
+        {varName: oldManPic, theFile: "merchant.png"},
 
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},

@@ -86,6 +86,18 @@ document.addEventListener('keydown', (event) => {
             player.attackTimer = 0;
         }
     }
+    if (event.key === 'x') {
+        for (let npc of npcs) {
+            const dx = player.x - npc.x;
+            const dy = player.y - npc.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 40) { // 40 pixels proximity
+                npc.speak(); // for now, logs to console
+                break;
+            }
+        }
+    }
     if(event.key === '1'){
         keys.usePotion = true;
     }

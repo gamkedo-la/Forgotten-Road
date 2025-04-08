@@ -11,6 +11,7 @@ let turnPathFindingDrawingOn = false;
 let insidebuilding = false;
 let projectiles = [];
 let worldItems = [];
+let npcs = [];
 
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
@@ -127,6 +128,12 @@ function spawnMonstersFromMap() {
     });
 }
 
+function spawnNPCs() {
+  const oldMan = new NPC("Old Man", 12 * TILE_W, 8 * TILE_H, "The forest holds many secrets...");
+  npcs.push(oldMan);
+}
+
+
 // Initialization
 window.onload = function () {
   canvas = document.getElementById("gameCanvas");
@@ -138,6 +145,7 @@ function imageLoadingDoneSoStartGame() {
   console.log("All images downloaded. Starting game!");
   SetupCollisionGridFromBackground();
   spawnMonstersFromMap();
+  spawnNPCs();
   requestAnimationFrame(drawGameFrame);
 }
 
@@ -165,6 +173,7 @@ function updateGameState(deltaTime) {
   handlePauseInput();
   if (paused) return;
   handlePlayerMovement();
+  handleNPCInteraction();
   player.regenStamina(deltaTime);
   handleQuickUseKeys();
   updateEnemiesAndProjectiles(deltaTime);
@@ -181,6 +190,7 @@ function renderGameFrame(deltaTime) {
 
   player.draw(deltaTime);
 
+  npcs.forEach(npc => npc.draw && npc.draw(deltaTime));
   worldItems.forEach(item => drawWorldItem(item));
   enemies.filter(e => !e.isDead).forEach(e => e.draw(deltaTime));
   projectiles.forEach(p => p.draw(ctx));
