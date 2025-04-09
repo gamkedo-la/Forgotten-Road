@@ -129,7 +129,8 @@ function spawnMonstersFromMap() {
 }
 
 function spawnNPCs() {
-  const oldMan = new NPC("Old Man", 12 * TILE_W, 8 * TILE_H, "The forest holds many secrets...");
+  const oldMan = new NPC("Old Man", 12 * TILE_W, 8 * TILE_H,   "The forest holds many secrets...",
+    "Stay a while...");
   npcs.push(oldMan);
 }
 

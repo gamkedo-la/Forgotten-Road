@@ -1,9 +1,11 @@
 class NPC extends Entity {
-    constructor(name, x, y, dialogue) {
+    constructor(name, x, y, dialogue, hoverText = null) {
         super(name, x, y, 100, 0); // NPCs don't fight, so no damage
         this.width = 32;
         this.height = 32;
         this._dialogue = dialogue;
+        this.hoverText = hoverText || name; 
+        this.bubbleBobTimer = 0;
     }
 
     // Getter for dialogue
@@ -17,11 +19,38 @@ class NPC extends Entity {
     }
 
     draw(deltaTime) {
+         // Update bobbing timer
+        this.bubbleBobTimer += deltaTime;
+        const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
+        
         ctx.drawImage(oldManPic, 0, 64, 32, 32, this.x, this.y, 32, 32);
         ctx.fillText(this.name, this.x, this.y - 5);
+
+       
+        // Dialogue 
+        if (this.hoverText) {
+            // Update bobbing animation
+            this.bubbleBobTimer += deltaTime;
+            const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
+
+            // Bubble position and size
+            const bubblePadding = 6;
+            ctx.font = "12px Arial"; 
+            const textWidth = ctx.measureText(this.hoverText).width;
+            const bubbleWidth = textWidth + bubblePadding * 2;
+            const bubbleHeight = 20;
+
+            const bubbleX = this.x + this.width / 2 - bubbleWidth / 2;
+            const bubbleY = this.y - bubbleHeight - 10 + bobOffset;
+
+            // Use your helper functions
+            colorRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "white");              // background
+            outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");           // border
+            drawTextWithShadow(this.hoverText, this.x + this.width / 2, bubbleY + 14,    // text
+                            "black", "12px Arial", "center");
+
+             }
     }
-    
-    
 }
 
 function handleNPCInteraction() {
