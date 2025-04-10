@@ -93,7 +93,7 @@ document.addEventListener('keydown', (event) => {
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < 40) { // 40 pixels proximity
-                npc.speak(); // for now, logs to console
+                npc.interact(); // for now, logs to console
                 break;
             }
         }

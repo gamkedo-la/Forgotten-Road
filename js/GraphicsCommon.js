@@ -24,16 +24,15 @@ function colorText(showWords, textX, textY, fillColor, fontSize = 7) {
 	ctx.fillText(showWords, textX, textY);
 }
 
-function drawTextWithShadow(text, x,y, color, font="13px sans-serif", align) {
+function drawTextWithShadow(text, x, y, color, font = "13px sans-serif", align = "left") {
 	ctx.textAlign = align;
 	ctx.font = font;
 	ctx.shadowBlur = 8;
 	ctx.shadowColor = "black";
-	// if these are both 0, it's more like a "glow"
 	ctx.shadowOffsetX = 0;
 	ctx.shadowOffsetY = 0;
 	ctx.fillStyle = color;
-	ctx.fillText(text, x,y);
+	ctx.fillText(text, x, y);
 	ctx.shadowBlur = 0;
 }
 

@@ -1,3 +1,11 @@
+const quests = {
+    echoesOfTheNorth: {
+      started: false,
+      completed: false,
+      pendantFound: false
+    }
+};
+
 class NPC extends Entity {
     constructor(name, x, y, dialogue, hoverText = null) {
         super(name, x, y, 100, 0); // NPCs don't fight, so no damage
@@ -6,7 +14,7 @@ class NPC extends Entity {
         this._dialogue = dialogue;
         this.hoverText = hoverText || name; 
         this.bubbleBobTimer = 0;
-    }
+    }    
 
     // Getter for dialogue
     get dialogue() { return this._dialogue; }
@@ -16,6 +24,26 @@ class NPC extends Entity {
 
     speak() {
         console.log(`${this.name}: "${this._dialogue}"`);
+    }
+
+    interact(){
+        console.log(this.name)
+        if (this.name === "Old Man") {
+            if (!quests.echoesOfTheNorth.started) {
+                quests.echoesOfTheNorth.started = true;
+                this.dialogue = "Thank you... it should be somewhere in the northern forest. Be careful.";
+                console.log("Quest Started: Echoes of the North");
+            } else if (quests.echoesOfTheNorth.pendantFound && !quests.echoesOfTheNorth.completed) {
+                quests.echoesOfTheNorth.completed = true;
+                this.dialogue = "You found it! I can’t thank you enough.";
+                player.gold += 100; // reward
+                console.log("Quest Completed! +100 gold");
+            } else {
+                this.speak();
+            }
+        } else {
+            this.speak();
+        }
     }
 
     draw(deltaTime) {
@@ -53,21 +81,6 @@ class NPC extends Entity {
     }
 }
 
-function handleNPCInteraction() {
-    if (keys.interact) {
-        for (let npc of npcs) {
-            const dx = player.x - npc.x;
-            const dy = player.y - npc.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 40) { // 40 pix
-                npc.speak(); 
-                break;
-            }
-        }
-    }
-}
-
 function drawDialogueBox(npc) {
     const boxWidth = 300;
     const boxHeight = 100;
@@ -80,5 +93,8 @@ function drawDialogueBox(npc) {
     ctx.font = "16px Arial";
     ctx.fillText(`${npc.name}: "${npc.dialogue}"`, x + 10, y + 30);
 }
+
+
+  
 
 

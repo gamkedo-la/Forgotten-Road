@@ -174,14 +174,34 @@ function updateGameState(deltaTime) {
   handlePauseInput();
   if (paused) return;
   handlePlayerMovement();
-  handleNPCInteraction();
   player.regenStamina(deltaTime);
   handleQuickUseKeys();
   updateEnemiesAndProjectiles(deltaTime);
   handleItemPickups();
   checkBuildingCollisions();
   updateUI(deltaTime);
+  if (quests.echoesOfTheNorth.started && !quests.echoesOfTheNorth.pendantSpawned) {  //Move to its own file
+    spawnPendantInForest();
+    quests.echoesOfTheNorth.pendantSpawned = true;
+  }
 }
+
+function spawnPendantInForest() { //Move to Items.js
+  const pendant = {
+      name: "Silver Pendant",
+      type: "quest",
+      sprite: pickUpItemPic,
+      x: 12 * TILE_W,  
+      y: 4 * TILE_H,
+      pickupRadius: 20,
+      onPickup: function () {
+          quests.echoesOfTheNorth.pendantFound = true;
+          console.log("Pendant found! Return to the Old Man.");
+      }
+  };
+  worldItems.push(pendant);
+}
+
 
 function renderGameFrame(deltaTime) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -231,19 +251,27 @@ function updateEnemiesAndProjectiles(deltaTime) {
   projectiles.forEach(p => p.update(collisionGrid, enemies));
   projectiles = projectiles.filter(p => p.isActive);
 }
-
 function handleItemPickups() {
   for (let i = worldItems.length - 1; i >= 0; i--) {
     const item = worldItems[i];
     const dx = player.x - item.x;
     const dy = player.y - item.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
+
     if (dist < item.pickupRadius) {
+      // Custom on-pickup 
+      if (item.onPickup) {
+        item.onPickup();
+      }
+
+      // Apply item effect or add to inventory
       if (item.use === "heal" && player.currentHP < player.maxHP) {
         player.heal(item.amount);
       } else {
         player.addItemToInventory(item);
       }
+
+      // Remove from world
       worldItems.splice(i, 1);
     }
   }
