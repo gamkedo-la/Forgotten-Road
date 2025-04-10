@@ -1,8 +1,8 @@
 var canvas, ctx, collisionCanvas, collisionCtx;
-var playState = "playing"; 
+var playState = "playing";
 const enemies = [];
 const temp_ui_elements = [];
-const PLAYER_MOVE_SPEED = 4;
+//const PLAYER_MOVE_SPEED = 4;
 let lastFrameTime = performance.now();
 
 let paused = false;
@@ -22,7 +22,7 @@ const gameState = {
   buildings: {
     blacksmithShop: {
       x: 32,
-      y: 1*32,
+      y: 1 * 32,
       sX: 0,
       sY: 0,
       sW: 32 * 6,
@@ -31,7 +31,8 @@ const gameState = {
       height: 32 * 6,
       color: "rgba(9, 0, 128, 0.5)",
       image: blacksmithShopPic,
-      buildingMessage: "You're in the blacksmith shop! You can interact with NPCs or buy items.",
+      buildingMessage:
+        "You're in the blacksmith shop! You can interact with NPCs or buy items.",
       insidebuilding: false,
     },
     alchemistShop: {
@@ -45,7 +46,8 @@ const gameState = {
       height: 32 * 6,
       color: "rgba(9, 0, 128, 0.5)",
       image: alchemistShopPic,
-      buildingMessage: "You're in the alchemist shop! You can interact with NPCs or buy items.",
+      buildingMessage:
+        "You're in the alchemist shop! You can interact with NPCs or buy items.",
       insidebuilding: false,
     },
   },
@@ -63,7 +65,7 @@ function createMonster({
   state = BEHAVIOR_STATES.IDLE,
   patrolZone = null,
   image = null,
-  extra = {}
+  extra = {},
 }) {
   var monster = new Monster(name, x, y, size, damage, maxHealth, type);
   monster.maxHealth = maxHealth;
@@ -82,58 +84,98 @@ function createMonster({
 }
 
 function spawnMonstersFromMap() {
-    const spawns = getMonsterSpawnTiles();
+  const spawns = getMonsterSpawnTiles();
 
-    spawns.forEach(({ tile, col, row }) => {
-      const x = col * TILE_W;
-      const y = row * TILE_H;
-      let monster;
+  spawns.forEach(({ tile, col, row }) => {
+    const x = col * TILE_W;
+    const y = row * TILE_H;
+    let monster;
 
-      if (tile === TILE_GOBLIN_SPAWN) {
-        monster = createMonster({ name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee" });
-      } else if (tile === TILE_KOBOLD_SPAWN) {
-        monster = createMonster({ name: "Kobold", x, y, damage: 5, maxHealth: 20, type: "ranged", state: BEHAVIOR_STATES.WANDER });
-      } else if (tile === TILE_ORC_SPAWN) {
-        monster = createMonster({ name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40 });
-      } else if (tile === TILE_SKELETON_SPAWN) {
-        monster = createMonster({
-          name: "Skeleton", x, y, damage: 2, maxHealth: 20, type: "melee", size: 40,
-          state: BEHAVIOR_STATES.PATROL,
-          extra: { canResurrect: true, isUndead: true, immuneToRanged: true }
+    if (tile === TILE_GOBLIN_SPAWN) {
+      monster = createMonster({
+        name: "Goblin",
+        x,
+        y,
+        damage: 5,
+        maxHealth: 30,
+        type: "melee",
+      });
+    } else if (tile === TILE_KOBOLD_SPAWN) {
+      monster = createMonster({
+        name: "Kobold",
+        x,
+        y,
+        damage: 5,
+        maxHealth: 20,
+        type: "ranged",
+        state: BEHAVIOR_STATES.WANDER,
+      });
+    } else if (tile === TILE_ORC_SPAWN) {
+      monster = createMonster({
+        name: "Orc",
+        x,
+        y,
+        damage: 10,
+        maxHealth: 40,
+        type: "melee",
+        size: 40,
+      });
+    } else if (tile === TILE_SKELETON_SPAWN) {
+      monster = createMonster({
+        name: "Skeleton",
+        x,
+        y,
+        damage: 2,
+        maxHealth: 20,
+        type: "melee",
+        size: 40,
+        state: BEHAVIOR_STATES.PATROL,
+        extra: { canResurrect: true, isUndead: true, immuneToRanged: true },
+      });
+    } else if (tile === TILE_WRAITH_SPAWN) {
+      monster = createMonster({
+        name: "Wraith",
+        x,
+        y,
+        damage: 5,
+        maxHealth: 20,
+        type: "melee",
+        state: BEHAVIOR_STATES.CHASE,
+        image: wraithPic,
+      });
+    } else if (tile === TILE_GHOUL_SPAWN) {
+      for (let i = 0; i < 5; i++) {
+        const offsetX = Math.random() * 32 * 2;
+        const offsetY = Math.random() * 32 * 2;
+        const ghoul = createMonster({
+          name: "Ghoul",
+          x: x + offsetX,
+          y: y + offsetY,
+          damage: 3,
+          maxHealth: 15,
+          type: "melee",
+          state: BEHAVIOR_STATES.CHASE,
+          image: ghoulPic,
         });
-      } else if (tile === TILE_WRAITH_SPAWN) {
-        monster = createMonster({
-          name: "Wraith", x, y, damage: 5, maxHealth: 20, type: "melee", state: BEHAVIOR_STATES.CHASE, image: wraithPic
-        });
-      } else if (tile === TILE_GHOUL_SPAWN){
-        for (let i = 0; i < 5; i++) {
-          const offsetX = Math.random() * 32 * 2;
-          const offsetY = Math.random() * 32 * 2;
-          const ghoul = createMonster({
-            name: "Ghoul", 
-            x: x + offsetX, 
-            y: y + offsetY, 
-            damage: 3, 
-            maxHealth: 15, 
-            type: "melee", 
-            state: BEHAVIOR_STATES.CHASE, 
-            image: ghoulPic  
-          });
-          enemies.push(ghoul);
-        }
-        return;
+        enemies.push(ghoul);
       }
+      return;
+    }
 
-      if (monster) enemies.push(monster);
-    });
+    if (monster) enemies.push(monster);
+  });
 }
 
 function spawnNPCs() {
-  const oldMan = new NPC("Old Man", 12 * TILE_W, 8 * TILE_H,   "The forest holds many secrets...",
-    "Stay a while...");
+  const oldMan = new NPC(
+    "Old Man",
+    12 * TILE_W,
+    8 * TILE_H,
+    "The forest holds many secrets...",
+    "Stay a while..."
+  );
   npcs.push(oldMan);
 }
-
 
 // Initialization
 window.onload = function () {
@@ -161,8 +203,8 @@ function drawGameFrame(currentTime) {
   // Add this before rendering
   camera.update(deltaTime);
   ctx.save();
-    camera.applyTransform(ctx);
-    renderGameFrame(deltaTime);
+  camera.applyTransform(ctx);
+  renderGameFrame(deltaTime);
   ctx.restore(); // restore after all drawing
 
   requestAnimationFrame(drawGameFrame);
@@ -170,14 +212,15 @@ function drawGameFrame(currentTime) {
 }
 
 function drawQuestTracker() {
-  if (!quests.echoesOfTheNorth.started || quests.echoesOfTheNorth.completed) return;
+  if (!quests.echoesOfTheNorth.started || quests.echoesOfTheNorth.completed)
+    return;
 
   let title = "Quest: Echoes of the North";
   let status = quests.echoesOfTheNorth.pendantFound
-      ? "• Return the pendant to the Old Man"
-      : "• Find the lost pendant in the northern forest";
+    ? "• Return the pendant to the Old Man"
+    : "• Find the lost pendant in the northern forest";
 
-  let x = canvas.width-270;
+  let x = canvas.width - 270;
   let y = 10;
 
   colorRect(x - 5, y - 30, 260, 50, "rgba(0, 0, 0, 0.5)");
@@ -196,24 +239,29 @@ function updateGameState(deltaTime) {
   handleItemPickups();
   checkBuildingCollisions();
   updateUI(deltaTime);
-  if (quests.echoesOfTheNorth.started && !quests.echoesOfTheNorth.pendantSpawned) {  //Move to its own file
+  if (
+    quests.echoesOfTheNorth.started &&
+    !quests.echoesOfTheNorth.pendantSpawned
+  ) {
+    //Move to its own file
     spawnPendantInForest();
     quests.echoesOfTheNorth.pendantSpawned = true;
   }
 }
 
-function spawnPendantInForest() { //Move to Items.js
+function spawnPendantInForest() {
+  //Move to Items.js
   const pendant = {
-      name: "Silver Pendant",
-      type: "quest",
-      sprite: pickUpItemPic,
-      x: 12 * TILE_W,  
-      y: 4 * TILE_H,
-      pickupRadius: 20,
-      onPickup: function () {
-          quests.echoesOfTheNorth.pendantFound = true;
-          console.log("Pendant found! Return to the Old Man.");
-      }
+    name: "Silver Pendant",
+    type: "quest",
+    sprite: pickUpItemPic,
+    x: 12 * TILE_W,
+    y: 4 * TILE_H,
+    pickupRadius: 20,
+    onPickup: function () {
+      quests.echoesOfTheNorth.pendantFound = true;
+      console.log("Pendant found! Return to the Old Man.");
+    },
   };
   worldItems.push(pendant);
 }
@@ -226,28 +274,28 @@ function renderGameFrame(deltaTime) {
 
   player.draw(deltaTime);
 
-  npcs.forEach(npc => npc.draw && npc.draw(deltaTime));
-  worldItems.forEach(item => drawWorldItem(item));
-  enemies.filter(e => !e.isDead).forEach(e => e.draw(deltaTime));
-  projectiles.forEach(p => p.draw(ctx));
+  npcs.forEach((npc) => npc.draw && npc.draw(deltaTime));
+  worldItems.forEach((item) => drawWorldItem(item));
+  enemies.filter((e) => !e.isDead).forEach((e) => e.draw(deltaTime));
+  projectiles.forEach((p) => p.draw(ctx));
   drawBackpackUI(ctx, player);
 
   drawGoldUI();
-  temp_ui_elements.forEach(ui => ui.draw());
+  temp_ui_elements.forEach((ui) => ui.draw());
   if (paused) drawPauseOverlay();
 
   player.drawHearts();
   drawStaminaBar();
 
   drawQuestTracker();
-  
+
   if (playState === "gameover") {
     drawGameOverScreen();
   }
 }
 
 function handlePauseInput() {
-  if (keys.pause && !pressedPause || playState === "gameover") {
+  if ((keys.pause && !pressedPause) || playState === "gameover") {
     paused = !paused;
     pressedPause = true;
   }
@@ -255,18 +303,28 @@ function handlePauseInput() {
 }
 
 function handlePlayerMovement() {
-  if (keys.up || gamepad.up) movePlayer(0, -PLAYER_MOVE_SPEED, "NORTH");
-  if (keys.down || gamepad.down) movePlayer(0, PLAYER_MOVE_SPEED, "SOUTH");
-  if (keys.left || gamepad.left) movePlayer(-PLAYER_MOVE_SPEED, 0, "WEST");
-  if (keys.right || gamepad.right) movePlayer(PLAYER_MOVE_SPEED, 0, "EAST");
+  if (player.isSprinting) {
+    if (player.canPerformAction(1)) {
+      player.useStamina(1);
+    } else {
+      player.isSprinting = false;
+      player.currentSpeed = player.baseSpeed;
+    }
+  }
+  if (keys.up || gamepad.up) movePlayer(0, -player.currentSpeed, "NORTH");
+  if (keys.down || gamepad.down) movePlayer(0, player.currentSpeed, "SOUTH");
+  if (keys.left || gamepad.left) movePlayer(-player.currentSpeed, 0, "WEST");
+  if (keys.right || gamepad.right) movePlayer(player.currentSpeed, 0, "EAST");
   player.updateMovement();
 }
 
 function updateEnemiesAndProjectiles(deltaTime) {
-  enemies.forEach(e => updateEnemy(e, player));
-  enemies.forEach(e => e.fireAtPlayerIfInRange(player, projectiles, collisionGrid));
-  projectiles.forEach(p => p.update(collisionGrid, enemies));
-  projectiles = projectiles.filter(p => p.isActive);
+  enemies.forEach((e) => updateEnemy(e, player));
+  enemies.forEach((e) =>
+    e.fireAtPlayerIfInRange(player, projectiles, collisionGrid)
+  );
+  projectiles.forEach((p) => p.update(collisionGrid, enemies));
+  projectiles = projectiles.filter((p) => p.isActive);
 }
 function handleItemPickups() {
   for (let i = worldItems.length - 1; i >= 0; i--) {
@@ -276,7 +334,7 @@ function handleItemPickups() {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < item.pickupRadius) {
-      // Custom on-pickup 
+      // Custom on-pickup
       if (item.onPickup) {
         item.onPickup();
       }
@@ -296,20 +354,27 @@ function handleItemPickups() {
 
 function handleQuickUseKeys() {
   if (keys.usePotion) {
-      const potion = player.inventory.find(i => i.type === "consumable");
-      if (potion) {
-          player.useItem(potion);
-      }
+    const potion = player.inventory.find((i) => i.type === "consumable");
+    if (potion) {
+      player.useItem(potion);
+    }
   }
 }
 
 function updateUI(deltaTime) {
-  temp_ui_elements.forEach(e => e.update(deltaTime));
+  temp_ui_elements.forEach((e) => e.update(deltaTime));
 }
 
 function drawGoldUI() {
   colorRect(5, 40, 110, 30, "rgba(0, 0, 0, 0.5)");
-  drawTextWithShadow(`Gold: ${player.gold}`, 15, 60, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, UI_TEXT_STYLES.DEFAULT.align);
+  drawTextWithShadow(
+    `Gold: ${player.gold}`,
+    15,
+    60,
+    UI_TEXT_STYLES.DEFAULT.textColor,
+    UI_TEXT_STYLES.DEFAULT.font,
+    UI_TEXT_STYLES.DEFAULT.align
+  );
 }
 
 function drawPauseOverlay() {
@@ -336,7 +401,6 @@ function drawBuildings() {
 }
 
 function drawStaminaBar() {
-
   let barColor = "green";
   if (player.currentStamina < 30) barColor = "orange";
   if (player.currentStamina < 10) barColor = "red";
@@ -350,13 +414,16 @@ function drawStaminaBar() {
 
   colorRect(x, y, fillWidth, height, barColor);
 
-  drawTextWithShadow("Stamina", x + 2, y + 10, 'white', "12px Arial", "left");
+  drawTextWithShadow("Stamina", x + 2, y + 10, "white", "12px Arial", "left");
 }
-
 
 function checkBuildingCollisions() {
   for (let key in gameState.buildings) {
-    checkCollision(player, gameState.buildings[key], gameState.buildings[key].buildingMessage);
+    checkCollision(
+      player,
+      gameState.buildings[key],
+      gameState.buildings[key].buildingMessage
+    );
   }
 }
 
