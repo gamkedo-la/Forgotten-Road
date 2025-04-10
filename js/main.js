@@ -169,6 +169,22 @@ function drawGameFrame(currentTime) {
   mouse.clicked = false;
 }
 
+function drawQuestTracker() {
+  if (!quests.echoesOfTheNorth.started || quests.echoesOfTheNorth.completed) return;
+
+  let title = "Quest: Echoes of the North";
+  let status = quests.echoesOfTheNorth.pendantFound
+      ? "• Return the pendant to the Old Man"
+      : "• Find the lost pendant in the northern forest";
+
+  let x = canvas.width-270;
+  let y = 10;
+
+  colorRect(x - 5, y - 30, 260, 50, "rgba(0, 0, 0, 0.5)");
+
+  drawTextWithShadow(title, x, y, "white", "14px Arial", "left");
+  drawTextWithShadow(status, x, y + 18, "yellow", "12px Arial", "left");
+}
 
 function updateGameState(deltaTime) {
   handlePauseInput();
@@ -202,7 +218,6 @@ function spawnPendantInForest() { //Move to Items.js
   worldItems.push(pendant);
 }
 
-
 function renderGameFrame(deltaTime) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground();
@@ -223,6 +238,8 @@ function renderGameFrame(deltaTime) {
 
   player.drawHearts();
   drawStaminaBar();
+
+  drawQuestTracker();
   
   if (playState === "gameover") {
     drawGameOverScreen();
