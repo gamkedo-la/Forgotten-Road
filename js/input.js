@@ -104,6 +104,20 @@ document.addEventListener("keydown", (event) => {
       }
     }
   }
+
+  if (dialoguePrompt && pendingQuest) {
+    if (event.key === "y") {
+        console.log("Quest accepted");
+        pendingQuest(); // Start the quest
+        dialoguePrompt = null;
+        pendingQuest = null;
+    } else if (event.key === "n") {
+        console.log("Quest declined");
+        dialoguePrompt = null;
+        pendingQuest = null;
+    }
+}
+
   
   if (event.key === "h") {
     if (player.isSprinting) {

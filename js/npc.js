@@ -6,6 +6,9 @@ const quests = {
     }
 };
 
+var dialoguePrompt = null; 
+var pendingQuest = null;  
+
 class NPC extends Entity {
     constructor(name, x, y, dialogue, hoverText = null) {
         super(name, x, y, 100, 0);
@@ -32,17 +35,25 @@ class NPC extends Entity {
         console.log(`${this.name}: "${this._dialogue}"`);
     }
 
-    interact(){
-        console.log(this.name)
+    interact() {
+        console.log(this.name);
+    
+        if (dialoguePrompt || pendingQuest) {
+            return;
+        }
+    
         if (this.name === "Old Man") {
             if (!quests.echoesOfTheNorth.started) {
-                quests.echoesOfTheNorth.started = true;
-                this.dialogue = "Thank you... it should be somewhere in the northern forest. Be careful.";
-                console.log("Quest Started: Echoes of the North");
+                dialoguePrompt = "Would you help me find a pendant I lost in the forest?";
+                pendingQuest = () => {
+                    quests.echoesOfTheNorth.started = true;
+                    this.dialogue = "Thank you... it should be somewhere in the northern forest. Be careful.";
+                    console.log("Quest Started: Echoes of the North");
+                };
             } else if (quests.echoesOfTheNorth.pendantFound && !quests.echoesOfTheNorth.completed) {
                 quests.echoesOfTheNorth.completed = true;
                 this.dialogue = "You found it! I can’t thank you enough.";
-                player.gold += 100; // reward
+                player.gold += 100;
                 console.log("Quest Completed! +100 gold");
             } else {
                 this.speak();
@@ -51,9 +62,9 @@ class NPC extends Entity {
             this.speak();
         }
     }
-
+    
     update(deltaTime) {
-        this.dialogueCooldown -= deltaTime * 1000; // convert seconds to ms
+        this.dialogueCooldown -= deltaTime * 1000; 
     
         if (this.dialogueCooldown > 0) return;
     
@@ -116,6 +127,22 @@ function drawDialogueBox(npc) {
     ctx.font = "16px Arial";
     ctx.fillText(`${npc.name}: "${npc.dialogue}"`, x + 10, y + 30);
 }
+
+function drawDialoguePrompt() {
+    if (!dialoguePrompt) return;
+
+    const width = 400;
+    const height = 100;
+    const x = canvas.width / 2 - width / 2;
+    const y = canvas.height - height - 30;
+
+    colorRect(x, y, width, height, "rgba(0, 0, 0, 0.8)");
+    outlineRect(x, y, width, height, "white");
+
+    drawTextWithShadow(dialoguePrompt, x + 20, y + 30, "white", "16px Arial", "left");
+    drawTextWithShadow("[Y]es   [N]o", x + 20, y + 60, "gray", "14px Arial", "left");
+}
+
 
 
   
