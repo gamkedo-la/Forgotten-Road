@@ -1,4 +1,5 @@
 var pathfinderGrid = [];
+let pressedInteract = false;
 
 // Key press handling
 const keys = {
@@ -89,19 +90,21 @@ document.addEventListener("keydown", (event) => {
       player.attackTimer = 0;
     }
   }
-  if (event.key === "x") {
+  if (event.key === "x" && !pressedInteract) {
+    pressedInteract = true;
+  
     for (let npc of npcs) {
       const dx = player.x - npc.x;
       const dy = player.y - npc.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-
+  
       if (dist < 40) {
-        // 40 pixels proximity
-        npc.interact(); // for now, logs to console
+        npc.interact();
         break;
       }
     }
   }
+  
   if (event.key === "h") {
     if (player.isSprinting) {
       player.currentSpeed = player.baseSpeed;

@@ -171,8 +171,10 @@ function spawnNPCs() {
     "Old Man",
     12 * TILE_W,
     8 * TILE_H,
-    "The forest holds many secrets...",
-    "Stay a while..."
+    [ "The forest holds many secrets...",
+      "Sometimes I still hear the wind whisper his name.",
+      "I wasn't always this old, you know.",
+      "We lost something out there..."]
   );
   npcs.push(oldMan);
 }
@@ -234,6 +236,7 @@ function updateGameState(deltaTime) {
   if (paused) return;
   handlePlayerMovement();
   player.regenStamina(deltaTime);
+  npcs.forEach(npc => npc.update && npc.update(deltaTime));
   handleQuickUseKeys();
   updateEnemiesAndProjectiles(deltaTime);
   handleItemPickups();
