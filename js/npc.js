@@ -2,9 +2,16 @@ const quests = {
     echoesOfTheNorth: {
       started: false,
       completed: false,
-      pendantFound: false
+      pendantFound: false,
+      declinedCount: 0,
+      permanentlyDeclined: false 
+    },
+    shadowsOfDoubt: {
+      started: false,
+      completed: false
     }
-};
+  };
+  
 
 class NPC extends Entity {
     constructor(name, x, y, dialogue, hoverText = null) {
@@ -31,41 +38,91 @@ class NPC extends Entity {
     speak() {
         console.log(`${this.name}: "${this._dialogue}"`);
     }
-
     interact() {
-        console.log(`[INTERACT] Interacting with ${this.name}`);
-    
         if (dialoguePrompt || pendingQuest) {
             console.log("[INTERACT] Skipped — dialogue prompt active");
             return;
         }
     
         if (this.name === "Old Man") {
-            console.log(`[QUEST STATE] started: ${quests.echoesOfTheNorth.started}, found: ${quests.echoesOfTheNorth.pendantFound}, completed: ${quests.echoesOfTheNorth.completed}`);
+            const quest = quests.echoesOfTheNorth;
     
-            if (!quests.echoesOfTheNorth.started) {
-                dialoguePrompt = "Would you help me find a pendant I lost in the forest?";
+            if (!quest.started && !quest.permanentlyDeclined) {
+                const declines = quest.declinedCount;
+    
+                if (declines === 0) {
+                    dialoguePrompt = "Would you help me find a pendant I lost in the forest?";
+                } else if (declines === 1) {
+                    dialoguePrompt = "You've returned. Have you changed your mind?";
+                } else if (declines === 2) {
+                    dialoguePrompt = "This is your last chance. Will you help me?";
+                }
+    
                 pendingQuest = () => {
-                    quests.echoesOfTheNorth.started = true;
+                    quest.started = true;
                     this.dialogue = "Thank you... it should be somewhere in the northern forest. Be careful.";
                     console.log("Quest Started: Echoes of the North");
                 };
-            } else if (quests.echoesOfTheNorth.pendantFound && !quests.echoesOfTheNorth.completed) {
-                console.log("[CHECK] pendantFound && !completed == true");
-                console.log("Triggering quest completion!");
+                return;
+            }
     
-                quests.echoesOfTheNorth.completed = true;
+            if (quest.permanentlyDeclined && !quests.shadowsOfDoubt.started) {
+                this.dialogue = "Have you reconsidered? I still need someone to investigate the graveyard.";
+                dialoguePrompt = "Will you help with the cloaked figure?";
+                pendingQuest = () => {
+                    quests.shadowsOfDoubt.started = true;
+                    this.dialogue = "Excellent. Keep your distance, but observe closely.";
+                    console.log("Quest Started: Shadows of Doubt");
+                };
+                return;
+            }
+    
+            // ✅ Handle quest turn-in
+            if (quest.pendantFound && !quest.completed) {
+                quest.completed = true;
                 this.dialogue = "You found it! I can’t thank you enough.";
                 player.gold += 100;
                 console.log("Quest Completed! +100 gold");
-            } else {
-                this.speak();
+                return;
             }
+    
+            // Default response if none of the conditions matched
+            this.speak();
         } else {
             this.speak();
         }
     }
     
+    handleQuestDecline() {
+        quests.echoesOfTheNorth.declinedCount++;
+    
+        let response = "";
+    
+        switch (quests.echoesOfTheNorth.declinedCount) {
+            case 1:
+                response = "I understand. Not everyone is ready for what lies beyond.";
+                break;
+            case 2:
+                response = "You again? Still unwilling to help? Hmph...";
+                break;
+            case 3:
+            default:
+                response = "Very well, I won’t ask about the pendant again.";
+                quests.echoesOfTheNorth.permanentlyDeclined = true;
+
+                setTimeout(() => {
+                    this.dialogue = "If you won’t help with my past... perhaps you can investigate something else for me.";
+                    dialoguePrompt = "Start a different quest?";
+                    pendingQuest = () => {
+                        quests.shadowsOfDoubt.started = true;
+                        this.dialogue = "There’s a cloaked figure near the graveyard. I want to know who they are.";
+                    };
+                }, 2000);
+                break;
+        }
+    
+        this.dialogue = response;
+    }
     
     
     update(deltaTime) {
@@ -147,6 +204,19 @@ function drawDialoguePrompt() {
     drawTextWithShadow(dialoguePrompt, x + 20, y + 30, "white", "16px Arial", "left");
     drawTextWithShadow("[Y]es   [N]o", x + 20, y + 60, "gray", "14px Arial", "left");
 }
+
+function spawnGraveyardMystery() {
+    const figure = new NPC(
+        "Cloaked Figure",
+        25 * TILE_W,
+        16 * TILE_H,
+        ["..."], // mysterious
+        "Suspicious?"
+    );
+
+    npcs.push(figure);
+}
+
 
 
 
