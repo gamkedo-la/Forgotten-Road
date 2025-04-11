@@ -95,23 +95,25 @@ function findPath(startX, startY, endX, endY, collisionGrid) {
 function getNeighbors(node, collisionGrid) {
     let neighbors = [];
     let directions = [
-        { dx: -1, dy: 0 }, // Left (W)
-        { dx: 1, dy: 0 },  // Right (E)
-        { dx: 0, dy: -1 }, // Up (N)
-        { dx: 0, dy: 1 }   // Down (S)
+      { dx: -1, dy: 0 }, // Left
+      { dx: 1, dy: 0 },  // Right
+      { dx: 0, dy: -1 }, // Up
+      { dx: 0, dy: 1 }   // Down
     ];
-    
+  
     for (let dir of directions) {
-        let nx = node.x + dir.dx;
-        let ny = node.y + dir.dy;
-
-        // Ensure we're within grid bounds
-        if (nx >= 0 && ny >= 0 && nx < TILE_COLS && ny < TILE_ROWS) {
-            neighbors.push(new GridElement(nx, ny, collisionGrid[ny][nx].isWalkable));
-        }
+      let nx = node.x + dir.dx;
+      let ny = node.y + dir.dy;
+  
+      if (nx >= 0 && ny >= 0 && nx < TILE_COLS && ny < TILE_ROWS) {
+        const isWalkable = collisionGrid[ny][nx].isWalkable &&
+                           !isTileOccupiedByPushBlock(nx, ny);
+        neighbors.push(new GridElement(nx, ny, isWalkable));
+      }
     }
     return neighbors;
-}
+  }
+  
 
 
 // Heuristic Function (Manhattan Distance)

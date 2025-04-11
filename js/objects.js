@@ -2,6 +2,10 @@ const pushableBlocks = [
     { x: 12, y: 10, width: TILE_W, height: TILE_H }
   ];
 
+function isTileOccupiedByPushBlock(tileX, tileY) {
+  return pushableBlocks.some(block => block.x === tileX && block.y === tileY);
+}  
+
 function tryPushBlock(player, dirX, dirY) {
     let playerTileX = Math.floor(player.x / TILE_W);
     let playerTileY = Math.floor(player.y / TILE_H);
