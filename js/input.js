@@ -148,6 +148,10 @@ document.addEventListener("keydown", (event) => {
     }
     keys.sprint = true;
   }
+  if(event.key === 'Shift'){
+    isPullingBlock = true;
+  }
+
 });
 
 document.addEventListener("keyup", (event) => {
@@ -167,6 +171,10 @@ document.addEventListener("keyup", (event) => {
     keys.action = false;
 
   if (event.key === "p") keys.pause = false;
+
+  if(event.key === 'Shift'){
+    isPullingBlock = false;
+  }
 
   if (event.key === "r" && playState === "gameover") {
     restartGame();

@@ -12,8 +12,13 @@ let insidebuilding = false;
 let projectiles = [];
 let worldItems = [];
 let npcs = [];
-var dialoguePrompt = null; 
-var pendingQuest = null;  
+let dialoguePrompt = null; 
+let pendingQuest = null;  
+let isBlockSliding = false;
+let isPullingBlock = false;
+let pulledBlock = null;
+
+
 
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
@@ -243,6 +248,30 @@ function updateGameState(deltaTime) {
   updateEnemiesAndProjectiles(deltaTime);
   handleItemPickups();
   checkBuildingCollisions();
+  isBlockSliding = false; // reset before checking
+
+  pushableBlocks.forEach(block => {
+    if (block.isMoving) {
+      isBlockSliding = true; // block is sliding this frame
+  
+      let dx = block.targetX - block.drawX;
+      let dy = block.targetY - block.drawY;
+      const speed = 4;
+  
+      if (Math.abs(dx) <= speed && Math.abs(dy) <= speed) {
+        block.drawX = block.targetX;
+        block.drawY = block.targetY;
+        block.isMoving = false;
+      } else {
+        block.drawX += Math.sign(dx) * speed;
+        block.drawY += Math.sign(dy) * speed;
+      }
+    } else {
+      block.drawX = block.x * TILE_W;
+      block.drawY = block.y * TILE_H;
+    }
+  });  
+  
   updateUI(deltaTime);
   if (
     quests.echoesOfTheNorth.started &&
@@ -278,10 +307,12 @@ function renderGameFrame(deltaTime) {
   drawBuildings();
 
   player.draw(deltaTime);
-
   npcs.forEach((npc) => npc.draw && npc.draw(deltaTime));
   worldItems.forEach((item) => drawWorldItem(item));
   enemies.filter((e) => !e.isDead).forEach((e) => e.draw(deltaTime));
+  pushableBlocks.forEach(block => {
+    colorRect(block.drawX, block.drawY, block.width, block.height, 'brown');
+  });  
   projectiles.forEach((p) => p.draw(ctx));
   drawBackpackUI(ctx, player);
 
@@ -292,10 +323,7 @@ function renderGameFrame(deltaTime) {
   player.drawHearts();
   drawStaminaBar();
 
-  pushableBlocks.forEach(block => {
-    ctx.fillStyle = "brown";
-    ctx.fillRect(block.x * TILE_W, block.y * TILE_H, block.width, block.height);
-  });
+
 
   drawQuestTracker();
   drawDialoguePrompt();
@@ -326,18 +354,22 @@ function handlePlayerMovement() {
 
   // movement input
   if (keys.up || gamepad.up) {
+    if (isPullingBlock && tryPullBlock(player, 0, -1)) return;
     const pushed = tryPushBlock(player, 0, -1);
     if (pushed !== false) movePlayer(0, -player.currentSpeed, "NORTH");
   }
   if (keys.down || gamepad.down) {
+    if (isPullingBlock && tryPullBlock(player, 0, 1)) return;
     const pushed = tryPushBlock(player, 0, 1);
     if (pushed !== false) movePlayer(0, player.currentSpeed, "SOUTH");
   }
   if (keys.left || gamepad.left) {
+    if (isPullingBlock && tryPullBlock(player, -1, 0)) return;
     const pushed = tryPushBlock(player, -1, 0);
     if (pushed !== false) movePlayer(-player.currentSpeed, 0, "WEST");
   }
   if (keys.right || gamepad.right) {
+    if (isPullingBlock && tryPullBlock(player, 1, 0)) return;
     const pushed = tryPushBlock(player, 1, 0);
     if (pushed !== false) movePlayer(player.currentSpeed, 0, "EAST");
   }
@@ -353,6 +385,7 @@ function updateEnemiesAndProjectiles(deltaTime) {
   projectiles.forEach((p) => p.update(collisionGrid, enemies));
   projectiles = projectiles.filter((p) => p.isActive);
 }
+
 function handleItemPickups() {
   for (let i = worldItems.length - 1; i >= 0; i--) {
     const item = worldItems[i];

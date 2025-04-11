@@ -216,7 +216,7 @@ class Player extends Entity {
   }
 
   updateMovement() {
-    if (!this.isMoving || !this.moveTarget || this.state == "dead") return;
+    if (!this.isMoving || !this.moveTarget || isBlockSliding || this.state == "dead") return;
     const dx = this.moveTarget.x - this.x;
     const dy = this.moveTarget.y - this.y;
 
