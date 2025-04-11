@@ -7,7 +7,8 @@ var basicStaff = {
     damage: 5,
     sprite: staffIconPic, // this should already be loaded in imageLoading.js
     stackable: true,
-    quantity: 1
+    quantity: 1,
+    durability : 10,
 };
 
 var leatherArmor = {

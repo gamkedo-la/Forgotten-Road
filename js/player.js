@@ -46,6 +46,7 @@ class Player extends Entity {
       armor: null,
       accessory: null,
     };
+
   }
 
   // Getters
@@ -144,10 +145,11 @@ class Player extends Entity {
         console.log(
           `You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`
         );
-        attacked = true;
+        attacked = true; 
         const dx = enemy.x - this.x;
         const dy = enemy.y - this.y;
         enemy.knockback(dx, dy, 10);
+        this.damagedEquippedItem();
       }
     });
 
@@ -203,6 +205,10 @@ class Player extends Entity {
     } else {
       console.log("Item cannot be equipped.");
     }
+  }
+
+  damagedEquippedItem (){
+    if (this.equipment.weapon){this.equipment.weapon.durability--};    
   }
 
   getEquippedBonusDamage() {
