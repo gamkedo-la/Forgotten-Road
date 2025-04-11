@@ -311,7 +311,8 @@ function renderGameFrame(deltaTime) {
   worldItems.forEach((item) => drawWorldItem(item));
   enemies.filter((e) => !e.isDead).forEach((e) => e.draw(deltaTime));
   pushableBlocks.forEach(block => {
-    colorRect(block.drawX, block.drawY, block.width, block.height, 'brown');
+    //colorRect(block.drawX, block.drawY, block.width, block.height, 'brown');
+    ctx.drawImage(boxPic, 0, 0, block.width, block.height, block.drawX, block.drawY, 32, 32);
   });  
   projectiles.forEach((p) => p.draw(ctx));
   drawBackpackUI(ctx, player);

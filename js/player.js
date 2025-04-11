@@ -3,6 +3,8 @@ const FRAME_ATTACK_WIDTH = 37; // Slightly wider to fit staff swing
 const FRAME_HEIGHT = 34; // Frame height is consistent
 const FRAMES_PER_ANIMATION = 4;
 const frameDuration = 0.1; // seconds (100 ms)
+const STAMINA_COST_PUSH = 5;
+const STAMINA_COST_PULL = 7;
 
 class Player extends Entity {
   constructor(name, x, y, health, damage, level, gold) {

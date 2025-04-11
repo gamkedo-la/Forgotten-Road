@@ -16,33 +16,44 @@ function isTileOccupiedByPushBlock(tileX, tileY) {
 }  
 
 function tryPushBlock(player, dirX, dirY) {
-  let playerTileX = Math.floor(player.x / TILE_W);
-  let playerTileY = Math.floor(player.y / TILE_H);
+  const playerTileX = Math.floor(player.x / TILE_W);
+  const playerTileY = Math.floor(player.y / TILE_H);
 
-  let nextX = playerTileX + dirX;
-  let nextY = playerTileY + dirY;
+  const nextX = playerTileX + dirX;
+  const nextY = playerTileY + dirY;
 
-  let block = pushableBlocks.find(b => b.x === nextX && b.y === nextY);
+  const block = pushableBlocks.find(b => b.x === nextX && b.y === nextY);
   if (block && !block.isMoving) {
-    let pushX = block.x + dirX;
-    let pushY = block.y + dirY;
+    const pushX = block.x + dirX;
+    const pushY = block.y + dirY;
 
-    let canPush = collisionGrid[pushY]?.[pushX]?.isWalkable &&
-                  !pushableBlocks.some(b => b.x === pushX && b.y === pushY);
+    const canPush = collisionGrid[pushY]?.[pushX]?.isWalkable &&
+                    !pushableBlocks.some(b => b.x === pushX && b.y === pushY);
 
     if (canPush) {
+      const STAMINA_COST_PUSH = 5;
+      if (!player.canPerformAction(STAMINA_COST_PUSH)) {
+        console.log("Too tired to push!");
+        return false;
+      }
+
+      player.useStamina(STAMINA_COST_PUSH);
+
       block.x = pushX;
       block.y = pushY;
       block.targetX = pushX * TILE_W;
       block.targetY = pushY * TILE_H;
       block.isMoving = true;
+
+      camera.applyShake(2, 100);
+
       return true;
-      camera.applyShake(2, 200);
     }
-    return false;
+
+    return false; // Tile blocked
   }
 
-  return null;
+  return null; // No block to push
 }
 
 function tryPullBlock(player, dirX, dirY) {
@@ -61,7 +72,15 @@ function tryPullBlock(player, dirX, dirY) {
                     !pushableBlocks.some(b => b.x === newBlockX && b.y === newBlockY);
 
     if (canMove) {
-      // Update block position
+      const STAMINA_COST_PULL = 7;
+      if (!player.canPerformAction(STAMINA_COST_PULL)) {
+        console.log("Too tired to pull!");
+        return false;
+      }
+
+      player.useStamina(STAMINA_COST_PULL);
+
+      // Move block
       block.x = newBlockX;
       block.y = newBlockY;
       block.targetX = newBlockX * TILE_W;
@@ -70,11 +89,15 @@ function tryPullBlock(player, dirX, dirY) {
 
       // Move player in the opposite direction
       movePlayer(dirX * player.currentSpeed, dirY * player.currentSpeed, getDirectionName(dirX, dirY));
+
+      camera.applyShake(1, 100);
+
       return true;
     }
-  }
 
-  return false;
+    return false; // Block cannot move forward
+  }
+  return null; // No block behind player
 }
 
 function getDirectionName(dx, dy) {
