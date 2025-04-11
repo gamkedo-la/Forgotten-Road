@@ -108,6 +108,27 @@ function getDirectionName(dx, dy) {
   return "NONE";
 }
 
+function isCrateOnPlate(plateCol, plateRow) {
+  return crates.some(crate => crate.col === plateCol && crate.row === plateRow);
+}
+
+function updatePressurePlates() {
+  for (let row = 0; row < TILE_ROWS; row++) {
+    for (let col = 0; col < TILE_COLS; col++) {
+      if (backgroundGrid[row][col] === TILE_PRESSURE_PLATE) {
+        const isOnPlate = pushableBlocks.some(block => block.x === col && block.y === row);
+
+        if (isOnPlate) {
+          backgroundGrid[1][12] = TILE_TREE;
+          console.log(`Pressure plate at (${col}, ${row}) is pressed.`);
+        }
+      }
+    }
+  }
+}
+
+
+
 
   
   

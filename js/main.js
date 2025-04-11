@@ -281,6 +281,7 @@ function updateGameState(deltaTime) {
     spawnPendantInForest();
     quests.echoesOfTheNorth.pendantSpawned = true;
   }
+  updatePressurePlates(); 
 }
 
 function spawnPendantInForest() {
