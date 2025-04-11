@@ -292,6 +292,11 @@ function renderGameFrame(deltaTime) {
   player.drawHearts();
   drawStaminaBar();
 
+  pushableBlocks.forEach(block => {
+    ctx.fillStyle = "brown";
+    ctx.fillRect(block.x * TILE_W, block.y * TILE_H, block.width, block.height);
+  });
+
   drawQuestTracker();
   drawDialoguePrompt();
 
@@ -309,6 +314,7 @@ function handlePauseInput() {
 }
 
 function handlePlayerMovement() {
+  // sprint stamina drain
   if (player.isSprinting) {
     if (player.canPerformAction(1)) {
       player.useStamina(1);
@@ -317,12 +323,27 @@ function handlePlayerMovement() {
       player.currentSpeed = player.baseSpeed;
     }
   }
-  if (keys.up || gamepad.up) movePlayer(0, -player.currentSpeed, "NORTH");
-  if (keys.down || gamepad.down) movePlayer(0, player.currentSpeed, "SOUTH");
-  if (keys.left || gamepad.left) movePlayer(-player.currentSpeed, 0, "WEST");
-  if (keys.right || gamepad.right) movePlayer(player.currentSpeed, 0, "EAST");
+
+  // movement input
+  if (keys.up || gamepad.up) {
+    const pushed = tryPushBlock(player, 0, -1);
+    if (pushed !== false) movePlayer(0, -player.currentSpeed, "NORTH");
+  }
+  if (keys.down || gamepad.down) {
+    const pushed = tryPushBlock(player, 0, 1);
+    if (pushed !== false) movePlayer(0, player.currentSpeed, "SOUTH");
+  }
+  if (keys.left || gamepad.left) {
+    const pushed = tryPushBlock(player, -1, 0);
+    if (pushed !== false) movePlayer(-player.currentSpeed, 0, "WEST");
+  }
+  if (keys.right || gamepad.right) {
+    const pushed = tryPushBlock(player, 1, 0);
+    if (pushed !== false) movePlayer(player.currentSpeed, 0, "EAST");
+  }
   player.updateMovement();
 }
+
 
 function updateEnemiesAndProjectiles(deltaTime) {
   enemies.forEach((e) => updateEnemy(e, player));
