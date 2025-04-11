@@ -12,6 +12,8 @@ let insidebuilding = false;
 let projectiles = [];
 let worldItems = [];
 let npcs = [];
+var dialoguePrompt = null; 
+var pendingQuest = null;  
 
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);

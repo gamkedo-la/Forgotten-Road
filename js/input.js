@@ -65,7 +65,30 @@ gameCanvas.addEventListener("click", (event) => {
 
 // Key listeners
 document.addEventListener("keydown", (event) => {
-  if (player.state === "dead") return; // Prevent input if dead
+  if (player.state === "dead") return;
+
+  if (dialoguePrompt && pendingQuest) {
+    if (event.key.toLowerCase() === "y") {
+      console.log("Quest accepted");
+      pendingQuest(); // Start the quest
+
+      setTimeout(() => {
+        dialoguePrompt = null;
+        pendingQuest = null;
+      }, 100);
+    } else if (event.key.toLowerCase() === "n") {
+      console.log("Quest declined");
+
+      setTimeout(() => {
+        dialoguePrompt = null;
+        pendingQuest = null;
+      }, 100);
+    }
+
+    return; 
+  }
+
+  // Movement and game keys
   if (event.key === "ArrowUp" || event.key === "w") keys.up = true;
   if (event.key === "ArrowDown" || event.key === "s") keys.down = true;
   if (event.key === "ArrowLeft" || event.key === "a") keys.left = true;
@@ -77,8 +100,26 @@ document.addEventListener("keydown", (event) => {
     event.key === "z" ||
     event.key === "Control" ||
     event.key === "Shift"
-  )
-    keys.action = true;
+  ) keys.action = true;
+
+  if (event.key === "x" && !pressedInteract) {
+    console.log("[INPUT] X key pressed");
+    pressedInteract = true;
+
+    for (let npc of npcs) {
+      const dx = player.x - npc.x;
+      const dy = player.y - npc.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      console.log(`[NPC CHECK] ${npc.name} is ${dist.toFixed(1)}px away`);
+
+      if (dist < 40) {
+        console.log(`[NPC INTERACT] Triggering interact for ${npc.name}`);
+        npc.interact();
+        break;
+      }
+    }
+  }
   if (event.key === "p") {
     keys.pause = true;
   }
@@ -90,35 +131,6 @@ document.addEventListener("keydown", (event) => {
       player.attackTimer = 0;
     }
   }
-  if (event.key === "x" && !pressedInteract) {
-    pressedInteract = true;
-  
-    for (let npc of npcs) {
-      const dx = player.x - npc.x;
-      const dy = player.y - npc.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-  
-      if (dist < 40) {
-        npc.interact();
-        break;
-      }
-    }
-  }
-
-  if (dialoguePrompt && pendingQuest) {
-    if (event.key === "y") {
-        console.log("Quest accepted");
-        pendingQuest(); // Start the quest
-        dialoguePrompt = null;
-        pendingQuest = null;
-    } else if (event.key === "n") {
-        console.log("Quest declined");
-        dialoguePrompt = null;
-        pendingQuest = null;
-    }
-}
-
-  
   if (event.key === "h") {
     if (player.isSprinting) {
       player.currentSpeed = player.baseSpeed;
@@ -129,10 +141,8 @@ document.addEventListener("keydown", (event) => {
     }
     keys.sprint = true;
   }
-  if (event.key === "1") {
-    keys.usePotion = true;
-  }
 });
+
 
 document.addEventListener("keyup", (event) => {
   if (event.key === "ArrowUp" || event.key === "w") keys.up = false;
@@ -167,6 +177,9 @@ document.addEventListener("keyup", (event) => {
   if (event.key === "1") {
     keys.usePotion = true;
   }
+  if (event.key === "x") {
+    pressedInteract = false;
+  }  
 });
 
 // Function to handle player movement
