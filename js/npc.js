@@ -6,9 +6,6 @@ const quests = {
     }
 };
 
-var dialoguePrompt = null; 
-var pendingQuest = null;  
-
 class NPC extends Entity {
     constructor(name, x, y, dialogue, hoverText = null) {
         super(name, x, y, 100, 0);
@@ -36,13 +33,16 @@ class NPC extends Entity {
     }
 
     interact() {
-        console.log(this.name);
+        console.log(`[INTERACT] Interacting with ${this.name}`);
     
         if (dialoguePrompt || pendingQuest) {
+            console.log("[INTERACT] Skipped — dialogue prompt active");
             return;
         }
     
         if (this.name === "Old Man") {
+            console.log(`[QUEST STATE] started: ${quests.echoesOfTheNorth.started}, found: ${quests.echoesOfTheNorth.pendantFound}, completed: ${quests.echoesOfTheNorth.completed}`);
+    
             if (!quests.echoesOfTheNorth.started) {
                 dialoguePrompt = "Would you help me find a pendant I lost in the forest?";
                 pendingQuest = () => {
@@ -51,6 +51,9 @@ class NPC extends Entity {
                     console.log("Quest Started: Echoes of the North");
                 };
             } else if (quests.echoesOfTheNorth.pendantFound && !quests.echoesOfTheNorth.completed) {
+                console.log("[CHECK] pendantFound && !completed == true");
+                console.log("Triggering quest completion!");
+    
                 quests.echoesOfTheNorth.completed = true;
                 this.dialogue = "You found it! I can’t thank you enough.";
                 player.gold += 100;
@@ -62,6 +65,8 @@ class NPC extends Entity {
             this.speak();
         }
     }
+    
+    
     
     update(deltaTime) {
         this.dialogueCooldown -= deltaTime * 1000; 
