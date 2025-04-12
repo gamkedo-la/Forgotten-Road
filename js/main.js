@@ -238,6 +238,49 @@ function drawQuestTracker() {
   drawTextWithShadow(status, x, y + 18, "yellow", "12px Arial", "left");
 }
 
+function checkForMapEdgeTransition() {
+  const col = Math.floor(player.x / TILE_W);
+  const row = Math.floor(player.y / TILE_H);
+
+  // NORTH TRANSITION
+  if (row === 0 && WOLRD_MAPS["northForest"] && currentMapKey === "fallDale") {
+    switchToMap("northForest", col, TILE_ROWS - 1);
+  }
+
+  // SOUTH TRANSITION
+  if (row === TILE_ROWS - 1 && WOLRD_MAPS["fallDale"] && currentMapKey === "northForest") {
+    switchToMap("fallDale", col, 0);
+  }
+
+  // EAST TRANSITION (→ into eastFields)
+  if (col === TILE_COLS - 1 && WOLRD_MAPS["eastFields"] && currentMapKey === "fallDale") {
+    switchToMap("eastFields", 0, row); // start at left edge of eastFields
+  }
+
+  // WEST TRANSITION (← back into startTown)
+  if (col === 0 && WOLRD_MAPS["fallDale"] && currentMapKey === "eastFields") {
+    switchToMap("fallDale", TILE_COLS - 1, row); // return to right edge of startTown
+  }
+}
+
+
+function switchToMap(newMapKey, playerCol, playerRow) {
+  if (!WOLRD_MAPS[newMapKey]) {
+    console.warn(`Map '${newMapKey}' not found.`);
+    return;
+  }
+
+  currentMapKey = newMapKey;
+  backgroundGrid = WOLRD_MAPS[newMapKey];
+  SetupCollisionGridFromBackground();
+  updateBackground();
+
+  player.x = playerCol * TILE_W;
+  player.y = playerRow * TILE_H;
+
+  console.log(`Switched to ${newMapKey}`);
+}
+
 function updateGameState(deltaTime) {
   handlePauseInput();
   if (paused) return;
@@ -282,6 +325,7 @@ function updateGameState(deltaTime) {
     quests.echoesOfTheNorth.pendantSpawned = true;
   }
   updatePressurePlates(); 
+  checkForMapEdgeTransition();
 }
 
 function spawnPendantInForest() {
