@@ -373,6 +373,7 @@ function renderGameFrame(deltaTime) {
 
   drawQuestTracker();
   drawDialoguePrompt();
+  drawIntroText();
 
   if (playState === "gameover") {
     drawGameOverScreen();
