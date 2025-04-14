@@ -203,6 +203,9 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
   if (!tileImage) return;
 
   if (tileType === TILE_TREE) {
+    // draw the ground tile
+    context.drawImage(tilePics[TILE_GRASS], 0, 0, 32, 32, col * TILE_W, row * TILE_H, TILE_W, TILE_H);
+    // draw the tree over top of it
     context.drawImage(tileImage, col * TILE_W - 32, row * TILE_H - 32);
   } else {
     context.drawImage(tileImage, sX, sY, 32, 32, col * TILE_W, row * TILE_H, TILE_W, TILE_H);
