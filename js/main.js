@@ -12,53 +12,18 @@ let insidebuilding = false;
 let projectiles = [];
 let worldItems = [];
 let npcs = [];
+let buildings = {};
 let dialoguePrompt = null; 
 let pendingQuest = null;  
 let isBlockSliding = false;
 let isPullingBlock = false;
 let pulledBlock = null;
-
-
+let lastMapSwitchTime = 0;
+const MAP_SWITCH_COOLDOWN = 1000; // milliseconds
 
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
 camera.followTarget = player;
-
-// Building Setup
-const gameState = {
-  buildings: {
-    blacksmithShop: {
-      x: 32,
-      y: 1 * 32,
-      sX: 0,
-      sY: 0,
-      sW: 32 * 6,
-      sH: 32 * 6,
-      width: 32 * 6,
-      height: 32 * 6,
-      color: "rgba(9, 0, 128, 0.5)",
-      image: blacksmithShopPic,
-      buildingMessage:
-        "You're in the blacksmith shop! You can interact with NPCs or buy items.",
-      insidebuilding: false,
-    },
-    alchemistShop: {
-      x: 32 * 18,
-      y: 5 * 32,
-      sX: 0,
-      sY: 32 * 6,
-      sW: 32 * 6,
-      sH: 32 * 6,
-      width: 32 * 6,
-      height: 32 * 6,
-      color: "rgba(9, 0, 128, 0.5)",
-      image: alchemistShopPic,
-      buildingMessage:
-        "You're in the alchemist shop! You can interact with NPCs or buy items.",
-      insidebuilding: false,
-    },
-  },
-};
 
 // Enemy Factory and Spawning
 function createMonster({
@@ -195,9 +160,8 @@ window.onload = function () {
 
 function imageLoadingDoneSoStartGame() {
   console.log("All images downloaded. Starting game!");
-  SetupCollisionGridFromBackground();
+  switchToMap("fallDale", 5, 4); // Optional: adjust to starting col/row
   spawnMonstersFromMap();
-  spawnNPCs();
   requestAnimationFrame(drawGameFrame);
 }
 
@@ -239,30 +203,36 @@ function drawQuestTracker() {
 }
 
 function checkForMapEdgeTransition() {
-  const col = Math.floor(player.x / TILE_W);
-  const row = Math.floor(player.y / TILE_H);
+  var now = performance.now();
+  if (now - lastMapSwitchTime < MAP_SWITCH_COOLDOWN) return;
 
-  // NORTH TRANSITION
+  var col = Math.floor(player.x / TILE_W);
+  var row = Math.floor(player.y / TILE_H);
+
+  // NORTH
   if (row === 0 && WOLRD_MAPS["northForest"] && currentMapKey === "fallDale") {
-    switchToMap("northForest", col, TILE_ROWS - 1);
+    switchToMap("northForest", col, TILE_ROWS - 2);
+    lastMapSwitchTime = now;
   }
 
-  // SOUTH TRANSITION
-  if (row === TILE_ROWS - 1 && WOLRD_MAPS["fallDale"] && currentMapKey === "northForest") {
-    switchToMap("fallDale", col, 0);
+  // SOUTH
+  else if (row === TILE_ROWS - 1 && WOLRD_MAPS["fallDale"] && currentMapKey === "northForest") {
+    switchToMap("fallDale", col, 1);
+    lastMapSwitchTime = now;
   }
 
-  // EAST TRANSITION (→ into eastFields)
-  if (col === TILE_COLS - 1 && WOLRD_MAPS["eastFields"] && currentMapKey === "fallDale") {
-    switchToMap("eastFields", 0, row); // start at left edge of eastFields
+  // EAST
+  else if (col === TILE_COLS - 1 && WOLRD_MAPS["eastFields"] && currentMapKey === "fallDale") {
+    switchToMap("eastFields", 1, row);
+    lastMapSwitchTime = now;
   }
 
-  // WEST TRANSITION (← back into startTown)
-  if (col === 0 && WOLRD_MAPS["fallDale"] && currentMapKey === "eastFields") {
-    switchToMap("fallDale", TILE_COLS - 1, row); // return to right edge of startTown
+  // WEST
+  else if (col === 0 && WOLRD_MAPS["fallDale"] && currentMapKey === "eastFields") {
+    switchToMap("fallDale", TILE_COLS - 2, row);
+    lastMapSwitchTime = now;
   }
 }
-
 
 function switchToMap(newMapKey, playerCol, playerRow) {
   if (!WOLRD_MAPS[newMapKey]) {
@@ -278,8 +248,13 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   player.x = playerCol * TILE_W;
   player.y = playerRow * TILE_H;
 
+  // Clear and load map-specific content
+  npcs = MAP_DATA[newMapKey]?.npcs || [];
+  buildings = MAP_DATA[newMapKey]?.buildings || {};
+
   console.log(`Switched to ${newMapKey}`);
 }
+
 
 function updateGameState(deltaTime) {
   handlePauseInput();
@@ -501,8 +476,8 @@ function drawWorldItem(item) {
 }
 
 function drawBuildings() {
-  for (let key in gameState.buildings) {
-    const b = gameState.buildings[key];
+  for (let key in buildings) {
+    const b = buildings[key];
     ctx.drawImage(b.image, b.sX, b.sY, b.sW, b.sH, b.x, b.y, b.width, b.height);
   }
 }
@@ -525,12 +500,8 @@ function drawStaminaBar() {
 }
 
 function checkBuildingCollisions() {
-  for (let key in gameState.buildings) {
-    checkCollision(
-      player,
-      gameState.buildings[key],
-      gameState.buildings[key].buildingMessage
-    );
+  for (let key in buildings) {
+    checkCollision(player, buildings[key], buildings[key].buildingMessage);
   }
 }
 
