@@ -210,7 +210,14 @@ class Player extends Entity {
   }
 
   damagedEquippedItem (){
-    if (this.equipment.weapon){this.equipment.weapon.durability--};    
+    if (this.equipment.weapon){
+      this.equipment.weapon.durability--
+    }; 
+      if (this.equipment.weapon.durability < 0){
+        this.equipment.weapon.durability = 0;
+        console.log (`${this.equipment.weapon.name} is broken!`);        
+      }
+
   }
 
   getEquippedBonusDamage() {
