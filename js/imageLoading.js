@@ -27,7 +27,7 @@ var picsToLoad = 0;
 
 function countLoadedImagesAndLaunchIfReady(){
 		picsToLoad--;
-		console.log("finished downloading image #"+picsToLoad);
+		//console.log("finished downloading image #"+picsToLoad);
 		if(picsToLoad == 0) {
 			imageLoadingDoneSoStartGame();
 	}

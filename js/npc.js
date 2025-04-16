@@ -191,8 +191,19 @@ function drawDialogueBox(npc) {
 }
 
 function drawDialoguePrompt() {
-    if (!dialoguePrompt) return;
-
+    if (!dialoguePrompt) {
+        for (let npc of npcs) {
+            const dx = player.x - npc.x;
+            const dy = player.y - npc.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+       
+            if (dist < 40) {
+                drawTextWithShadow("Press X to Interact", player.x + 20, player.y + 60, "white", "14px Arial", "left");
+            }
+          }
+        return;
+    }
+    
     const width = 400;
     const height = 100;
     const x = canvas.width / 2 - width / 2;

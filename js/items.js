@@ -38,7 +38,7 @@ function drawBackpackUI(ctx, player) {
     let slotSize = 32;
     let padding = 4;
     let cols = 5;
-
+    
     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     ctx.fillRect(
         startX - 5,
