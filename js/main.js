@@ -22,7 +22,7 @@ let lastMapSwitchTime = 0;
 const MAP_SWITCH_COOLDOWN = 1000; // milliseconds
 
 // Player
-const player = new Player("Hero", 300, 500, 30, 10, 1, 50);
+const player = new Player("Hero", 300, 500, 30, 10, 1, STARTING_GOLD);
 camera.followTarget = player;
 
 // Enemy Factory and Spawning
@@ -341,7 +341,7 @@ function renderGameFrame(deltaTime) {
   temp_ui_elements.forEach((ui) => ui.draw());
   if (paused) drawPauseOverlay();
 
-  // FIXME: these GUI elements scroll when the camera moves!
+  // FIXME: these scroll when the camera moves!
   player.drawHearts();
   drawStaminaBar();
   drawQuestTracker();
@@ -446,7 +446,7 @@ function updateUI(deltaTime) {
 }
 
 function drawGoldUI() {
-  colorRect(5, 40, 110, 30, "rgba(0, 0, 0, 0.5)");
+  colorRect(5, 40, 170, 30, "rgba(0, 0, 0, 0.5)");
   drawTextWithShadow(
     `Gold: ${player.gold}`,
     15,
@@ -455,6 +455,12 @@ function drawGoldUI() {
     UI_TEXT_STYLES.DEFAULT.font,
     UI_TEXT_STYLES.DEFAULT.align
   );
+  // actually draw each gold coin in stacks of ten! =)
+  for (let n=0; n<player.gold; n++) {
+    let x = 100 + Math.floor(n/10)*12;
+    let y = 60 + (n % 10)*-2;
+    ctx.drawImage(coinPic,x,y);
+  }
 }
 
 function drawPauseOverlay() {

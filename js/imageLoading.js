@@ -20,6 +20,7 @@ var orcPic = document.createElement("img");
 var wraithPic = document.createElement("img"); 
 var oldManPic = document.createElement("img");
 var boxPic = document.createElement("img");
+var coinPic = document.createElement("img");
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
 
@@ -66,6 +67,7 @@ function loadImages() {
         {varName: healthPotionPic, theFile: "healthPotion.png"},
         {varName: oldManPic, theFile: "merchant.png"},
         {varName: boxPic, theFile: "box.png"},
+        {varName: coinPic, theFile: "coin.png"},
 
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},

@@ -6,6 +6,8 @@ const frameDuration = 0.1; // seconds (100 ms)
 const STAMINA_COST_PUSH = 5;
 const STAMINA_COST_PULL = 7;
 
+var STARTING_GOLD = Math.round(Math.random()*50); // just for testing!
+
 class Player extends Entity {
   constructor(name, x, y, health, damage, level, gold) {
     super(name, x, y, health, damage);
