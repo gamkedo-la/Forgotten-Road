@@ -43,11 +43,12 @@ const MAP_DATA = {
         height: 32 * 6,
         color: "rgba(9, 0, 128, 0.5)",
         image: blacksmithShopPic,
-        buildingMessage: "You're in the blacksmith shop! You can interact with NPCs or buy items.",
+        buildingMessage:
+          "You're in the blacksmith shop! You can interact with NPCs or buy items.",
         insidebuilding: false,
       },
       alchemistShop: {
-        x: 32*18,
+        x: 32 * 18,
         y: 5 * 32,
         sX: 0,
         sY: 0,
@@ -57,43 +58,44 @@ const MAP_DATA = {
         height: 32 * 6,
         color: "rgba(9, 0, 128, 0.5)",
         image: alchemistShopPic,
-        buildingMessage: "You're in the alchemist shop! You can interact with NPCs or buy items.",
+        buildingMessage:
+          "You're in the alchemist shop! You can interact with NPCs or buy items.",
         insidebuilding: false,
       },
-    }
+    },
   },
   northForest: {
     npcs: [],
-    buildings: {}
+    buildings: {},
   },
   eastFields: {
     npcs: [],
-    buildings: {}
-  }
+    buildings: {},
+  },
 };
 
 // Background grids
-const WOLRD_MAPS = {
+const WORLD_MAPS = {
   fallDale: [
-      [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 2, 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
-      [0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0],
-      [4, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 3, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0],
-      [0, 1, 3, 3, 1, 1, 1, 0, 0, 0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
-      [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
-      [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 4, 0, 0, 1, 3, 3, 3, 3, 1, 0],
-      [0, 0, 0, 0, 4, 4, 0, 0, 7, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
-      [0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0],
-      [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+    [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 2, 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+    [0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0],
+    [4, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 3, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0],
+    [0, 1, 3, 3, 1, 1, 1, 0, 0, 0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
+    [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0],
+    [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 4, 0, 0, 1, 3, 3, 3, 3, 1, 0],
+    [0, 0, 0, 0, 4, 4, 0, 0, 7, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0],
+    [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
   ],
   northForest: [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -114,9 +116,9 @@ const WOLRD_MAPS = {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ],
-  eastFields: [ 
+  eastFields: [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0],
@@ -135,7 +137,7 @@ const WOLRD_MAPS = {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 0],
   ],
   southForest: [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -156,13 +158,12 @@ const WOLRD_MAPS = {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0],
-    [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+    [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
   ],
-
-}
+};
 
 var currentMapKey = "fallDale";
-var backgroundGrid = WOLRD_MAPS[currentMapKey];
+var backgroundGrid = WORLD_MAPS[currentMapKey];
 
 var collisionGrid = [];
 let pathfindingGrid = Array.from({ length: GRID_HEIGHT }, () =>
@@ -175,9 +176,9 @@ let cachedBackgroundGrid = [];
 function SetupCollisionGridFromBackground() {
   if (!backgroundGrid || backgroundGrid.length === 0) return;
 
-  collisionGrid = new Array(TILE_ROWS).fill(null).map(() =>
-    new Array(TILE_COLS).fill(null)
-  );
+  collisionGrid = new Array(TILE_ROWS)
+    .fill(null)
+    .map(() => new Array(TILE_COLS).fill(null));
 
   for (let row = 0; row < TILE_ROWS; row++) {
     for (let col = 0; col < TILE_COLS; col++) {
@@ -188,8 +189,8 @@ function SetupCollisionGridFromBackground() {
       collisionGrid[row][col].name = `${col},${row}`;
       collisionGrid[row][col].idx = idxHere;
       collisionGrid[row][col].elementType = tileType;
-      collisionGrid[row][col].isWalkable = (tileType !== TILE_WALL &&
-                                            tileType !== TILE_CLIFF);
+      collisionGrid[row][col].isWalkable =
+        tileType !== TILE_WALL && tileType !== TILE_CLIFF;
     }
   }
 }
@@ -225,7 +226,10 @@ function precomputeBackground() {
 
     for (let col = 0; col < TILE_COLS; col++) {
       const tileType = backgroundGrid[row][col];
-      const result = checkTileTypeForConnectors(tileType, col, row) || checkTileTypeForRandomization(tileType) || {};
+      const result =
+        checkTileTypeForConnectors(tileType, col, row) ||
+        checkTileTypeForRandomization(tileType) ||
+        {};
       const { sX = 0, sY = 0 } = result;
       cachedBackgroundGrid[row][col] = { sX, sY, tileType };
     }
@@ -255,20 +259,43 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
 
   if (tileType === TILE_TREE) {
     // draw the ground tile
-    context.drawImage(tilePics[TILE_GRASS], 0, 0, 32, 32, col * TILE_W, row * TILE_H, TILE_W, TILE_H);
+    context.drawImage(
+      tilePics[TILE_GRASS],
+      0,
+      0,
+      32,
+      32,
+      col * TILE_W,
+      row * TILE_H,
+      TILE_W,
+      TILE_H
+    );
     // draw the tree over top of it
     context.drawImage(tileImage, col * TILE_W - 32, row * TILE_H - 32);
   } else {
-    context.drawImage(tileImage, sX, sY, 32, 32, col * TILE_W, row * TILE_H, TILE_W, TILE_H);
+    context.drawImage(
+      tileImage,
+      sX,
+      sY,
+      32,
+      32,
+      col * TILE_W,
+      row * TILE_H,
+      TILE_W,
+      TILE_H
+    );
   }
 }
 
 function checkTileTypeForConnectors(tileType, x, y) {
   if (tileType === TILE_ROAD) {
     const above = y > 0 && backgroundGrid[y - 1][x] === TILE_ROAD;
-    const below = y < backgroundGrid.length - 1 && backgroundGrid[y + 1][x] === TILE_ROAD;
+    const below =
+      y < backgroundGrid.length - 1 && backgroundGrid[y + 1][x] === TILE_ROAD;
     const left = x > 0 && backgroundGrid[y][x - 1] === TILE_ROAD;
-    const right = x < backgroundGrid[0].length - 1 && backgroundGrid[y][x + 1] === TILE_ROAD;
+    const right =
+      x < backgroundGrid[0].length - 1 &&
+      backgroundGrid[y][x + 1] === TILE_ROAD;
 
     if (above && below) return { sX: 32, sY: 32 };
     if (left && right) return { sX: 0, sY: 32 };
@@ -277,12 +304,14 @@ function checkTileTypeForConnectors(tileType, x, y) {
     if (below && right) return { sX: 0, sY: 0 };
     if (below && left) return { sX: 64, sY: 0 };
 
-    return { sX: 32, sY: 32 }; 
+    return { sX: 32, sY: 32 };
   }
 
   if (tileType === TILE_CLIFF) {
     const leftIsGrass = x > 0 && backgroundGrid[y][x - 1] === TILE_GRASS;
-    const rightIsGrass = x < backgroundGrid[0].length - 1 && backgroundGrid[y][x + 1] === TILE_GRASS;
+    const rightIsGrass =
+      x < backgroundGrid[0].length - 1 &&
+      backgroundGrid[y][x + 1] === TILE_GRASS;
 
     if (leftIsGrass && !rightIsGrass) {
       return { sX: 0, sY: 0 }; // opens to grass on the left

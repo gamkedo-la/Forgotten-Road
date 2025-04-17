@@ -10,17 +10,21 @@ let pressedPause = false;
 let turnPathFindingDrawingOn = false;
 let insidebuilding = false;
 let projectiles = [];
-let worldItems = [];
+let worldItems = {};
 let npcs = [];
 let buildings = {};
-let dialoguePrompt = null; 
-let pendingQuest = null;  
+let dialoguePrompt = null;
+let pendingQuest = null;
 let isBlockSliding = false;
 let isPullingBlock = false;
 let pulledBlock = null;
 let lastMapSwitchTime = 0;
 const MAP_SWITCH_COOLDOWN = 1000; // milliseconds
 
+//Initialize the world items arrays for each screen
+Object.keys(WORLD_MAPS).forEach((key) => {
+  worldItems[key] = [];
+});
 // Player
 const player = new Player("Hero", 300, 500, 30, 10, 1, STARTING_GOLD);
 camera.followTarget = player;
@@ -139,15 +143,12 @@ function spawnMonstersFromMap() {
 }
 
 function spawnNPCs() {
-  const oldMan = new NPC(
-    "Old Man",
-    12 * TILE_W,
-    8 * TILE_H,
-    [ "The forest holds many secrets...",
-      "Sometimes I still hear the wind whisper his name.",
-      "I wasn't always this old, you know.",
-      "We lost something out there..."]
-  );
+  const oldMan = new NPC("Old Man", 12 * TILE_W, 8 * TILE_H, [
+    "The forest holds many secrets...",
+    "Sometimes I still hear the wind whisper his name.",
+    "I wasn't always this old, you know.",
+    "We lost something out there...",
+  ]);
   npcs.push(oldMan);
 }
 
@@ -210,38 +211,50 @@ function checkForMapEdgeTransition() {
   var row = Math.floor(player.y / TILE_H);
 
   // NORTH
-  if (row === 0 && WOLRD_MAPS["northForest"] && currentMapKey === "fallDale") {
+  if (row === 0 && WORLD_MAPS["northForest"] && currentMapKey === "fallDale") {
     switchToMap("northForest", col, TILE_ROWS - 2);
     lastMapSwitchTime = now;
   }
 
   // SOUTH
-  else if (row === TILE_ROWS - 1 && WOLRD_MAPS["fallDale"] && currentMapKey === "northForest") {
+  else if (
+    row === TILE_ROWS - 1 &&
+    WORLD_MAPS["fallDale"] &&
+    currentMapKey === "northForest"
+  ) {
     switchToMap("fallDale", col, 1);
     lastMapSwitchTime = now;
   }
 
   // EAST
-  else if (col === TILE_COLS - 1 && WOLRD_MAPS["eastFields"] && currentMapKey === "fallDale") {
+  else if (
+    col === TILE_COLS - 1 &&
+    WORLD_MAPS["eastFields"] &&
+    currentMapKey === "fallDale"
+  ) {
     switchToMap("eastFields", 1, row);
     lastMapSwitchTime = now;
   }
 
   // WEST
-  else if (col === 0 && WOLRD_MAPS["fallDale"] && currentMapKey === "eastFields") {
+  else if (
+    col === 0 &&
+    WORLD_MAPS["fallDale"] &&
+    currentMapKey === "eastFields"
+  ) {
     switchToMap("fallDale", TILE_COLS - 2, row);
     lastMapSwitchTime = now;
   }
 }
 
 function switchToMap(newMapKey, playerCol, playerRow) {
-  if (!WOLRD_MAPS[newMapKey]) {
+  if (!WORLD_MAPS[newMapKey]) {
     console.warn(`Map '${newMapKey}' not found.`);
     return;
   }
 
   currentMapKey = newMapKey;
-  backgroundGrid = WOLRD_MAPS[newMapKey];
+  backgroundGrid = WORLD_MAPS[newMapKey];
   SetupCollisionGridFromBackground();
   updateBackground();
 
@@ -255,27 +268,26 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   console.log(`Switched to ${newMapKey}`);
 }
 
-
 function updateGameState(deltaTime) {
   handlePauseInput();
   if (paused) return;
   handlePlayerMovement();
   player.regenStamina(deltaTime);
-  npcs.forEach(npc => npc.update && npc.update(deltaTime));
+  npcs.forEach((npc) => npc.update && npc.update(deltaTime));
   handleQuickUseKeys();
   updateEnemiesAndProjectiles(deltaTime);
   handleItemPickups();
   checkBuildingCollisions();
   isBlockSliding = false; // reset before checking
 
-  pushableBlocks.forEach(block => {
+  pushableBlocks.forEach((block) => {
     if (block.isMoving) {
       isBlockSliding = true; // block is sliding this frame
-  
+
       let dx = block.targetX - block.drawX;
       let dy = block.targetY - block.drawY;
       const speed = 4;
-  
+
       if (Math.abs(dx) <= speed && Math.abs(dy) <= speed) {
         block.drawX = block.targetX;
         block.drawY = block.targetY;
@@ -288,8 +300,8 @@ function updateGameState(deltaTime) {
       block.drawX = block.x * TILE_W;
       block.drawY = block.y * TILE_H;
     }
-  });  
-  
+  });
+
   updateUI(deltaTime);
   if (
     quests.echoesOfTheNorth.started &&
@@ -299,7 +311,7 @@ function updateGameState(deltaTime) {
     spawnPendantInForest();
     quests.echoesOfTheNorth.pendantSpawned = true;
   }
-  updatePressurePlates(); 
+  updatePressurePlates();
   checkForMapEdgeTransition();
 }
 
@@ -317,7 +329,7 @@ function spawnPendantInForest() {
       console.log("Pendant found! Return to the Old Man.");
     },
   };
-  worldItems.push(pendant);
+  worldItems["northForest"].push(pendant);
 }
 
 function renderGameFrame(deltaTime) {
@@ -328,12 +340,22 @@ function renderGameFrame(deltaTime) {
 
   player.draw(deltaTime);
   npcs.forEach((npc) => npc.draw && npc.draw(deltaTime));
-  worldItems.forEach((item) => drawWorldItem(item));
+  worldItems[currentMapKey].forEach((item) => drawWorldItem(item));
   enemies.filter((e) => !e.isDead).forEach((e) => e.draw(deltaTime));
-  pushableBlocks.forEach(block => {
+  pushableBlocks.forEach((block) => {
     //colorRect(block.drawX, block.drawY, block.width, block.height, 'brown');
-    ctx.drawImage(boxPic, 0, 0, block.width, block.height, block.drawX, block.drawY, 32, 32);
-  });  
+    ctx.drawImage(
+      boxPic,
+      0,
+      0,
+      block.width,
+      block.height,
+      block.drawX,
+      block.drawY,
+      32,
+      32
+    );
+  });
   projectiles.forEach((p) => p.draw(ctx));
   drawBackpackUI(ctx, player);
 
@@ -346,7 +368,7 @@ function renderGameFrame(deltaTime) {
   drawStaminaBar();
   drawQuestTracker();
   drawDialoguePrompt();
-  drawIntroText(); 
+  drawIntroText();
 
   if (playState === "gameover") {
     drawGameOverScreen();
@@ -396,7 +418,6 @@ function handlePlayerMovement() {
   player.updateMovement();
 }
 
-
 function updateEnemiesAndProjectiles(deltaTime) {
   enemies.forEach((e) => updateEnemy(e, player));
   enemies.forEach((e) =>
@@ -407,12 +428,11 @@ function updateEnemiesAndProjectiles(deltaTime) {
 }
 
 function handleItemPickups() {
-  for (let i = worldItems.length - 1; i >= 0; i--) {
-    const item = worldItems[i];
+  for (let i = worldItems[currentMapKey].length - 1; i >= 0; i--) {
+    const item = worldItems[currentMapKey][i];
     const dx = player.x - item.x;
     const dy = player.y - item.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-
     if (dist < item.pickupRadius) {
       // Custom on-pickup
       if (item.onPickup) {
@@ -423,11 +443,12 @@ function handleItemPickups() {
       if (item.use === "heal" && player.currentHP < player.maxHP) {
         player.heal(item.amount);
       } else {
+        console.log("Add item to inventory");
         player.addItemToInventory(item);
       }
 
       // Remove from world
-      worldItems.splice(i, 1);
+      worldItems[currentMapKey].splice(i, 1);
     }
   }
 }
@@ -456,10 +477,10 @@ function drawGoldUI() {
     UI_TEXT_STYLES.DEFAULT.align
   );
   // actually draw each gold coin in stacks of ten! =)
-  for (let n=0; n<player.gold; n++) {
-    let x = 100 + Math.floor(n/10)*12;
-    let y = 60 + (n % 10)*-2;
-    ctx.drawImage(coinPic,x,y);
+  for (let n = 0; n < player.gold; n++) {
+    let x = 100 + Math.floor(n / 10) * 12;
+    let y = 60 + (n % 10) * -2;
+    ctx.drawImage(coinPic, x, y);
   }
 }
 
