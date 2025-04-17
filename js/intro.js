@@ -1,3 +1,4 @@
+var please_skip_intro = false;
 var current_intro_text = "";
 var current_intro_fade = 1;
 var current_intro_fadespeed = 0.0005;
@@ -17,30 +18,35 @@ function intro_text(str) {
 }
 
 function intro1() {
+    if (please_skip_intro) return;
     console.log("intro part 1");
     intro_voiceover_1.play();
     intro_text(voiceover_script[0]);
 }
 
 function intro2() {
+    if (please_skip_intro) return;
     console.log("intro part 2");
     intro_voiceover_2.play();
     intro_text(voiceover_script[1]);
 }
 
 function intro3() {
+    if (please_skip_intro) return;
     console.log("intro part 3");
     intro_voiceover_3.play();
     intro_text(voiceover_script[2]);
 }
 
 function intro4() {
+    if (please_skip_intro) return;
     console.log("intro part 4");
     intro_voiceover_4.play();
     intro_text(voiceover_script[3]);
 }
 
 function drawIntroText() {
+    if (please_skip_intro) return;
     if (current_intro_fade > 0) {
         //console.log("INTRO!");
         current_intro_fade -= current_intro_fadespeed;
@@ -51,8 +57,17 @@ function drawIntroText() {
             drawTextWithShadow(arr[line], 400, 610+(line*20)-((1-current_intro_fade)*120),"white","14px Arial","center");
         }
     }
+    // note that you can hit Esc
+    drawTextWithShadow("[Esc] Skip Intro",790,598,"rgba(255,255,255,0.5)","14px Arial","right");
 }
 
+function skip_intro() {
+    please_skip_intro = true; // skip any future setTimeout calls
+    intro_voiceover_1.pause();
+    intro_voiceover_2.pause();
+    intro_voiceover_3.pause();
+    intro_voiceover_4.pause();
+}
 
 function startIntro() {
     console.log("playing music and queueing up intro voiceovers");

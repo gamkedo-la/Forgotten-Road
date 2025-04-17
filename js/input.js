@@ -46,6 +46,11 @@ gameCanvas.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (player.state === "dead") return;
 
+  // skip intro voiceovers
+  console.log("keypress:"+event.key);
+  if (event.key=='Escape') { skip_intro(); }
+
+
   // Handle active prompt
   if (dialoguePrompt && pendingQuest) {
     if (event.key.toLowerCase() === "y") {

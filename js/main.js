@@ -341,14 +341,12 @@ function renderGameFrame(deltaTime) {
   temp_ui_elements.forEach((ui) => ui.draw());
   if (paused) drawPauseOverlay();
 
+  // FIXME: these GUI elements scroll when the camera moves!
   player.drawHearts();
   drawStaminaBar();
-
-
-
   drawQuestTracker();
   drawDialoguePrompt();
-  drawIntroText();
+  drawIntroText(); 
 
   if (playState === "gameover") {
     drawGameOverScreen();
