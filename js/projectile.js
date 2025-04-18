@@ -10,6 +10,7 @@ class Projectile {
         this.owner = owner;
         this.ownerType = ownerType;
         this.sY = 0;
+        this.bouncesRemaining = 2;
 
     }
 
@@ -33,8 +34,27 @@ class Projectile {
             !collisionGrid[tileY][tileX] ||
             !collisionGrid[tileY][tileX].isWalkable
           ) {
-            console.log(`Projectile hit wall at (${tileX}, ${tileY})`);
-            this.isActive = false;
+            switch (this.direction) {
+                case "up":
+                  this.direction = "down";
+                break;
+                case "down":
+                  this.direction = "up";
+                break;
+                case "left":
+                  this.direction = "right";
+                break;
+                case "right":
+                  this.direction = "left";
+                break;
+            }
+            
+            this.bouncesRemaining--;
+            this.speed *= 0.8;
+            if (this.bouncesRemaining <= 0) {
+              this.isActive = false;
+            }
+          
             return;
         }
           
