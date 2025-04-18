@@ -50,6 +50,7 @@ class Projectile {
             }
             
             this.bouncesRemaining--;
+            createSpark(this.x + this.width / 2, this.y + this.height / 2);
             this.speed *= 0.8;
             if (this.bouncesRemaining <= 0) {
               this.isActive = false;
@@ -95,4 +96,28 @@ class Projectile {
         if (!this.isActive) return;
         ctx.drawImage(boltPic, 0,this.sY, this.width, this.height, this.x, this.y, this.width, this.height);
     }
+}
+
+function createSpark(x, y) {
+  const spark = {
+    x,
+    y,
+    radius: 8,
+    life: 0.3,
+    maxLife: 0.3,
+    color: "yellow",
+    update(deltaTime) {
+      this.life -= deltaTime;
+      this.radius *= 0.92; 
+    },
+    draw(ctx) {
+      if (this.life > 0) {
+        const opacity = this.life / this.maxLife;
+        const rgbaColor = `rgba(255, 255, 0, ${opacity})`;
+        colorCircle(this.x, this.y, this.radius, rgbaColor); 
+      }
+    }
+  };
+
+  temp_ui_elements.push(spark);
 }
