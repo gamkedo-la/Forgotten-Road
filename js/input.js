@@ -14,6 +14,11 @@ const keys = {
 
 var mouse = { x: 0, y: 0, clicked: false, hoverObjects: null };
 
+var { x: worldX, y: worldY } = screenToWorld(mouse.x, mouse.y);
+var clickX = Math.floor(worldX / TILE_W);
+var clickY = Math.floor(worldY / TILE_H);
+
+
 gameCanvas.addEventListener("mousemove", (event) => {
   const rect = gameCanvas.getBoundingClientRect();
   mouse.x = event.clientX - rect.left;
@@ -26,10 +31,19 @@ gameCanvas.addEventListener("mousedown", (event) => {
 });
 
 gameCanvas.addEventListener("click", (event) => {
-  const rect = gameCanvas.getBoundingClientRect();
+  let rect = gameCanvas.getBoundingClientRect();
 
-  let clickX = Math.floor((event.clientX - rect.left) / TILE_W);
-  let clickY = Math.floor((event.clientY - rect.top) / TILE_H);
+  // Screen coords
+  let screenX = event.clientX - rect.left;
+  let screenY = event.clientY - rect.top;
+  
+  // World coords
+  let worldX = screenX + camera.x;
+  let worldY = screenY + camera.y;
+  
+  let clickX = Math.floor(worldX / TILE_W);
+  let clickY = Math.floor(worldY / TILE_H);
+  
 
   let playerX = Math.floor(player.x / TILE_W);
   let playerY = Math.floor(player.y / TILE_H);
@@ -37,10 +51,18 @@ gameCanvas.addEventListener("click", (event) => {
   if (!player.isMoving) {
     const path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
     if (path.length > 0) {
+      console.log("Click path to:", clickX, clickY);
       player.setPath(path);
     }
   }
 });
+
+function screenToWorld(x, y) {
+  return {
+    x: x + camera.x,
+    y: y + camera.y
+  };
+}
 
 // Key listeners
 document.addEventListener("keydown", (event) => {
