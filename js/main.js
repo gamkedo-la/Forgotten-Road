@@ -161,7 +161,7 @@ window.onload = function () {
 
 function imageLoadingDoneSoStartGame() {
   console.log("All images downloaded. Starting game!");
-  switchToMap("fallDale", 5, 4); // Optional: adjust to starting col/row
+  switchToMap("fallDale", 5, 4); 
   spawnMonstersFromMap();
   requestAnimationFrame(drawGameFrame);
 }
@@ -174,16 +174,19 @@ function drawGameFrame(currentTime) {
   check_gamepad();
   updateGameState(deltaTime);
 
-  // Add this before rendering
   camera.update(deltaTime);
   ctx.save();
   camera.applyTransform(ctx);
-  renderGameFrame(deltaTime);
-  ctx.restore(); // restore after all drawing
 
+  renderGameWorld(deltaTime); 
+  ctx.restore();              
+
+  renderUI();                
   requestAnimationFrame(drawGameFrame);
+
   mouse.clicked = false;
 }
+
 
 function drawQuestTracker() {
   if (!quests.echoesOfTheNorth.started || quests.echoesOfTheNorth.completed)
@@ -332,7 +335,7 @@ function spawnPendantInForest() {
   worldItems["northForest"].push(pendant);
 }
 
-function renderGameFrame(deltaTime) {
+function renderGameWorld(deltaTime) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground();
   if (turnPathFindingDrawingOn) drawPathingFindingTiles();
@@ -343,7 +346,6 @@ function renderGameFrame(deltaTime) {
   worldItems[currentMapKey].forEach((item) => drawWorldItem(item));
   enemies.filter((e) => !e.isDead).forEach((e) => e.draw(deltaTime));
   pushableBlocks.forEach((block) => {
-    //colorRect(block.drawX, block.drawY, block.width, block.height, 'brown');
     ctx.drawImage(
       boxPic,
       0,
@@ -357,13 +359,14 @@ function renderGameFrame(deltaTime) {
     );
   });
   projectiles.forEach((p) => p.draw(ctx));
-  drawBackpackUI(ctx, player);
+}
 
+function renderUI() {
+  drawBackpackUI(ctx, player);
   drawGoldUI();
   temp_ui_elements.forEach((ui) => ui.draw());
-  if (paused) drawPauseOverlay();
 
-  // FIXME: these scroll when the camera moves!
+  if (paused) drawPauseOverlay();
   player.drawHearts();
   drawStaminaBar();
   drawQuestTracker();
