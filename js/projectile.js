@@ -28,12 +28,16 @@ class Projectile {
         const tileY = Math.floor(this.y / TILE_H);
     
         // Check collision with walls
-        if (!collisionGrid[tileY] || !collisionGrid[tileY][tileX] || collisionGrid[tileY][tileX] === 1) {
+        if (
+            !collisionGrid[tileY] ||
+            !collisionGrid[tileY][tileX] ||
+            !collisionGrid[tileY][tileX].isWalkable
+          ) {
             console.log(`Projectile hit wall at (${tileX}, ${tileY})`);
             this.isActive = false;
             return;
         }
-    
+          
         // Check collision with player (if fired by enemy)
         if (this.ownerType === "enemy") {
             const playerTileX = Math.floor(player.x / TILE_W);
