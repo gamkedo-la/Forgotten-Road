@@ -15,6 +15,7 @@ class Projectile {
       this.statusEffect = statusEffect;
       this.maxDistance = 300;
       this.distanceTraveled = 0;
+      this.isChaotic = false; 
     }
   
 
@@ -78,6 +79,7 @@ class Projectile {
             }
             
             this.bouncesRemaining--;
+            this.isChaotic = true;
             createSpark(this.x + this.width / 2, this.y + this.height / 2);
             this.speed *= 0.8;
             if (this.bouncesRemaining <= 0) {
@@ -87,36 +89,41 @@ class Projectile {
             return;
         }
           
-        // Check collision with player (if fired by enemy)
-        if (this.ownerType === "enemy") {
-            const playerTileX = Math.floor(player.x / TILE_W);
-            const playerTileY = Math.floor(player.y / TILE_H);
-    
-            if (playerTileX === tileX && playerTileY === tileY) {
-                player.takeDamage(5);
-                console.log(`Player was hit by enemy projectile!`);
-                this.isActive = false;
-                return;
-            }
+        // Check collision with player
+        let playerTileX = Math.floor(player.x / TILE_W);
+        let playerTileY = Math.floor(player.y / TILE_H);
+        
+        let hitPlayer = playerTileX === tileX && playerTileY === tileY;
+        let validToHitPlayer = this.ownerType === "enemy" || this.isChaotic;
+        
+        if (validToHitPlayer && hitPlayer) {
+          player.takeDamage(this.damage);
+          this.isActive = false;
+          return;
         }
+        
+        
     
-        // Check collision with enemies (if fired by player)
-        if (this.ownerType === "player") {
-            for (let enemy of enemies) {
-                if (enemy.isDead) continue;
-                if (enemy === this.owner) continue;
-    
-                const enemyTileX = Math.floor(enemy.x / TILE_W);
-                const enemyTileY = Math.floor(enemy.y / TILE_H);
-    
-                if (enemyTileX === tileX && enemyTileY === tileY) {
-                    enemy.takeDamage(5); 
-                    console.log(`${enemy.name} was shot!`);
-                    this.isActive = false;
-                    break;
-                }
+        // Check collision with enemies 
+        if (this.ownerType === "player" || this.isChaotic) {
+          for (let enemy of enemies) {
+            if (enemy.isDead) continue;
+        
+            const enemyTileX = Math.floor(enemy.x / TILE_W);
+            const enemyTileY = Math.floor(enemy.y / TILE_H);
+        
+            const hitEnemy = enemyTileX === tileX && enemyTileY === tileY;
+            const isNotOwner = enemy !== this.owner;
+        
+            if (hitEnemy && (this.isChaotic || this.ownerType === "player")) {
+              enemy.takeDamage(this.damage);
+              console.log(`${enemy.name} was hit by projectile!`);
+              this.isActive = false;
+              break;
             }
+          }
         }
+        
     }
     
 
