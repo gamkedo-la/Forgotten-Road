@@ -44,15 +44,17 @@ class Player extends Entity {
     this.image = warriorPic;
     this.deathTimer = 0;
     this.currentDeathFrame = 0;
+    this.isBlocking = false;
+    this.blockCooldown = 0; 
+    this.blockCooldownTime = 1000; 
     this.arrows = 10; 
     this.maxArrows = 20;
     this.inventory = []; // Backpack items (array of item objects)
     this.equipment = {
-      weapon: null,
+      weapon: basicStaff,
       armor: null,
       accessory: null,
     };
-
   }
 
   // Getters
@@ -119,11 +121,13 @@ class Player extends Entity {
     this.isAttacking = true;
 
     let bonusDamage = this.getEquippedBonusDamage();
+    let attacked = false;
 
     let targetX = this.x;
     let targetY = this.y;
     let attackRange = TILE_W;
-    let attackRadius = TILE_W;
+    //let attackRadius = TILE_W;
+
     switch (this.facing) {
       case "up":
         targetY -= attackRange;
@@ -139,25 +143,35 @@ class Player extends Entity {
         break;
     }
 
-    let attacked = false;
-
+    let swingBox = {
+      x: targetX,
+      y: targetY,
+      width: TILE_W,
+      height: TILE_H
+    };
+    
     enemies.forEach((enemy) => {
-      if (
-        !enemy.isDead &&
-        dist(enemy.x, enemy.y, targetX, targetY) < attackRadius
-      ) {
+      if (enemy.isDead) return;
+    
+      let enemyBox = {
+        x: enemy.x,
+        y: enemy.y,
+        width: enemy.width,
+        height: enemy.height
+      };
+    
+      if (rectsOverlap(swingBox, enemyBox)) {
         enemy.takeDamage(10 + bonusDamage);
         camera.applyShake(4, 200);
-        console.log(
-          `You hit ${enemy.name} at (${enemy.x}, ${enemy.y}) for 10 damage!`
-        );
-        attacked = true; 
+        console.log(`You hit ${enemy.name} for ${10 + bonusDamage} damage!`);
+        attacked = true;
         const dx = enemy.x - this.x;
         const dy = enemy.y - this.y;
         enemy.knockback(dx, dy, 10);
         this.damagedEquippedItem();
       }
     });
+    
 
     if (!attacked) {
       console.log("You swing... but hit nothing.");
@@ -251,16 +265,18 @@ class Player extends Entity {
     }
   }
 
-  damagedEquippedItem (){
-    if (this.equipment.weapon){
-      this.equipment.weapon.durability--
-    }; 
-      if (this.equipment.weapon.durability < 0){
-        this.equipment.weapon.durability = 0;
-        console.log (`${this.equipment.weapon.name} is broken!`);        
-      }
-
+  damagedEquippedItem() {
+    const weapon = this.equipment.weapon;
+    if (!weapon) return;
+  
+    weapon.durability--;
+  
+    if (weapon.durability < 0) {
+      weapon.durability = 0;
+      console.log(`${weapon.name} is broken!`);
+    }
   }
+  
 
   getEquippedBonusDamage() {
     return this.equipment.weapon ? this.equipment.weapon.damage : 0;
@@ -271,6 +287,11 @@ class Player extends Entity {
     const dx = this.moveTarget.x - this.x;
     const dy = this.moveTarget.y - this.y;
 
+    if (this.blockCooldown > 0) {
+      this.blockCooldown -= deltaTime * 1000;
+      if (this.blockCooldown < 0) this.blockCooldown = 0;
+    }
+  
     const moveSpeed = this.currentSpeed / 2;
     console.log(moveSpeed);
     if (Math.abs(dx) <= moveSpeed && Math.abs(dy) <= moveSpeed) {
@@ -318,20 +339,33 @@ class Player extends Entity {
   }
 
   takeDamage(amount) {
+    if (this.isBlocking && this.blockCooldown <= 0) {
+      const staminaBlockCost = 20;
+      if (this.currentStamina >= staminaBlockCost) {
+        this.useStamina(staminaBlockCost);
+        this.blockCooldown = this.blockCooldownTime;
+        console.log(`${this.name} blocks the attack with stamina!`);
+        return; 
+      } else {
+        console.log(`${this.name} tried to block but was too exhausted!`);
+      }
+    }
+  
     this.currentHP -= amount;
     if (this.currentHP < 0) this.currentHP = 0;
-
+  
     console.log(`${this.name} takes ${amount} damage! HP: ${this.currentHP}`);
-
+  
     if (this.currentHP <= 0 && this.state !== "dead") {
       this.state = "dead";
       playState = "gameover";
     }
   }
+  
 
   drawHearts() {
-    var heartSize = 24; // pixels
-    var spacing = 3; // pixels between hearts
+    var heartSize = 24; 
+    var spacing = 3; 
     var totalHearts = Math.ceil(this.maxHP / 10);
     var fullHearts = Math.floor(this.currentHP / 10);
     var hasHalfHeart = this.currentHP % 10 >= 5;
@@ -409,5 +443,11 @@ class Player extends Entity {
       frameWidth,
       FRAME_HEIGHT
     );
+
+    //temp until animated
+    if (this.isBlocking) {
+      ctx.drawImage(shieldGlowPic, this.x - 8, this.y - 8, this.width + 16, this.height + 16);
+    }
+    
   }
 }

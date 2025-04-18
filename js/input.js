@@ -170,7 +170,9 @@ document.addEventListener("keydown", (event) => {
   if(event.key === 'Shift'){
     isPullingBlock = true;
   }
-
+  if (event.key === "q") {
+    player.isBlocking = true;
+  }  
 });
 
 document.addEventListener("keyup", (event) => {
@@ -193,6 +195,9 @@ document.addEventListener("keyup", (event) => {
 
   if(event.key === 'Shift'){
     isPullingBlock = false;
+  }
+  if (event.key === "q") {
+    player.isBlocking = false;
   }
 
   if (event.key === "r" && playState === "gameover") {
