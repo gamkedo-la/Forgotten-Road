@@ -275,6 +275,9 @@ function updateGameState(deltaTime) {
   handlePauseInput();
   if (paused) return;
   handlePlayerMovement();
+  if (keys.fire) {
+    player.fireProjectile();
+  }  
   player.regenStamina(deltaTime);
   npcs.forEach((npc) => npc.update && npc.update(deltaTime));
   handleQuickUseKeys();
@@ -369,6 +372,7 @@ function renderUI() {
   if (paused) drawPauseOverlay();
   player.drawHearts();
   drawStaminaBar();
+  drawArrowCount();
   drawQuestTracker();
   drawDialoguePrompt();
   drawIntroText();
@@ -486,6 +490,15 @@ function drawGoldUI() {
     ctx.drawImage(coinPic, x, y);
   }
 }
+
+function drawArrowCount() {
+  let text = `Arrows: ${player.arrows}/${player.maxArrows}`;
+  let x = 10;
+  let y = 80;
+  drawTextWithShadow(text, x, y, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left");
+}
+
+
 
 function drawPauseOverlay() {
   colorRect(0, 0, canvas.width, canvas.height, "#000000AA");

@@ -44,6 +44,8 @@ class Player extends Entity {
     this.image = warriorPic;
     this.deathTimer = 0;
     this.currentDeathFrame = 0;
+    this.arrows = 10; 
+    this.maxArrows = 20;
     this.inventory = []; // Backpack items (array of item objects)
     this.equipment = {
       weapon: null,
@@ -165,6 +167,44 @@ class Player extends Entity {
       this.isAttacking = false;
     }, 300);
   }
+
+  fireProjectile() {
+    if (this.isAttacking || this.isMoving) return;
+  
+    if (this.arrows <= 0) {
+      console.log("You're out of arrows!");
+      return;
+    }
+  
+    const STAMINA_COST = 10;
+    if (!this.canPerformAction(STAMINA_COST)) {
+      console.log("Too exhausted to shoot!");
+      return;
+    }
+  
+    this.useStamina(STAMINA_COST);
+    this.arrows--; // 🏹 Use an arrow
+    this.isAttacking = true;
+  
+    const bolt = new Projectile(
+      this.x + this.width / 2,
+      this.y + this.height / 2,
+      this.facing,
+      6,
+      "player",
+      this,
+      this.getEquippedBonusDamage() || 10
+    );
+  
+    projectiles.push(bolt);
+    camera.applyShake(1, 100);
+  
+    setTimeout(() => {
+      this.isAttacking = false;
+    }, 300);
+  }
+  
+  
 
   addItemToInventory(item) {
     if (item.stackable) {

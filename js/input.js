@@ -200,12 +200,9 @@ document.addEventListener("keyup", (event) => {
   }
 
   if (event.key === "r") {
-    const projX = player.x + TILE_W / 4;
-    const projY = player.y + TILE_H / 4;
-    const bolt = new Projectile(projX, projY, player.facing);
-    projectiles.push(bolt);
+    player.fireProjectile();
   }
-
+      
   if (event.key === "h") keys.sprint = false;
   if (event.key === "1") keys.usePotion = true;
   if (event.key === "x") pressedInteract = false;

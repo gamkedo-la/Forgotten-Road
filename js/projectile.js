@@ -1,34 +1,62 @@
 class Projectile {
-    constructor(x, y, direction, speed = 4, ownerType, owner) {
-        this.x = x;
-        this.y = y;
-        this.direction = direction;
-        this.speed = speed;
-        this.width = 17;
-        this.height = 17;
-        this.isActive = true;
-        this.owner = owner;
-        this.ownerType = ownerType;
-        this.sY = 0;
-        this.bouncesRemaining = 2;
-
+    constructor(x, y, direction, speed = 4, ownerType, owner, damage = 5, statusEffect = null) {
+      this.x = x;
+      this.y = y;
+      this.direction = direction;
+      this.speed = speed;
+      this.width = 17;
+      this.height = 17;
+      this.isActive = true;
+      this.owner = owner;
+      this.ownerType = ownerType;
+      this.sY = 0;
+      this.bouncesRemaining = 2;
+      this.damage = damage;
+      this.statusEffect = statusEffect;
+      this.maxDistance = 300;
+      this.distanceTraveled = 0;
     }
+  
 
     update(collisionGrid, enemies) {
         if (!this.isActive) return;
-    
-        // Move projectile
+
+        let dy = 0;
+        let dx = 0;
+
+        //projectile movement
         switch (this.direction) {
-            case "up": this.y -= this.speed; this.sY = 0 * this.height; break;
-            case "down": this.y += this.speed; this.sY = 2 * this.height; break;
-            case "left": this.x -= this.speed; this.sY = 3 * this.height; break;
-            case "right": this.x += this.speed; this.sY = 1 * this.height; break;
+          case "up":
+            dy = -this.speed;
+            this.sY = 0 * this.height;
+            break;
+          case "right":
+            dx = this.speed;
+            this.sY = 1 * this.height;
+            break;
+          case "down":
+            dy = this.speed;
+            this.sY = 2 * this.height;
+            break;
+          case "left":
+            dx = -this.speed;
+            this.sY = 3 * this.height;
+            break;
         }
-    
-        const tileX = Math.floor(this.x / TILE_W);
-        const tileY = Math.floor(this.y / TILE_H);
-    
+ 
+        this.x += dx;
+        this.y += dy;
+        this.distanceTraveled += Math.sqrt(dx * dx + dy * dy);
+        if (this.distanceTraveled > this.maxDistance) {
+          this.isActive = false;
+          return;
+        }
+      
         // Check collision with walls
+
+        let tileX = Math.floor(this.x / TILE_W);
+        let tileY = Math.floor(this.y / TILE_H);
+
         if (
             !collisionGrid[tileY] ||
             !collisionGrid[tileY][tileX] ||
@@ -120,4 +148,26 @@ function createSpark(x, y) {
   };
 
   temp_ui_elements.push(spark);
+}
+
+function updateProjectiles(deltaTime) {
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    const p = projectiles[i];
+    p.update(deltaTime);
+
+    // Check collision with player
+    if (p.owner !== player && dist(p.x, p.y, player.x, player.y) < 20) {
+      player.takeDamage(5); // or p.damage
+      projectiles.splice(i, 1);
+      continue;
+    }
+
+    // Check collision with enemies
+    enemies.forEach((e) => {
+      if (p.owner === player && !e.isDead && dist(p.x, p.y, e.x, e.y) < 20) {
+        e.takeDamage(10); // or p.damage
+        projectiles.splice(i, 1);
+      }
+    });
+  }
 }
