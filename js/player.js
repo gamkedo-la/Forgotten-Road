@@ -351,7 +351,7 @@ class Player extends Entity {
       }
     }
 
-    const floatingDamageNumber = new TextEntity(`-${amount}`, this.x, this.y, "red", 0, -20, 10);
+    const floatingDamageNumber = new TextEntity(`-${amount}`, this.x, this.y, "white", 0, -20, 10, "20px Arial");
     temp_ui_elements.push(floatingDamageNumber);
   
     this.currentHP -= amount;
