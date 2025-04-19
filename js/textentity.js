@@ -1,5 +1,5 @@
 class TextEntity {
-  constructor(text, x, y, color, x_speed = 0, y_speed = 0, lifespan = 10) {
+  constructor(text, x, y, color, x_speed = 0, y_speed = 0, lifespan = 10, font = "14px sans-serif") {
     this.text = text;
     this.x = x;
     this.y = y;
@@ -7,6 +7,7 @@ class TextEntity {
     this.xspeed = x_speed;
     this.yspeed = y_speed;
     this.lifespan = lifespan;
+    this.font = font;
   }
 
   update(dt) {
@@ -23,7 +24,7 @@ class TextEntity {
 
   draw() {
     ctx.globalAlpha = this.lifespan;
-    drawTextWithShadow(this.text, this.x - camera.x, this.y - camera.y, this.color);
+    drawTextWithShadow(this.text, this.x - camera.x, this.y - camera.y, this.color, this.font);
     ctx.globalAlpha = 1;
   }
 }
