@@ -59,3 +59,12 @@ function outlineRect(topLeftX, topLeftY, boxWidth, boxHeight, lineColor) {
     ctx.stroke();
 }
 
+function drawSprite(sprite, x, y, w = 32, h = 32, context = ctx) {
+	context.drawImage(
+	  sprite.img,
+	  sprite.sX, sprite.sY, sprite.sW, sprite.sH,
+	  x, y, w, h
+	);
+  }
+  
+

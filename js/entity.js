@@ -128,7 +128,7 @@ class Entity {
   }
 
   dropLoot() {
-    const drops = [{ ...basicStaff }, { ...leatherArmor }, { ...healthPotion }];
+    const drops = [{ ...basicStaff }, { ...leatherArmor }, { ...healthPotion }, {...boltPickUp}];
     const randomDrop = drops[Math.floor(Math.random() * drops.length)];
 
     const dropX = this.x;

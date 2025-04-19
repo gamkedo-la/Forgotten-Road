@@ -5,7 +5,7 @@ var basicStaff = {
     name: "Basic Staff",
     type: "weapon",
     damage: 5,
-    sprite: staffIconPic, // this should already be loaded in imageLoading.js
+    sprite: staffIconPic, 
     stackable: true,
     quantity: 1,
     durability : 10,
@@ -30,6 +30,27 @@ var healthPotion = {
     sprite: healthPotionPic,
     stackable: true,
     quantity: 1
+};
+
+var questPendant = {
+    id: "quest_pendant",
+    name: "Silver Pendant",
+    type: "quest",
+    sprite: pendantPic,
+    stackable: false,
+    quantity: 1
+  };
+  
+
+var boltPickUp = {
+    id: "basic_bolt",
+    name: "Bolt",
+    type: "consumable",
+    use: "bolt",
+    amount: 5,
+    sprite: boltItemPic,
+    stackable: true,
+    quantity: 5
 };
 
 function drawBackpackUI(ctx, player) {

@@ -326,7 +326,7 @@ function spawnPendantInForest() {
   const pendant = {
     name: "Silver Pendant",
     type: "quest",
-    sprite: pickUpItemPic,
+    sprite: pendantPic,
     x: 12 * TILE_W,
     y: 4 * TILE_H,
     pickupRadius: 20,
