@@ -9,6 +9,41 @@ const BEHAVIOR_STATES = {
 };
 
 var DEBUG_turnOffEnemy_AI_ToAvoidFreeze = false;
+let globalUsedFlankTiles = new Set();
+
+function getFlankPosition(enemy, player, others, collisionGrid, usedFlankTiles = new Set()) {
+    let px = Math.floor(player.x / TILE_W);
+    let py = Math.floor(player.y / TILE_H);
+  
+    const flankOffsets = [
+        { x: 1, y: 0 },   // East
+        { x: -1, y: 0 },  // West
+        { x: 0, y: 1 },   // South
+        { x: 0, y: -1 }   // North
+    ];
+      
+    let shuffled = flankOffsets.sort(() => 0.5 - Math.random());
+  
+    for (let offset of shuffled) {
+      let tx = px + offset.x;
+      let ty = py + offset.y;
+      let key = `${tx},${ty}`;
+  
+      if (
+        tx >= 0 && ty >= 0 &&
+        tx < TILE_COLS && ty < TILE_ROWS &&
+        collisionGrid[ty][tx] &&
+        collisionGrid[ty][tx].isWalkable &&
+        !usedFlankTiles.has(key)
+      ) {
+        usedFlankTiles.add(key);
+        return { x: tx, y: ty };
+      }
+    }
+  
+    return null;
+}
+  
 
 class Monster extends Entity {
     constructor(name, x, y, health, damage, loot, combatType = "melee") {
@@ -35,6 +70,7 @@ class Monster extends Entity {
         this.maxDeathFrames = 8; 
         this.removalStarted = false;
         this.isMindless = false;
+        this.flankTarget = null;
         if (name === "Goblin") {
             this.behavior = "melee";
             this.image = goblinPic;
@@ -178,7 +214,6 @@ class Monster extends Entity {
         return true; // no obstructions
     }
     
-
     moveAwayFrom(target) {
         const dx = this.x - target.x;
         const dy = this.y - target.y;
@@ -256,7 +291,6 @@ class Monster extends Entity {
       //  console.log(`${this.name} is following path, ${this.path.length} steps remaining`);
     }
     
-
     followPatrolPath() {
         if (!this.patrolPath) return;
         if (!this.path || this.path.length === 0) {
@@ -374,6 +408,8 @@ class Monster extends Entity {
 }
 
 function updateEnemy(enemy, player) {
+    let usedFlankTiles = new Set();
+
     if (DEBUG_turnOffEnemy_AI_ToAvoidFreeze) return;
 
     if (enemy.health < enemy.maxHealth * 0.25) {
@@ -457,34 +493,71 @@ function updateEnemy(enemy, player) {
             enemy.state = BEHAVIOR_STATES.CHASE;
         }        
     break;    
-    case BEHAVIOR_STATES.CHASE:
-        if (dist < TILE_W * 1.5) {
-            if (enemy.combatType === "melee") {
-                enemy.state = BEHAVIOR_STATES.KITE;
-            }
+    case BEHAVIOR_STATES.CHASE: {
+        if (dist < TILE_W * 1.5 && enemy.combatType === "melee") {
+          enemy.state = BEHAVIOR_STATES.KITE;
+          break;
         }
+      
+        //GOBLIN FLANKING BEHAVIOR 
+        if (enemy.name === "Goblin") {
+            const nearbyGoblins = enemies.filter(e =>
+              e !== enemy &&
+              e.name === "Goblin" &&
+              getDistance(e.x, e.y, enemy.x, enemy.y) < TILE_W * 6
+            );
+          
+            // Use saved flank target if it exists
+            if (!enemy.flankTarget) {
+                const flankPos = getFlankPosition(enemy, player, nearbyGoblins, collisionGrid, globalUsedFlankTiles);
 
-        if (enemy.combatType === "ranged" && dist < TILE_W * 6) {
-            const prevProjectileCount = projectiles.length;
-            enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
-            const didFire = projectiles.length > prevProjectileCount;
-
-            if (!didFire) {
-                enemy.followPath();
-            }
-        } else {
-            enemy.followPath();
-        }
-
-        // Pathfinding refresh
-        if (!enemy.path || enemy.path.length === 0) {
-            if (dist < TILE_W * 8) {
-                enemy.chooseNewPath(player, collisionGrid);
+                if (flankPos) {
+                    enemy.flankTarget = flankPos;
+            
+                    const startX = Math.floor(enemy.x / TILE_W);
+                    const startY = Math.floor(enemy.y / TILE_H);
+                    const flankPath = findPath(startX, startY, flankPos.x, flankPos.y, collisionGrid);
+            
+                    if (flankPath && flankPath.length > 0) {
+                    enemy.setPath(flankPath);
+                    }
+                } else {
+                    enemy.chooseNewPath(player, collisionGrid);
+                }
             } else {
-                enemy.state = BEHAVIOR_STATES.IDLE;
+              enemy.followPath();
+          
+              const ex = Math.floor(enemy.x / TILE_W);
+              const ey = Math.floor(enemy.y / TILE_H);
+              if (ex === enemy.flankTarget.x && ey === enemy.flankTarget.y) {
+                // Reached flank target — clear it and switch to direct chase
+                enemy.flankTarget = null;
+                enemy.chooseNewPath(player, collisionGrid);
+              }
             }
         }
-    break;
+
+      
+        //RANGED ENEMY SHOOTING
+        if (enemy.combatType === "ranged" && dist < TILE_W * 6) {
+            let prevProjectileCount = projectiles.length;
+            enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
+            let didFire = projectiles.length > prevProjectileCount;
+        }
+      
+        //Pathfinding Refresh
+        if (!enemy.path || enemy.path.length === 0) {
+          if (dist < TILE_W * 8) {
+            enemy.chooseNewPath(player, collisionGrid);
+          } else {
+            enemy.state = BEHAVIOR_STATES.IDLE;
+          }
+        } else {
+            enemy.followPath(); // keep following the existing path
+        }  
+        break;
+      }
+    break;      
     case BEHAVIOR_STATES.KITE:
     if (enemy.combatType === "ranged") {
         console.log(`${enemy.name} is kiting`);
@@ -494,7 +567,7 @@ function updateEnemy(enemy, player) {
             const now = performance.now();
             if (now - enemy.lastAttackTime > enemy.cooldownTime) {
                 enemy.faceToward(player);
-                player.takeDamage(enemy.damage); // Use proper damage method
+                player.takeDamage(enemy.damage); 
                 enemy.lastAttackTime = now;
                 console.log(`${enemy.name} strikes ${player.name} in melee!`);
             }
@@ -607,3 +680,5 @@ function createMonster({
   
     return monster;
 } 
+  
+  

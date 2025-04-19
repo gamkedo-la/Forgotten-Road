@@ -281,6 +281,7 @@ function updateGameState(deltaTime) {
   player.regenStamina(deltaTime);
   npcs.forEach((npc) => npc.update && npc.update(deltaTime));
   handleQuickUseKeys();
+  globalUsedFlankTiles.clear();
   updateEnemiesAndProjectiles(deltaTime);
   handleItemPickups();
   checkBuildingCollisions();
