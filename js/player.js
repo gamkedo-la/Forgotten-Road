@@ -350,6 +350,9 @@ class Player extends Entity {
         console.log(`${this.name} tried to block but was too exhausted!`);
       }
     }
+
+    const floatingDamageNumber = new TextEntity(`-${amount}`, this.x, this.y, "red", 0, -20, 10);
+    temp_ui_elements.push(floatingDamageNumber);
   
     this.currentHP -= amount;
     if (this.currentHP < 0) this.currentHP = 0;
