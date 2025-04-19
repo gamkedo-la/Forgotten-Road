@@ -23,7 +23,7 @@ class TextEntity {
 
   draw() {
     ctx.globalAlpha = this.lifespan;
-    drawTextWithShadow(this.text, this.x, this.y, this.color);
+    drawTextWithShadow(this.text, this.x - camera.x, this.y - camera.y, this.color);
     ctx.globalAlpha = 1;
   }
 }
