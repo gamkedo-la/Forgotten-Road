@@ -71,6 +71,11 @@ class Monster extends Entity {
         this.removalStarted = false;
         this.isMindless = false;
         this.flankTarget = null;
+        this.minDamage = 2;
+        this.maxDamage = damage ?? 5;
+        this.critChance = 0.1;
+        this.critMultiplier = 1.5;
+
         if (name === "Goblin") {
             this.behavior = "melee";
             this.image = goblinPic;
@@ -94,6 +99,10 @@ class Monster extends Entity {
             this.width = 40;
             this.height = 40;
             this.speed = 0.8; 
+            this.minDamage = 6;
+            this.maxDamage = 12;
+            this.critChance = 0.2;
+            this.critMultiplier = 2.0;
         } else if (name === "Wraith") {
             this.behavior = "ghost";
             this.image = wraithPic;
@@ -112,8 +121,7 @@ class Monster extends Entity {
             this.speed = 0.4; 
             this.isMindless = true;
         }
-    
-                
+
         this.patrolPath = [
             { x: Math.floor(this.x / TILE_W) + 1, y: Math.floor(this.y / TILE_H) },
             { x: Math.floor(this.x / TILE_W), y: Math.floor(this.y / TILE_H) + 1 },
@@ -121,10 +129,22 @@ class Monster extends Entity {
             { x: Math.floor(this.x / TILE_W), y: Math.floor(this.y / TILE_H) - 1 },
         ];
     }
-    
 
     get loot() { return this._loot; }
 
+    calculateAttackDamage(bonus = 0) {
+        const min = this.minDamage ?? this._damage ?? 1;
+        const max = this.maxDamage ?? this._damage ?? 1;
+        const base = min + Math.floor(Math.random() * (max - min + 1));
+        const isCrit = Math.random() < (this.critChance ?? 0);
+        const multiplier = isCrit ? (this.critMultiplier ?? 1.5) : 1;
+        const total = Math.floor(base * multiplier) + bonus;
+        return {
+            value: total,
+            isCrit
+        };
+    }
+    
     attack(target) {
         if (target instanceof Player) {
             target.health -= this.damage;
@@ -418,8 +438,8 @@ function updateEnemy(enemy, player) {
             enemy.state = BEHAVIOR_STATES.FLEE;
         }
     }
+
     if (enemy.canPhase) {
-        //Skip pathfinding, move directly toward player
         const dx = player.x - enemy.x;
         const dy = player.y - enemy.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -428,201 +448,196 @@ function updateEnemy(enemy, player) {
         enemy.faceToward(player);
         return;
     }
+
     if (enemy.name === "Ghoul" && enemy.isMindless) {
         const dx = player.x - enemy.x;
         const dy = player.y - enemy.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-    
+
         if (dist > 0) {
             enemy.x += (dx / dist) * enemy.speed;
             enemy.y += (dy / dist) * enemy.speed;
         }
-    
+
         enemy.faceToward(player);
 
         if (dist < TILE_W) {
             const now = performance.now();
             if (now - enemy.lastAttackTime > enemy.cooldownTime) {
-                player.takeDamage(enemy.damage);
+                const { value: damage, isCrit } = enemy.calculateAttackDamage();
+                player.takeDamage(damage);
                 enemy.lastAttackTime = now;
-                console.log("Ghoul bites!");
+                console.log(`Ghoul bites for ${damage} damage${isCrit ? " (CRIT!)" : ""}`);
             }
         }
-    
+
         return;
     }
-    
-        
+
     const dx = player.x - enemy.x;
     const dy = player.y - enemy.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     switch (enemy.state) {
-    case BEHAVIOR_STATES.IDLE:
-        if (enemy.canSeePlayer(player)) {
-            console.log(`${enemy.name} spots the player while idle!`);
-            enemy.state = BEHAVIOR_STATES.CHASE;
-        }
-    break;
-
-    break;
-    case BEHAVIOR_STATES.PATROL:
-        // If no path or path is empty, find next patrol point
-        if (!enemy.path || enemy.path.length === 0) {
-            const target = enemy.patrolPath[enemy.pathIndex];
-            const startX = Math.floor(enemy.x / TILE_W);
-            const startY = Math.floor(enemy.y / TILE_H);
-            const endX = target.x;
-            const endY = target.y;
-    
-            if (collisionGrid[endY]?.[endX] !== TILE_WALL) {
-                enemy.path = findPath(startX, startY, endX, endY, collisionGrid);
-            } else {
-                console.warn(`${enemy.name}'s patrol point is blocked`);
+        case BEHAVIOR_STATES.IDLE:
+            if (enemy.canSeePlayer(player)) {
+                console.log(`${enemy.name} spots the player while idle!`);
+                enemy.state = BEHAVIOR_STATES.CHASE;
             }
-    
-            // Cycle to next point for next round
-            enemy.pathIndex = (enemy.pathIndex + 1) % enemy.patrolPath.length;
-        } else {
-            enemy.followPath();
-        }
-    
-        // Look for player while patrolling
-        if (enemy.canSeePlayer(player)) {
-            console.log(`${enemy.name} sees the player!`);
-            enemy.state = BEHAVIOR_STATES.CHASE;
-        }        
-    break;    
-    case BEHAVIOR_STATES.CHASE: {
-        if (dist < TILE_W * 1.5 && enemy.combatType === "melee") {
-          enemy.state = BEHAVIOR_STATES.KITE;
-          break;
-        }
-      
-        //GOBLIN FLANKING BEHAVIOR 
-        if (enemy.name === "Goblin") {
-            const nearbyGoblins = enemies.filter(e =>
-              e !== enemy &&
-              e.name === "Goblin" &&
-              getDistance(e.x, e.y, enemy.x, enemy.y) < TILE_W * 6
-            );
-          
-            // Use saved flank target if it exists
-            if (!enemy.flankTarget) {
-                const flankPos = getFlankPosition(enemy, player, nearbyGoblins, collisionGrid, globalUsedFlankTiles);
+            break;
 
-                if (flankPos) {
-                    enemy.flankTarget = flankPos;
-            
-                    const startX = Math.floor(enemy.x / TILE_W);
-                    const startY = Math.floor(enemy.y / TILE_H);
-                    const flankPath = findPath(startX, startY, flankPos.x, flankPos.y, collisionGrid);
-            
-                    if (flankPath && flankPath.length > 0) {
-                    enemy.setPath(flankPath);
+        case BEHAVIOR_STATES.PATROL:
+            if (!enemy.path || enemy.path.length === 0) {
+                const target = enemy.patrolPath[enemy.pathIndex];
+                const startX = Math.floor(enemy.x / TILE_W);
+                const startY = Math.floor(enemy.y / TILE_H);
+                const endX = target.x;
+                const endY = target.y;
+
+                if (collisionGrid[endY]?.[endX] !== TILE_WALL) {
+                    enemy.path = findPath(startX, startY, endX, endY, collisionGrid);
+                }
+
+                enemy.pathIndex = (enemy.pathIndex + 1) % enemy.patrolPath.length;
+            } else {
+                enemy.followPath();
+            }
+
+            if (enemy.canSeePlayer(player)) {
+                console.log(`${enemy.name} sees the player!`);
+                enemy.state = BEHAVIOR_STATES.CHASE;
+            }
+            break;
+
+        case BEHAVIOR_STATES.CHASE: {
+            if (dist < TILE_W * 1.5 && enemy.combatType === "melee") {
+                enemy.state = BEHAVIOR_STATES.KITE;
+                break;
+            }
+
+            if (enemy.name === "Goblin") {
+                const nearbyGoblins = enemies.filter(e =>
+                    e !== enemy &&
+                    e.name === "Goblin" &&
+                    getDistance(e.x, e.y, enemy.x, enemy.y) < TILE_W * 6
+                );
+
+                if (!enemy.flankTarget) {
+                    const flankPos = getFlankPosition(enemy, player, nearbyGoblins, collisionGrid, globalUsedFlankTiles);
+
+                    if (flankPos) {
+                        enemy.flankTarget = flankPos;
+
+                        const startX = Math.floor(enemy.x / TILE_W);
+                        const startY = Math.floor(enemy.y / TILE_H);
+                        const flankPath = findPath(startX, startY, flankPos.x, flankPos.y, collisionGrid);
+
+                        if (flankPath && flankPath.length > 0) {
+                            enemy.setPath(flankPath);
+                        }
+                    } else {
+                        enemy.chooseNewPath(player, collisionGrid);
+                    }
+                } else {
+                    enemy.followPath();
+
+                    const ex = Math.floor(enemy.x / TILE_W);
+                    const ey = Math.floor(enemy.y / TILE_H);
+                    if (ex === enemy.flankTarget.x && ey === enemy.flankTarget.y) {
+                        enemy.flankTarget = null;
+                        enemy.chooseNewPath(player, collisionGrid);
+                    }
+                }
+            }
+
+            if (enemy.combatType === "ranged" && dist < TILE_W * 6) {
+                let prevProjectileCount = projectiles.length;
+                enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
+                let didFire = projectiles.length > prevProjectileCount;
+            }
+
+            if (!enemy.path || enemy.path.length === 0) {
+                if (dist < TILE_W * 8) {
+                    enemy.chooseNewPath(player, collisionGrid);
+                } else {
+                    enemy.state = BEHAVIOR_STATES.IDLE;
+                }
+            } else {
+                enemy.followPath();
+            }
+            break;
+        }
+
+        case BEHAVIOR_STATES.KITE:
+            if (enemy.combatType === "ranged") {
+                console.log(`${enemy.name} is kiting`);
+                enemy.kiteAwayFrom(player);
+            } else {
+                if (dist < TILE_W * 1.2) {
+                    const now = performance.now();
+                    if (now - enemy.lastAttackTime > enemy.cooldownTime) {
+                        enemy.faceToward(player);
+                        const { value: damage, isCrit } = enemy.calculateAttackDamage();
+                        player.takeDamage(damage);
+                        enemy.lastAttackTime = now;
+                        console.log(`${enemy.name} strikes ${player.name} for ${damage} damage${isCrit ? " (CRIT!)" : ""}`);
                     }
                 } else {
                     enemy.chooseNewPath(player, collisionGrid);
+                    enemy.state = BEHAVIOR_STATES.CHASE;
+                }
+            }
+            break;
+
+        case BEHAVIOR_STATES.LOST:
+            console.log(`${enemy.name} is lost!`);
+            enemy.funcwanderOrPatrol();
+            break;
+
+        case BEHAVIOR_STATES.FLEE:
+            console.log(`${enemy.name} is fleeing!`);
+            enemy.moveAwayFrom(player);
+            break;
+
+        case BEHAVIOR_STATES.WANDER:
+            console.log(`${enemy.name} is wandering!`);
+            if (!enemy.path || enemy.path.length === 0) {
+                const dir = Math.floor(Math.random() * 4);
+                const dx = [1, -1, 0, 0][dir];
+                const dy = [0, 0, 1, -1][dir];
+
+                const newX = Math.floor(enemy.x / TILE_W) + dx;
+                const newY = Math.floor(enemy.y / TILE_H) + dy;
+
+                if (
+                    collisionGrid[newY] &&
+                    collisionGrid[newY][newX] !== TILE_WALL
+                ) {
+                    enemy.path = findPath(
+                        Math.floor(enemy.x / TILE_W),
+                        Math.floor(enemy.y / TILE_H),
+                        newX,
+                        newY,
+                        collisionGrid
+                    );
                 }
             } else {
-              enemy.followPath();
-          
-              const ex = Math.floor(enemy.x / TILE_W);
-              const ey = Math.floor(enemy.y / TILE_H);
-              if (ex === enemy.flankTarget.x && ey === enemy.flankTarget.y) {
-                // Reached flank target — clear it and switch to direct chase
-                enemy.flankTarget = null;
-                enemy.chooseNewPath(player, collisionGrid);
-              }
+                enemy.followPath();
             }
-        }
 
-      
-        //RANGED ENEMY SHOOTING
-        if (enemy.combatType === "ranged" && dist < TILE_W * 6) {
-            let prevProjectileCount = projectiles.length;
-            enemy.fireAtPlayerIfInRange(player, projectiles, collisionGrid);
-            let didFire = projectiles.length > prevProjectileCount;
-        }
-      
-        //Pathfinding Refresh
-        if (!enemy.path || enemy.path.length === 0) {
-          if (dist < TILE_W * 8) {
-            enemy.chooseNewPath(player, collisionGrid);
-          } else {
-            enemy.state = BEHAVIOR_STATES.IDLE;
-          }
-        } else {
-            enemy.followPath(); // keep following the existing path
-        }  
-        break;
-      }
-    break;      
-    case BEHAVIOR_STATES.KITE:
-    if (enemy.combatType === "ranged") {
-        console.log(`${enemy.name} is kiting`);
-        enemy.kiteAwayFrom(player);
-    } else {
-        if (dist < TILE_W * 1.2) {
-            const now = performance.now();
-            if (now - enemy.lastAttackTime > enemy.cooldownTime) {
-                enemy.faceToward(player);
-                player.takeDamage(enemy.damage); 
-                enemy.lastAttackTime = now;
-                console.log(`${enemy.name} strikes ${player.name} in melee!`);
+            if (enemy.canSeePlayer(player)) {
+                console.log(`${enemy.name} sees the player while wandering!`);
+                enemy.state = BEHAVIOR_STATES.CHASE;
             }
-        } else {
-            enemy.chooseNewPath(player, collisionGrid); // chase again if out of range
-            enemy.state = BEHAVIOR_STATES.CHASE;
-        }
-    }
-    break;
-    case BEHAVIOR_STATES.LOST:
-        console.log(`${enemy.name} is lost!`);
-        enemy.funcwanderOrPatrol();
-    break;
-    case BEHAVIOR_STATES.FLEE:
-        console.log(`${enemy.name} is fleeing!`);
-        enemy.moveAwayFrom(player);
-    break;
-    case BEHAVIOR_STATES.WANDER:
-        console.log(`${enemy.name} is wandering!`);
-        if (!enemy.path || enemy.path.length === 0) {
-            const dir = Math.floor(Math.random() * 4);
-            const dx = [1, -1, 0, 0][dir];
-            const dy = [0, 0, 1, -1][dir];
+            break;
 
-            const newX = Math.floor(enemy.x / TILE_W) + dx;
-            const newY = Math.floor(enemy.y / TILE_H) + dy;
-
-            if (
-                collisionGrid[newY] &&
-                collisionGrid[newY][newX] !== TILE_WALL
-            ) {
-                enemy.path = findPath(
-                    Math.floor(enemy.x / TILE_W),
-                    Math.floor(enemy.y / TILE_H),
-                    newX,
-                    newY,
-                    collisionGrid
-                );
-            }
-        } else {
-            enemy.followPath();
-        }
-        // Line of sight check
-        if (enemy.canSeePlayer(player)) {
-            console.log(`${enemy.name} sees the player while wandering!`);
-            enemy.state = BEHAVIOR_STATES.CHASE;
-        }
-    break;
-    default:
-        //safeguard
-        console.log(`${enemy.name} has no behavor state!`);
-        enemy.moveAwayFrom(player);
-    break;
+        default:
+            console.log(`${enemy.name} has no behavior state!`);
+            enemy.moveAwayFrom(player);
+            break;
     }
 }
+
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {

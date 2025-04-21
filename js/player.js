@@ -109,6 +109,24 @@ class Player extends Entity {
     }
   }
 
+  calculateWeaponDamage(weapon, bonusDamage = 0) {
+    let min = weapon?.minDamage ?? weapon?.damage ?? 1;
+    let max = weapon?.maxDamage ?? weapon?.damage ?? 1;
+    let base = min + Math.floor(Math.random() * (max - min + 1));
+    let critRoll = Math.random();
+    let critChance = weapon?.critChance ?? 0;
+    let critMultiplier = weapon?.critMultiplier ?? 1;
+  
+    const isCrit = critRoll < critChance;
+    let total = isCrit ? Math.floor(base * critMultiplier) : base;
+    return {
+      damage: total + bonusDamage,
+      isCrit
+    };
+  }
+  
+
+
   staffAttack(enemies) {
     if (this.isAttacking || this.isMoving) return;
 
@@ -161,9 +179,15 @@ class Player extends Entity {
       };
     
       if (rectsOverlap(swingBox, enemyBox)) {
-        enemy.takeDamage(10 + bonusDamage);
+        let weapon = this.equipment.weapon;
+        let { damage, isCrit } = this.calculateWeaponDamage(weapon, bonusDamage);
+      
+        enemy.takeDamage(damage);
         camera.applyShake(4, 200);
-        console.log(`You hit ${enemy.name} for ${10 + bonusDamage} damage!`);
+      
+        const critText = isCrit ? " (CRIT!)" : "";
+        console.log(`You hit ${enemy.name} for ${damage} damage${critText}`);
+      
         attacked = true;
         const dx = enemy.x - this.x;
         const dy = enemy.y - this.y;
@@ -200,15 +224,26 @@ class Player extends Entity {
     this.arrows--; // 🏹 Use an arrow
     this.isAttacking = true;
   
-    const bolt = new Projectile(
+    let weapon = this.equipment.weapon;
+    let bonusDamage = this.getEquippedBonusDamage();
+    let { damage, isCrit } = this.calculateWeaponDamage(weapon, bonusDamage);
+    
+    let bolt = new Projectile(
       this.x + this.width / 2,
       this.y + this.height / 2,
       this.facing,
       6,
       "player",
       this,
-      this.getEquippedBonusDamage() || 10
+      damage
     );
+    
+    if (isCrit) {
+      console.log(`You fired a critical bolt for ${damage} damage!`);
+    } else {
+      console.log(`You fired a bolt for ${damage} damage.`);
+    }
+    
   
     projectiles.push(bolt);
     camera.applyShake(1, 100);
