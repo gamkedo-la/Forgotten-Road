@@ -68,7 +68,7 @@ function loadImages() {
         {varName: staffIconPic, theFile: "staffIcon.png"},
         {varName: leatherArmorIconPic, theFile: "armorIcon.png"},
         {varName: healthPotionPic, theFile: "healthPotion.png"},
-        {varName: oldManPic, theFile: "merchant.png"},
+        {varName: oldManPic, theFile: "oldman.png"},
         {varName: boxPic, theFile: "box.png"},
         {varName: coinPic, theFile: "coin.png"},
         {varName: shieldGlowPic, theFile: "shadowShield.png"},

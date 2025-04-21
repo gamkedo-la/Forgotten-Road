@@ -149,7 +149,7 @@ class NPC extends Entity {
         this.bubbleBobTimer += deltaTime;
         const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
         
-        ctx.drawImage(oldManPic, 0, 64, 32, 32, this.x, this.y, 32, 32);
+        ctx.drawImage(oldManPic, 0, 0, 34, 32, this.x, this.y, 34, 32);
         //ctx.fillText(this.name, this.x, this.y - 5);
 
         // Dialogue 
