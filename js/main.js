@@ -20,6 +20,10 @@ let isPullingBlock = false;
 let pulledBlock = null;
 let lastMapSwitchTime = 0;
 const MAP_SWITCH_COOLDOWN = 1000; // milliseconds
+let inventoryOpen = false;
+let inventoryPressed = false; 
+
+
 
 //Initialize the world items arrays for each screen
 Object.keys(WORLD_MAPS).forEach((key) => {
@@ -273,7 +277,8 @@ function switchToMap(newMapKey, playerCol, playerRow) {
 
 function updateGameState(deltaTime) {
   handlePauseInput();
-  if (paused) return;
+  handleInventoryInput(); 
+  if (paused && !inventoryOpen) return; 
   handlePlayerMovement();
   if (keys.fire) {
     player.fireProjectile();
@@ -572,3 +577,16 @@ function dist(x1, y1, x2, y2) {
   const dy = y1 - y2;
   return Math.sqrt(dx * dx + dy * dy);
 }
+
+function handleInventoryInput() {
+  if (keys.inventory && !inventoryPressed) {
+    inventoryOpen = !inventoryOpen;
+    paused = inventoryOpen;
+    inventoryPressed = true;
+  }
+  if (!keys.inventory) {
+    inventoryPressed = false;
+  }
+}
+
+

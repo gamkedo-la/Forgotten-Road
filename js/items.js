@@ -54,21 +54,25 @@ var boltPickUp = {
 };
 
 function drawBackpackUI(ctx, player) {
-    let startX = 600;
-    let startY = 10;
-    let slotSize = 32;
-    let padding = 4;
-    let cols = 5;
-    
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    ctx.fillRect(
-        startX - 5,
-        startY - 5,
-        cols * (slotSize + padding),
-        Math.ceil(player.inventory.length / cols) * (slotSize + padding)
-    );
+    if (!inventoryOpen) return; 
 
-    let hoveredItem = null;
+    const panelX = 50;
+    const panelY = 50;
+    const panelW = canvas.width - 100;
+    const panelH = canvas.height - 100;
+    const slotSize = 40;
+    const padding = 6;
+    const cols = 6;
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.fillRect(panelX, panelY, panelW, panelH);
+
+    ctx.fillStyle = "white";
+    ctx.font = "18px Arial";
+    ctx.fillText("Backpack", panelX + 10, panelY + 30);
+
+    let startX = panelX + 10;
+    let startY = panelY + 50;
 
     player.inventory.forEach((item, index) => {
         const col = index % cols;
@@ -77,43 +81,22 @@ function drawBackpackUI(ctx, player) {
         const y = startY + row * (slotSize + padding);
 
         // Draw icon
+        ctx.fillStyle = "gray";
+        ctx.fillRect(x, y, slotSize, slotSize);
         if (item.sprite instanceof Image) {
             ctx.drawImage(item.sprite, x, y, slotSize, slotSize);
-        } else {
-            ctx.fillStyle = "gray";
-            ctx.fillRect(x, y, slotSize, slotSize);
         }
 
-        // Split item name into two lines
-        const words = item.name.split(" ");
-        let firstLine = item.name;
-        let secondLine = "";
-
-        if (words.length > 1) {
-            firstLine = words[0];
-            secondLine = words.slice(1).join(" ");
+        // Draw quantity
+        if (item.stackable && item.quantity > 1) {
+            ctx.fillStyle = "white";
+            ctx.font = "12px Arial";
+            ctx.textAlign = "right";
+            ctx.fillText(`x${item.quantity}`, x + slotSize - 2, y + slotSize - 2);
+            ctx.textAlign = "start";
         }
 
-        ctx.fillStyle = "white";
-        ctx.font = "10px Arial";
-        const centerX = x + slotSize / 2;
-        const firstWidth = ctx.measureText(firstLine).width;
-        const secondWidth = ctx.measureText(secondLine).width;
-
-        ctx.fillText(firstLine, centerX - firstWidth / 2, y + slotSize + 10);
-        if (secondLine) {
-            ctx.fillText(secondLine, centerX - secondWidth / 2, y + slotSize + 20);
-        }
-
-        // Hover detection
-        if (
-            mouse.x >= x && mouse.x <= x + slotSize &&
-            mouse.y >= y && mouse.y <= y + slotSize
-        ) {
-            hoveredItem = item;
-        }
-
-        // Click detection
+        // Equip or use
         if (
             mouse.clicked &&
             mouse.x >= x && mouse.x <= x + slotSize &&
@@ -125,30 +108,31 @@ function drawBackpackUI(ctx, player) {
                 player.equipItem(item);
             }
         }
-
-        // Draw stack quantity
-        if (item.stackable && item.quantity > 1) {
-            ctx.fillStyle = "white";
-            ctx.font = "10px Arial";
-            ctx.textAlign = "right";
-            ctx.fillText(`x${item.quantity}`, x + slotSize - 2, y + slotSize - 2);
-        }
-        ctx.textAlign = "start";
     });
 
-    // Draw tooltip if hovering
-    if (hoveredItem) {
-        const tooltipText = hoveredItem.name;
-        const padding = 6;
-        ctx.font = "12px Arial";
-        const textWidth = ctx.measureText(tooltipText).width;
-        const tooltipX = mouse.x + 10;
-        const tooltipY = mouse.y + 10;
+    // Equipment section
+    const equipStartX = panelX + panelW - 200;
+    const equipStartY = panelY + 60;
+    ctx.fillText("Equipped", equipStartX, equipStartY - 20);
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-        ctx.fillRect(tooltipX, tooltipY, textWidth + padding * 2, 20);
+    ["weapon", "armor", "accessory"].forEach((slot, i) => {
+        let boxY = equipStartY + i * (slotSize + 20);
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(equipStartX, boxY, slotSize, slotSize);
+
+        const equipped = player.equipment[slot];
+        if (equipped && equipped.sprite instanceof Image) {
+            ctx.drawImage(equipped.sprite, equipStartX, boxY, slotSize, slotSize);
+        } else {
+            ctx.fillStyle = "#222";
+            ctx.fillRect(equipStartX, boxY, slotSize, slotSize);
+        }
 
         ctx.fillStyle = "white";
-        ctx.fillText(tooltipText, tooltipX + padding, tooltipY + 14);
-    }
+        ctx.font = "12px Arial";
+        ctx.fillText(slot.charAt(0).toUpperCase() + slot.slice(1), equipStartX + slotSize + 10, boxY + 20);
+    });
+
+    mouse.clicked = false; // Reset click
 }
+

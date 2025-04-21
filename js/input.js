@@ -10,6 +10,7 @@ const keys = {
   pause: false,
   usePotion: false,
   sprint: false,
+  inventory: false
 };
 
 var mouse = { x: 0, y: 0, clicked: false, hoverObjects: null };
@@ -173,6 +174,9 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "q") {
     player.isBlocking = true;
   }  
+  if (event.key === 'i'){
+    keys.inventory = true;
+  }
 });
 
 document.addEventListener("keyup", (event) => {
@@ -199,10 +203,15 @@ document.addEventListener("keyup", (event) => {
   if (event.key === "q") {
     player.isBlocking = false;
   }
+  if (event.key === "i") {
+    keys.inventory = false;
+  }
+  
 
   if (event.key === "r" && playState === "gameover") {
     restartGame();
   }
+
 
   if (event.key === "r") {
     player.fireProjectile();
