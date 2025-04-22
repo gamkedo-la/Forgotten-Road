@@ -54,6 +54,7 @@ function drawShopUI() {
     }
 
     drawTextWithShadow(`Your Gold: ${player.gold}`, x + 10, y + height - 20, "gold");
+    drawTextWithShadow("Press [Esc] to leave", x + width - 160, y + height - 20, "gray", "12px Arial");
 }
 
 

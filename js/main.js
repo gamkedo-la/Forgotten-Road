@@ -403,6 +403,12 @@ function handlePlayerMovement() {
         return;
     }
 
+    if (keys.cancel) {
+      closeShopInterface();
+      keys.cancel = false;
+      return;
+    }
+
     const itemList = inSellMode ? player.inventory : shopInventory;
 
     if (keys.up) {

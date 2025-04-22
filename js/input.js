@@ -75,7 +75,11 @@ document.addEventListener("keydown", (event) => {
 
   // skip intro voiceovers
   console.log("keypress:"+event.key);
-  if (event.key=='Escape') { skip_intro(); }
+  if (event.key=='Escape') { 
+    skip_intro(); 
+    keys.cancel = true;
+  }
+
 
 
   // Handle active prompt
@@ -221,6 +225,9 @@ document.addEventListener("keyup", (event) => {
   }
   if(event.key === "b"){
     keys.b = false;
+  }
+  if (event.key=='Escape') {  
+    keys.cancel = false;
   }
   
 
