@@ -88,6 +88,14 @@ class NPC extends Entity {
     
             // Default response if none of the conditions matched
             this.speak();
+
+        } else if (this.name === "Blacksmith") {
+            dialoguePrompt = "Looking to upgrade or buy something?";
+            pendingQuest = () => {
+                this.dialogue = "Come back when you're ready.";
+                console.log("Blacksmith Shop interaction triggered!");
+            };
+            return;
         } else {
             this.speak();
         }
