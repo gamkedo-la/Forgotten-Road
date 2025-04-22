@@ -89,7 +89,9 @@ class Player extends Entity {
         y: this.path[0].y * TILE_H,
       };
       this.isMoving = true;
+      this.useStamina(10);      
     }
+    
   }
 
   useStamina(amount) {
