@@ -62,7 +62,7 @@ var ringOfEnergy = {
   name: "Ring of Energy",
   type: "accessory",
   description: "+5 Max Stamina",
-  sprite: ringPic,
+  sprite: pendantPic, //ringPic,
   stackable: false,
   quantity: 1
 };

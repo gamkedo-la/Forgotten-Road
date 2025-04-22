@@ -32,6 +32,11 @@ const MAP_DATA = {
         "I wasn't always this old, you know.",
         "We lost something out there...",
       ]),
+      new NPC("Blacksmith", 5 * TILE_W, 3 * TILE_H, [
+        "Need something forged?",
+        "I can sharpen that blade.",
+        "Strong arms make strong steel.",
+      ])
     ],
     buildings: {
       blacksmithShop: {
