@@ -152,7 +152,7 @@ class NPC extends Entity {
         let npcImage = this.name === "Old Man" ? oldManPic : 
         this.name === "Blacksmith" ? blacksmithPic : oldManPic;
 
-        ctx.drawImage(npcImage, 0, 0, 34, 32, this.x, this.y, 34, 32);
+        ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);
 
         // Dialogue 
         if (this.dialogue) {
