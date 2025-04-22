@@ -77,7 +77,7 @@ class NPC extends Entity {
                 return;
             }
     
-            // ✅ Handle quest turn-in
+            // Handle quest turn-in
             if (quest.pendantFound && !quest.completed) {
                 quest.completed = true;
                 this.dialogue = "You found it! I can’t thank you enough.";
@@ -90,11 +90,12 @@ class NPC extends Entity {
             this.speak();
 
         } else if (this.name === "Blacksmith") {
-            dialoguePrompt = "Looking to upgrade or buy something?";
-            pendingQuest = () => {
-                this.dialogue = "Come back when you're ready.";
-                console.log("Blacksmith Shop interaction triggered!");
-            };
+            let inventory = [
+                { name: "Iron Sword", cost: 50 },
+                { name: "Steel Shield", cost: 75 },
+                { name: "Health Potion", cost: 20 }
+            ];
+            openShopInterface("Blacksmith", inventory);
             return;
         } else {
             this.speak();
@@ -150,8 +151,6 @@ class NPC extends Entity {
         this.dialogueCooldown = (3 + Math.random() * 3) * 1000;
     }
     
-    
-
     draw(deltaTime) {
          // Update bobbing timer
         this.bubbleBobTimer += deltaTime;

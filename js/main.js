@@ -278,7 +278,7 @@ function switchToMap(newMapKey, playerCol, playerRow) {
 function updateGameState(deltaTime) {
   handlePauseInput();
   handleInventoryInput(); 
-  if (paused && !inventoryOpen) return; 
+  if (paused && !inventoryOpen && !shopOpen) return; 
   handlePlayerMovement();
   if (keys.fire) {
     player.fireProjectile();
@@ -382,7 +382,7 @@ function renderUI() {
   drawQuestTracker();
   drawDialoguePrompt();
   drawIntroText();
-
+  if (shopOpen) drawShopUI();
   if (playState === "gameover") {
     drawGameOverScreen();
   }
@@ -397,7 +397,43 @@ function handlePauseInput() {
 }
 
 function handlePlayerMovement() {
-  // sprint stamina drain
+  if (shopOpen) {
+    if (shopJustOpened) {
+      shopJustOpened = false;
+      return; // Ignore inputs this frame
+    }
+
+    if (keys.up) {
+      selectedItemIndex = (selectedItemIndex - 1 + shopInventory.length) % shopInventory.length;
+      keys.up = false;
+    }
+
+    if (keys.down) {
+      selectedItemIndex = (selectedItemIndex + 1) % shopInventory.length;
+      keys.down = false;
+    }
+
+    if (keys.action) {
+      const item = shopInventory[selectedItemIndex];
+      if (player.gold >= item.cost) {
+        player.gold -= item.cost;
+        player.inventory.push(item);
+        console.log(`Bought ${item.name}`);
+      } else {
+        console.log("Not enough gold!");
+      }
+      keys.action = false; // prevent repeat buy
+    }
+
+    if (keys.cancel) {
+      closeShopInterface();
+      keys.cancel = false;
+    }
+
+    return;
+  }
+  
+  // 🏃 sprint stamina drain
   if (player.isSprinting) {
     if (player.canPerformAction(1)) {
       player.useStamina(1);
@@ -407,7 +443,7 @@ function handlePlayerMovement() {
     }
   }
 
-  // movement input
+  // 🧭 movement input
   if (keys.up || gamepad.up) {
     if (isPullingBlock && tryPullBlock(player, 0, -1)) return;
     const pushed = tryPushBlock(player, 0, -1);
