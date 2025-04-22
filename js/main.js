@@ -534,7 +534,7 @@ function drawStaminaBar() {
   if (player.currentStamina < 30) barColor = "orange";
   if (player.currentStamina < 10) barColor = "red";
   let x = 5;
-  let y = 75;
+  let y = 85;
   let width = 110;
   let height = 12;
   let fillWidth = (player.currentStamina / player.maxStamina) * width;
