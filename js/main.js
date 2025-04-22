@@ -389,7 +389,7 @@ function renderUI() {
 }
 
 function handlePauseInput() {
-  if ((keys.pause && !pressedPause) || playState === "gameover") {
+  if ((keys.pause && !pressedPause)) {
     paused = !paused;
     pressedPause = true;
   }
