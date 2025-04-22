@@ -399,41 +399,59 @@ function handlePauseInput() {
 function handlePlayerMovement() {
   if (shopOpen) {
     if (shopJustOpened) {
-      shopJustOpened = false;
-      return; // Ignore inputs this frame
+        shopJustOpened = false;
+        return;
     }
+
+    const list = inSellMode ? player.inventory : shopInventory;
 
     if (keys.up) {
-      selectedItemIndex = (selectedItemIndex - 1 + shopInventory.length) % shopInventory.length;
-      keys.up = false;
+        selectedItemIndex = (selectedItemIndex - 1 + list.length) % list.length;
+        keys.up = false;
     }
-
     if (keys.down) {
-      selectedItemIndex = (selectedItemIndex + 1) % shopInventory.length;
-      keys.down = false;
+        selectedItemIndex = (selectedItemIndex + 1) % list.length;
+        keys.down = false;
     }
 
-    if (keys.action) {
-      const item = shopInventory[selectedItemIndex];
-      if (player.gold >= item.cost) {
-        player.gold -= item.cost;
-        player.inventory.push(item);
-        console.log(`Bought ${item.name}`);
-      } else {
-        console.log("Not enough gold!");
-      }
-      keys.action = false; // prevent repeat buy
+    if (keys.tab || keys.s) { // 👈 Add toggle key
+        inSellMode = !inSellMode;
+        selectedItemIndex = 0;
+        keys.tab = false;
+        keys.s = false;
+    }
+
+    if (keys.action && list[selectedItemIndex]) {
+        const item = list[selectedItemIndex];
+
+        if (inSellMode) {
+            const sellPrice = Math.floor(item.cost / 2);
+            player.gold += sellPrice;
+            player.inventory.splice(player.inventory.indexOf(item), 1);
+            console.log(`Sold ${item.name} for ${sellPrice}g`);
+        } else {
+            if (player.gold >= item.cost) {
+                player.gold -= item.cost;
+                player.inventory.push(item);
+                console.log(`Bought ${item.name}`);
+            } else {
+                console.log("Not enough gold!");
+            }
+        }
+
+        keys.action = false;
     }
 
     if (keys.cancel) {
-      closeShopInterface();
-      keys.cancel = false;
+        closeShopInterface();
+        keys.cancel = false;
     }
 
     return;
-  }
+}
+
   
-  // 🏃 sprint stamina drain
+  // sprint stamina drain
   if (player.isSprinting) {
     if (player.canPerformAction(1)) {
       player.useStamina(1);
@@ -443,7 +461,7 @@ function handlePlayerMovement() {
     }
   }
 
-  // 🧭 movement input
+  // movement input
   if (keys.up || gamepad.up) {
     if (isPullingBlock && tryPullBlock(player, 0, -1)) return;
     const pushed = tryPushBlock(player, 0, -1);

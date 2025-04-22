@@ -7,10 +7,13 @@ const keys = {
   left: false,
   right: false,
   action: false,
+  cancel: false, 
   pause: false,
   usePotion: false,
   sprint: false,
-  inventory: false
+  inventory: false,
+  tab: false,
+  s: false
 };
 
 var mouse = { x: 0, y: 0, clicked: false, hoverObjects: null };
