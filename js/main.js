@@ -403,26 +403,31 @@ function handlePlayerMovement() {
         return;
     }
 
-    const list = inSellMode ? player.inventory : shopInventory;
+    const itemList = inSellMode ? player.inventory : shopInventory;
 
     if (keys.up) {
-        selectedItemIndex = (selectedItemIndex - 1 + list.length) % list.length;
+        selectedItemIndex = (selectedItemIndex - 1 + itemList.length) % itemList.length;
         keys.up = false;
     }
     if (keys.down) {
-        selectedItemIndex = (selectedItemIndex + 1) % list.length;
+        selectedItemIndex = (selectedItemIndex + 1) % itemList.length;
         keys.down = false;
     }
 
-    if (keys.tab || keys.s) { // 👈 Add toggle key
-        inSellMode = !inSellMode;
+    if (keys.s) {
+        inSellMode = true;
         selectedItemIndex = 0;
-        keys.tab = false;
         keys.s = false;
     }
 
-    if (keys.action && list[selectedItemIndex]) {
-        const item = list[selectedItemIndex];
+    if (keys.b) {
+        inSellMode = false;
+        selectedItemIndex = 0;
+        keys.b = false;
+    }
+
+    if (keys.action && itemList[selectedItemIndex]) {
+        const item = itemList[selectedItemIndex];
 
         if (inSellMode) {
             const sellPrice = Math.floor(item.cost / 2);

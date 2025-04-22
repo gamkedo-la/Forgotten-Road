@@ -26,33 +26,35 @@ function closeShopInterface() {
 }
 
 function drawShopUI() {
-    let x = 450;
-    let y = 50;
-    let width = 300;
-    let height = 220;
+    const x = 450;
+    const y = 50;
+    const width = 300;
+    const height = 220;
 
     colorRect(x, y, width, height, "rgba(0,0,0,0.8)");
     outlineRect(x, y, width, height, "white");
-    //drawTextWithShadow("Blacksmith Shop", x + 10, y + 20, "white", "16px Arial");
-    drawTextWithShadow(inSellMode ? "Buy" : "[Buy]", x + 10, y + 20, inSellMode ? "gray" : "white", "16px Arial");
-    drawTextWithShadow(inSellMode ? "[Sell]" : "Sell", x + 80, y + 20, inSellMode ? "white" : "gray", "16px Arial");
 
-    let itemList = inSellMode ? player.inventory : shopInventory;
+    // Tabs
+    drawTextWithShadow(inSellMode ? "[Buy]" : "Buy", x + 10, y + 20, inSellMode ? "gray" : "white", "16px Arial");
+    drawTextWithShadow(inSellMode ? "Sell" : "[Sell]", x + 80, y + 20, inSellMode ? "white" : "gray", "16px Arial");
 
-    itemList.forEach((item, i) => {
-        let color = i === selectedItemIndex ? "yellow" : "white";
-        let label = inSellMode
-            ? `${item.name} - ${Math.floor(item.cost / 2)}g`
-            : `${item.name} - ${item.cost}g`;
-        drawTextWithShadow(label, x + 20, y + 50 + i * 20, color);
-    });
+    // Item list
+    const itemList = inSellMode ? player.inventory : shopInventory;
 
-    shopInventory.forEach((item, i) => {
-        let highlight = i === selectedItemIndex ? "yellow" : "white";
-        drawTextWithShadow(`${item.name} - ${item.cost}g`, x + 20, y + 50 + i * 20, highlight);
-    });
+    if (itemList.length === 0) {
+        drawTextWithShadow("No items available", x + 20, y + 60, "gray", "14px Arial");
+    } else {
+        itemList.forEach((item, i) => {
+            const color = i === selectedItemIndex ? "yellow" : "white";
+            const label = inSellMode
+                ? `${item.name} - ${Math.floor(item.cost / 2)}g`
+                : `${item.name} - ${item.cost}g`;
+            drawTextWithShadow(label, x + 20, y + 50 + i * 20, color);
+        });
+    }
 
     drawTextWithShadow(`Your Gold: ${player.gold}`, x + 10, y + height - 20, "gold");
 }
+
 
 

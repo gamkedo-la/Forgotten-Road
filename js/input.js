@@ -13,7 +13,8 @@ const keys = {
   sprint: false,
   inventory: false,
   tab: false,
-  s: false
+  s: false,
+  b: false
 };
 
 var mouse = { x: 0, y: 0, clicked: false, hoverObjects: null };
@@ -123,7 +124,7 @@ document.addEventListener("keydown", (event) => {
     event.key === "x" ||
     event.key === "z" ||
     event.key === "Control" ||
-    event.key === "Shift"
+    event.key === "Shift"     
   )
     keys.action = true;
 
@@ -180,6 +181,12 @@ document.addEventListener("keydown", (event) => {
   if (event.key === 'i'){
     keys.inventory = true;
   }
+  if(event.key === "s"){
+    keys.s = true;
+  }
+  if(event.key === "b"){
+    keys.b = true;
+  }
 });
 
 document.addEventListener("keyup", (event) => {
@@ -208,6 +215,12 @@ document.addEventListener("keyup", (event) => {
   }
   if (event.key === "i") {
     keys.inventory = false;
+  }
+  if(event.key === "s"){
+    keys.s = false;
+  }
+  if(event.key === "b"){
+    keys.b = false;
   }
   
 
