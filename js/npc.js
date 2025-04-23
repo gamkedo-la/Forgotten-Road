@@ -90,11 +90,7 @@ class NPC extends Entity {
             this.speak();
 
         } else if (this.name === "Blacksmith") {
-            let inventory = [
-                { name: "Iron Sword", cost: 50 },
-                { name: "Steel Shield", cost: 75 },
-                { name: "Health Potion", cost: 20 }
-            ];
+            let inventory = [basicStaff, leatherArmor, healthPotion, boltPickUp, ringOfEnergy];
             openShopInterface("Blacksmith", inventory);
             return;
         } else {

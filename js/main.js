@@ -348,10 +348,9 @@ function renderGameWorld(deltaTime) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground();
   if (turnPathFindingDrawingOn) drawPathingFindingTiles();
-  drawBuildings();
-
-  player.draw(deltaTime);
   npcs.forEach((npc) => npc.draw && npc.draw(deltaTime));
+  drawBuildings();
+  player.draw(deltaTime);
   worldItems[currentMapKey].forEach((item) => drawWorldItem(item));
   enemies.filter((e) => !e.isDead).forEach((e) => e.draw(deltaTime));
   pushableBlocks.forEach((block) => {
@@ -368,6 +367,15 @@ function renderGameWorld(deltaTime) {
     );
   });
   projectiles.forEach((p) => p.draw(ctx));
+  // Re-draw the Blacksmith in front of the interior if we're inside
+  if (insidebuilding) {
+    npcs.forEach(npc => {
+    if (npc.name === "Blacksmith") {
+      npc.draw(0);
+    }
+  });
+}
+
 }
 
 function renderUI() {

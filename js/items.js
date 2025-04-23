@@ -10,10 +10,11 @@ var basicStaff = {
     critMultiplier: 1.5,   
     sprite: staffIconPic, 
     stackable: true,
+    description: "wooden staff",
+    cost: 5,
     quantity: 1,
     durability: 10
 };
-
 
 var leatherArmor = {
     id: "leather_armor",
@@ -22,6 +23,7 @@ var leatherArmor = {
     defense: 2,
     sprite: leatherArmorIconPic,
     stackable: false,
+    cost: 25,
     quantity: 1
 };
 
@@ -29,8 +31,10 @@ var healthPotion = {
     id: "health_potion",
     name: "Health Potion",
     type: "consumable",
+    description: "Heals light wounds",
     use: "heal",
     amount: 5,
+    cost: 5,
     sprite: healthPotionPic,
     stackable: true,
     quantity: 1
@@ -40,7 +44,9 @@ var questPendant = {
     id: "quest_pendant",
     name: "Silver Pendant",
     type: "quest",
+    description: "An old pendant",
     sprite: pendantPic,
+    cost: 0,
     stackable: false,
     quantity: 1
   };
@@ -50,9 +56,11 @@ var boltPickUp = {
     id: "basic_bolt",
     name: "Bolt",
     type: "consumable",
+    description: "wooden bolt",
     use: "bolt",
     amount: 5,
     sprite: boltItemPic,
+    cost: 5,
     stackable: true,
     quantity: 5
 };
@@ -62,6 +70,7 @@ var ringOfEnergy = {
   name: "Ring of Energy",
   type: "accessory",
   description: "+5 Max Stamina",
+  cost: 25,
   sprite: pendantPic, //ringPic,
   stackable: false,
   quantity: 1

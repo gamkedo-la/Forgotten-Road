@@ -26,13 +26,13 @@ const TILE_GHOUL_SPAWN = 95;
 const MAP_DATA = {
   fallDale: {
     npcs: [
-      new NPC("Old Man", 12 * TILE_W, 8 * TILE_H, [
+      new NPC("Old Man", 12 * TILE_W, 9 * TILE_H, [
         "The forest holds many secrets...",
         "Sometimes I still hear the wind whisper his name.",
         "I wasn't always this old, you know.",
         "We lost something out there...",
       ]),
-      new NPC("Blacksmith", 5 * TILE_W, 3 * TILE_H, [
+      new NPC("Blacksmith", 2 * TILE_W, 4 * TILE_H, [
         "Need something forged?",
         "I can sharpen that blade.",
         "Strong arms make strong steel.",
