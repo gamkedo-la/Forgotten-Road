@@ -25,6 +25,7 @@ var shieldGlowPic = document.createElement("img");
 var boltItemPic = document.createElement("img");
 var pendantPic = document.createElement("img");
 var blacksmithPic = document.createElement("img");
+var shadowPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -77,6 +78,7 @@ function loadImages() {
         {varName: boltItemPic, theFile: "boltItem.png"},
         {varName: pendantPic, theFile: "pendant.png"},
         {varName: blacksmithPic, theFile: "blacksmith.png"},
+        {varName: shadowPic, theFile: "shadow.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_WALL, theFile: "wall.png", sX: "0", sY: "0",options: 0},

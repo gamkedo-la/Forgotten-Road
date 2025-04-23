@@ -297,8 +297,12 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
       TILE_W,
       TILE_H
     );
+    // add a shadow just for fun
+    context.globalAlpha = 0.5;
+    context.drawImage(shadowPic,col * TILE_W - 32, row * TILE_H+4);
+    context.globalAlpha = 1; 
     // draw the tree over top of it
-    context.drawImage(tileImage, col * TILE_W - 32, row * TILE_H - 32);
+    context.drawImage(tileImage, col * TILE_W - 32, row * TILE_H - 40);
   } else {
     context.drawImage(
       tileImage,

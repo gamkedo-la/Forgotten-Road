@@ -472,6 +472,8 @@ class Player extends Entity {
       srcY = this.getDirectionIndex() * FRAME_HEIGHT;
     }
 
+    this.drawShadow();
+
     ctx.drawImage(
       player.image,
       srcX,

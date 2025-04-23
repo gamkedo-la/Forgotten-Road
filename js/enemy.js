@@ -416,6 +416,7 @@ class Monster extends Entity {
         srcX = this.currentWalkFrame * frameWidth;
         srcY = this.getDirectionIndex() * this.height;
     
+        this.drawShadow();
         ctx.drawImage(this.image, srcX, srcY, this.width, this.height, this.x, this.y, this.width, this.height);
     
         if (this.isDead && !this.isDying) {

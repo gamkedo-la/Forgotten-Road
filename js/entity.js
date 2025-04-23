@@ -157,6 +157,13 @@ class Entity {
       console.log("Collision detected at", this._x, this._y);
     }
   }
+
+  drawShadow() {
+    ctx.globalAlpha = 0.5;
+    ctx.drawImage(shadowPic,this.x-16,this.y+18);
+    ctx.globalAlpha = 1; 
+  }
+
 }
 
 function rectsOverlap(a, b) {
