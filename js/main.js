@@ -181,8 +181,8 @@ function drawGameFrame(currentTime) {
   camera.update(deltaTime);
   ctx.save();
   camera.applyTransform(ctx);
-
   renderGameWorld(deltaTime); 
+  renderParticles(deltaTime);
   ctx.restore();              
 
   renderUI();                
