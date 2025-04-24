@@ -34,7 +34,7 @@ class Entity {
 
   // Setters
   set health(value) {
-    this._health = Math.max(0, value); // Prevent negative health
+    this.currentHP = Math.max(0, value); // Prevent negative health
   }
 
   set x(value) {
