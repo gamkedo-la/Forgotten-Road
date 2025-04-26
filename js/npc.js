@@ -93,6 +93,10 @@ class NPC extends Entity {
             let inventory = [basicStaff, leatherArmor, healthPotion, boltPickUp, ringOfEnergy];
             openShopInterface("Blacksmith", inventory);
             return;
+        } else if (this.name === "Alchemist") {
+            let inventory = [healthPotion, manaPotion, elixirOfSpeed, antidote]; // whatever items you want!
+            openShopInterface("Alchemist", inventory);
+            return;
         } else {
             this.speak();
         }
@@ -152,8 +156,11 @@ class NPC extends Entity {
         this.bubbleBobTimer += deltaTime;
         const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
         
-        let npcImage = this.name === "Old Man" ? oldManPic : 
-        this.name === "Blacksmith" ? blacksmithPic : oldManPic;
+        let npcImage = 
+        this.name === "Old Man" ? oldManPic :
+        this.name === "Blacksmith" ? blacksmithPic :
+        this.name === "Alchemist" ? alchemistPic : oldManPic;
+    
 
         this.drawShadow();
         ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);

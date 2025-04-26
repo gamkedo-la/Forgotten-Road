@@ -36,7 +36,13 @@ const MAP_DATA = {
         "Need something forged?",
         "I can sharpen that blade.",
         "Strong arms make strong steel.",
-      ])
+      ]),
+      new NPC("Alchemist", 18 * TILE_W + 32, 8 * TILE_H, [
+        "Potions, elixirs, and ancient remedies!",
+        "Tread carefully — not every potion is for the faint-hearted.",
+        "Knowledge is power... and danger."
+    ])
+    
     ],
     buildings: {
       blacksmithShop: {
