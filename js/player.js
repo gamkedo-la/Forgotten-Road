@@ -464,11 +464,12 @@ class Player extends Entity {
       if (this.walkTimer > frameDuration) {
         this.walkTimer = 0;
         this.currentWalkFrame =
-          (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+          (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION
       }
+      console.log(this.currentWalkFrame)
 
       frameWidth = FRAME_WALK_WIDTH;
-      srcX = this.currentWalkFrame * frameWidth;
+      srcX = (this.currentWalkFrame + 1) * frameWidth;
       srcY = this.getDirectionIndex() * FRAME_HEIGHT;
     }
 
