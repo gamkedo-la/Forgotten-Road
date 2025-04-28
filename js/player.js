@@ -466,7 +466,6 @@ class Player extends Entity {
         this.currentWalkFrame =
           (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION
       }
-      console.log(this.currentWalkFrame)
 
       frameWidth = FRAME_WALK_WIDTH;
       srcX = (this.currentWalkFrame + 1) * frameWidth;

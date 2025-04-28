@@ -22,6 +22,16 @@ let lastMapSwitchTime = 0;
 const MAP_SWITCH_COOLDOWN = 1000; // milliseconds
 let inventoryOpen = false;
 let inventoryPressed = false; 
+let weather = new WeatherSystem("rain");
+let thunderTimer = 0;
+let nextThunderTime = 5 + Math.random() * 10; // first thunder after 5-15 seconds
+let lightningAlpha = 0;
+let currentWeather = "clear"; 
+let weatherTimer = 0;
+let nextWeatherChange = 5 + Math.random() * 5; // change every 1–2 minutes
+
+
+
 
 
 
@@ -185,7 +195,8 @@ function drawGameFrame(currentTime) {
   camera.applyTransform(ctx);
   renderGameWorld(deltaTime); 
   renderParticles(deltaTime);
-  ctx.restore();              
+  ctx.restore();   
+  renderWeatherEffects()           
 
   renderUI();                
   requestAnimationFrame(drawGameFrame);
@@ -279,6 +290,41 @@ function switchToMap(newMapKey, playerCol, playerRow) {
 
 function updateGameState(deltaTime) {
   handlePauseInput();
+
+  weatherTimer += deltaTime;
+
+  if (weatherTimer > nextWeatherChange) {
+      weatherTimer = 0;
+      nextWeatherChange = 60 + Math.random() * 60;
+
+      // Randomly pick a new weather type
+      const weatherTypes = ["clear", "rain", "storm"];
+      currentWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+
+      if (currentWeather === "rain") {
+          weather = new WeatherSystem("rain");
+      } else if (currentWeather === "storm") {
+          weather = new WeatherSystem("rain");
+      } else {
+          weather = null; // no rain particles
+      }
+  }
+
+  if (currentWeather === "storm") {
+    thunderTimer += deltaTime;
+    if (thunderTimer > nextThunderTime) {
+        lightningAlpha = 1;
+        thunderTimer = 0;
+        nextThunderTime = 5 + Math.random() * 10;
+    }
+    if (lightningAlpha > 0) {
+        lightningAlpha -= deltaTime * 2;
+        if (lightningAlpha < 0) lightningAlpha = 0;
+    }
+  } else {
+      lightningAlpha = 0; // no lightning during clear/rain
+  }
+
   handleInventoryInput(); 
   if (paused && !inventoryOpen && !shopOpen) return; 
   handlePlayerMovement();
@@ -347,7 +393,6 @@ function spawnPendantInForest() {
 }
 
 function renderGameWorld(deltaTime) {
-  
   // clear using the same shade of green as our grass tile
   // just in case we can see past the map edges
   // ctx.fillStyle="rgba(137,140,34,1)"; // grass green
@@ -382,8 +427,22 @@ function renderGameWorld(deltaTime) {
       npc.draw(0);
     }
   });
+  } 
 }
 
+function renderWeatherEffects() {
+  if (currentWeather === "rain") {
+      ctx.fillStyle = "rgba(100, 100, 100, 0.2)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  if (currentWeather === "storm") {
+      ctx.fillStyle = "rgba(50, 50, 50, 0.3)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  if (lightningAlpha > 0) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${lightningAlpha})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
 }
 
 function renderUI() {
