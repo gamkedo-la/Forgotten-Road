@@ -393,20 +393,37 @@ function spawnPendantInForest() {
 }
 
 function renderGameWorld(deltaTime) {
+  
   // clear using the same shade of green as our grass tile
   // just in case we can see past the map edges
   // ctx.fillStyle="rgba(137,140,34,1)"; // grass green
   ctx.fillStyle="rgba(60,103,140,1)"; // water blue
   ctx.fillRect(0,0,4000,4000); // if we use canvas.width and height it's too small due to scrolling
 
+  // ground
   drawBackground();
+  
+  // tiles
   if (turnPathFindingDrawingOn) drawPathingFindingTiles();
+  
+  // npcs
   npcs.forEach((npc) => npc.draw && npc.draw(deltaTime));
+  
+  // walls
   drawBuildings();
+  
+  // player
   player.draw(deltaTime);
+  
+  // pickups
   worldItems[currentMapKey].forEach((item) => drawWorldItem(item));
+  
+  // enemies
   enemies.filter((e) => !e.isDead).forEach((e) => e.draw(deltaTime));
+  
+  // draw all pushable blocks
   pushableBlocks.forEach((block) => {
+    ctx.drawImage(shadowPic,block.drawX-16,block.drawY+10);
     ctx.drawImage(
       boxPic,
       0,
@@ -419,15 +436,19 @@ function renderGameWorld(deltaTime) {
       32
     );
   });
+  
+  // arrows
   projectiles.forEach((p) => p.draw(ctx));
+  
   // Re-draw the Blacksmith in front of the interior if we're inside
   if (insidebuilding) {
     npcs.forEach(npc => {
-    if (npc.name === "Blacksmith") {
-      npc.draw(0);
-    }
-  });
+      if (npc.name === "Blacksmith") {
+        npc.draw(0);
+      }
+    });
   } 
+
 }
 
 function renderWeatherEffects() {
