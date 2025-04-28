@@ -47,7 +47,8 @@ function createMonster({
   image = null,
   extra = {},
 }) {
-  var monster = new Monster(name, x, y, size, damage, maxHealth, type);
+  
+  var monster = new Monster(name, x, y, maxHealth, damage, loot ={}, type);
   monster.maxHealth = maxHealth;
   monster.health = maxHealth;
   monster.state = state;
@@ -59,8 +60,9 @@ function createMonster({
   if (state === BEHAVIOR_STATES.PATROL || state === BEHAVIOR_STATES.WANDER) {
     assignDefaultPatrol(monster);
   }
-
+  console.log(monster);
   return monster;
+  
 }
 
 function spawnMonstersFromMap() {
