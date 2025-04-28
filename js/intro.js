@@ -1,3 +1,5 @@
+const DEBUG_NEVER_PLAY_INTRO = true; // set to false on release
+
 var please_skip_intro = false;
 var current_intro_text = "";
 var current_intro_fade = 1;
@@ -46,6 +48,7 @@ function intro4() {
 }
 
 function drawIntroText() {
+    if (DEBUG_NEVER_PLAY_INTRO) return;
     if (please_skip_intro) return;
     if (current_intro_fade > 0) {
         //console.log("INTRO!");
@@ -72,9 +75,11 @@ function skip_intro() {
 function startIntro() {
     console.log("playing music and queueing up intro voiceovers");
     music.play();
-    var delay = 4000;
-    setTimeout(() => intro1(), delay);
-    setTimeout(() => intro2(), delay + 26000);
-    setTimeout(() => intro3(), delay + 46000);
-    setTimeout(() => intro4(), delay + 63000);
+    if (!DEBUG_NEVER_PLAY_INTRO) {
+        var delay = 4000;
+        setTimeout(() => intro1(), delay);
+        setTimeout(() => intro2(), delay + 26000);
+        setTimeout(() => intro3(), delay + 46000);
+        setTimeout(() => intro4(), delay + 63000);
+    }
 }
