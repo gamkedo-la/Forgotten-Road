@@ -2,6 +2,16 @@
 
 function renderParticles(deltaTime) {
 
+    // dust particles / fireflies
+    drawFireflies();
+
+    // and a couple smokestacks in town
+    drawSmoke(750,170);
+    drawSmoke(210,40);
+
+}
+
+function drawFireflies() {
     // draw a bunch of random dust particles for now
     let now = performance.now();
     for (let n=0; n<200; n++) {
@@ -11,5 +21,17 @@ function renderParticles(deltaTime) {
         ctx.fillStyle="rgba(255,255,255,"+a+")";
         ctx.fillRect(x,y,2,2);
     }
+}
 
+function drawSmoke(xx,yy) {
+    let now = performance.now();
+    for (let n=0; n<64; n++) {
+        let a = (Math.cos(n*123+now/12340)+now/12340) % 1;
+        if (a<0) a=0; if (a>1) a=1;
+        let x = xx + Math.cos(n*1237+now/888)*10;
+        let y = yy + a*-100;
+        let opacity = 1-a;
+        ctx.fillStyle="rgba(32,32,32,"+opacity+")";
+        ctx.fillRect(x,y,16*(a),16*(a));
+    }
 }
