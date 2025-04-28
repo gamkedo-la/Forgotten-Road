@@ -25,13 +25,15 @@ function drawFireflies() {
 
 function drawSmoke(xx,yy) {
     let now = performance.now();
+    let maxSize = 32;
+    let maxHeight = 128;
     for (let n=0; n<64; n++) {
         let a = (Math.cos(n*123+now/12340)+now/12340) % 1;
         if (a<0) a=0; if (a>1) a=1;
         let x = xx + Math.cos(n*1237+now/888)*10;
-        let y = yy + a*-100;
+        let y = yy + a*-maxHeight;
         let opacity = 1-a;
         ctx.fillStyle="rgba(32,32,32,"+opacity+")";
-        ctx.fillRect(x,y,16*(a),16*(a));
+        ctx.fillRect(x,y,maxSize*(a),maxSize*(a));
     }
 }
