@@ -23,9 +23,6 @@ const MAP_SWITCH_COOLDOWN = 1000; // milliseconds
 let inventoryOpen = false;
 let inventoryPressed = false; 
 let weather = new WeatherSystem("rain");
-let thunderTimer = 0;
-let nextThunderTime = 5 + Math.random() * 10; // first thunder after 5-15 seconds
-let lightningAlpha = 0;
 let currentWeather = "clear"; 
 let weatherTimer = 0;
 let nextWeatherChange = 5 + Math.random() * 5; // change every 1–2 minutes
@@ -196,15 +193,13 @@ function drawGameFrame(currentTime) {
   renderGameWorld(deltaTime); 
   renderParticles(deltaTime);
   weather?.update(deltaTime);
-  ctx.restore();   
-  weather?.draw(ctx);
-  renderWeatherEffects()           
+  ctx.restore();
+  weather?.render(ctx);  
   renderUI();                
   requestAnimationFrame(drawGameFrame);
 
   mouse.clicked = false;
 }
-
 
 function drawQuestTracker() {
   if (!quests.echoesOfTheNorth.started || quests.echoesOfTheNorth.completed)
@@ -309,21 +304,6 @@ function updateGameState(deltaTime) {
       } else {
           weather = null; // no rain particles
       }
-  }
-
-  if (currentWeather === "storm") {
-    thunderTimer += deltaTime;
-    if (thunderTimer > nextThunderTime) {
-        lightningAlpha = 1;
-        thunderTimer = 0;
-        nextThunderTime = 5 + Math.random() * 10;
-    }
-    if (lightningAlpha > 0) {
-        lightningAlpha -= deltaTime * 2;
-        if (lightningAlpha < 0) lightningAlpha = 0;
-    }
-  } else {
-      lightningAlpha = 0; // no lightning during clear/rain
   }
 
   handleInventoryInput(); 
@@ -450,21 +430,6 @@ function renderGameWorld(deltaTime) {
     });
   } 
 
-}
-
-function renderWeatherEffects() {
-  if (currentWeather === "rain") {
-      ctx.fillStyle = "rgba(100, 100, 100, 0.2)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-  if (currentWeather === "storm") {
-      ctx.fillStyle = "rgba(50, 50, 50, 0.3)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-  if (lightningAlpha > 0) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${lightningAlpha})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
 }
 
 function renderUI() {
