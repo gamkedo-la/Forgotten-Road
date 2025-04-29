@@ -195,9 +195,10 @@ function drawGameFrame(currentTime) {
   camera.applyTransform(ctx);
   renderGameWorld(deltaTime); 
   renderParticles(deltaTime);
+  weather?.update(deltaTime);
   ctx.restore();   
+  weather?.draw(ctx);
   renderWeatherEffects()           
-
   renderUI();                
   requestAnimationFrame(drawGameFrame);
 
