@@ -175,7 +175,6 @@ window.onload = function () {
 function imageLoadingDoneSoStartGame() {
   console.log("All images downloaded. Starting game!");
   switchToMap("fallDale", 5, 4); 
-  spawnMonstersFromMap();
   requestAnimationFrame(drawGameFrame);
 }
 
@@ -280,6 +279,22 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   // Clear and load map-specific content
   npcs = MAP_DATA[newMapKey]?.npcs || [];
   buildings = MAP_DATA[newMapKey]?.buildings || {};
+  enemies.length = 0; // clear old enemies
+
+  const monsterDefs = MAP_DATA[newMapKey]?.monsters || [];
+  monsterDefs.forEach(({ type, x, y }) => {
+    let monster;
+    switch (type) {
+      case "Goblin":
+        monster = createMonster({ name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee" });
+        break;  
+      case "Orc":
+        monster = createMonster({ name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40 });
+        break;
+      // Add other monster types as needed
+    }
+    if (monster) enemies.push(monster);
+  });
 
   console.log(`Switched to ${newMapKey}`);
 }

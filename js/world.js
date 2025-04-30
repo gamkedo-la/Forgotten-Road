@@ -80,6 +80,13 @@ const MAP_DATA = {
   northForest: {
     npcs: [],
     buildings: {},
+    monsters: [
+      { type: "Goblin", x: 25 * TILE_W, y: 14 * TILE_H },
+      { type: "Goblin", x: 25 * TILE_W, y: 44 * TILE_H },
+      { type: "Goblin", x: 45 * TILE_W, y: 14 * TILE_H },
+      { type: "Goblin", x: 25 * TILE_W, y: 24 * TILE_H },
+      { type: "Orc", x: 31 * TILE_W, y: 14 * TILE_H }
+    ]
   },
   eastFields: {
     npcs: [],
