@@ -263,41 +263,22 @@ function checkForMapEdgeTransition() {
 }
 
 function switchToMap(newMapKey, playerCol, playerRow) {
-  if (!WORLD_MAPS[newMapKey]) {
-    console.warn(`Map '${newMapKey}' not found.`);
-    return;
-  }
+  if (!WORLD_MAPS[newMapKey]) return;
 
   currentMapKey = newMapKey;
   backgroundGrid = WORLD_MAPS[newMapKey];
   SetupCollisionGridFromBackground();
   updateBackground();
 
+  spawnEntitiesFromTiles(newMapKey); // <<< REPLACEMENT
+
   player.x = playerCol * TILE_W;
   player.y = playerRow * TILE_H;
 
-  // Clear and load map-specific content
-  npcs = MAP_DATA[newMapKey]?.npcs || [];
   buildings = MAP_DATA[newMapKey]?.buildings || {};
-  enemies.length = 0; // clear old enemies
-
-  const monsterDefs = MAP_DATA[newMapKey]?.monsters || [];
-  monsterDefs.forEach(({ type, x, y }) => {
-    let monster;
-    switch (type) {
-      case "Goblin":
-        monster = createMonster({ name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee" });
-        break;  
-      case "Orc":
-        monster = createMonster({ name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40 });
-        break;
-      // Add other monster types as needed
-    }
-    if (monster) enemies.push(monster);
-  });
-
   console.log(`Switched to ${newMapKey}`);
 }
+
 
 function updateGameState(deltaTime) {
   handlePauseInput();

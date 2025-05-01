@@ -23,27 +23,86 @@ const TILE_SKELETON_SPAWN = 93;
 const TILE_WRAITH_SPAWN = 94;
 const TILE_GHOUL_SPAWN = 95;
 
+const TILE_NPC_OLD_MAN = 100;
+const TILE_NPC_BLACKSMITH = 101;
+const TILE_NPC_ALCHEMIST = 102;
+
+function spawnEntitiesFromTiles(mapKey) {
+  const grid = WORLD_MAPS[mapKey];
+  if (!grid) return;
+
+  enemies.length = 0;
+  npcs.length = 0;
+  worldItems[mapKey] = [];
+
+  for (let row = 0; row < grid.length; row++) {
+    for (let col = 0; col < grid[row].length; col++) {
+      const tile = grid[row][col];
+      const x = col * TILE_W;
+      const y = row * TILE_H;
+
+      switch (tile) {
+        case TILE_GOBLIN_SPAWN:
+          enemies.push(createMonster({ name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee" }));
+          break;
+
+        case TILE_ORC_SPAWN:
+          enemies.push(createMonster({ name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40 }));
+          break;
+
+        case TILE_KOBOLD_SPAWN:
+          enemies.push(createMonster({ name: "Kobold", x, y, damage: 5, maxHealth: 20, type: "ranged", state: BEHAVIOR_STATES.WANDER }));
+          break;
+
+        case TILE_SKELETON_SPAWN:
+          enemies.push(createMonster({ name: "Skeleton", x, y, damage: 2, maxHealth: 20, type: "melee", size: 40, state: BEHAVIOR_STATES.PATROL, extra: { canResurrect: true, isUndead: true, immuneToRanged: true } }));
+          break;
+
+        case TILE_WRAITH_SPAWN:
+          enemies.push(createMonster({ name: "Wraith", x, y, damage: 5, maxHealth: 20, type: "melee", state: BEHAVIOR_STATES.CHASE, image: wraithPic }));
+          break;
+
+        case TILE_GHOUL_SPAWN:
+          for (let i = 0; i < 5; i++) {
+            const offsetX = Math.random() * 32 * 2;
+            const offsetY = Math.random() * 32 * 2;
+            enemies.push(createMonster({ name: "Ghoul", x: x + offsetX, y: y + offsetY, damage: 3, maxHealth: 15, type: "melee", state: BEHAVIOR_STATES.CHASE, image: ghoulPic }));
+          }
+          break;
+
+        case TILE_NPC_OLD_MAN:
+          npcs.push(new NPC("Old Man", x, y, [
+            "The forest holds many secrets...",
+            "Sometimes I still hear the wind whisper his name.",
+            "I wasn't always this old, you know.",
+            "We lost something out there...",
+          ]));
+          break;
+
+        case TILE_NPC_BLACKSMITH:
+          npcs.push(new NPC("Blacksmith", x, y, [
+            "Need something forged?",
+            "I can sharpen that blade.",
+            "Strong arms make strong steel.",
+          ]));
+          break;
+
+        case TILE_NPC_ALCHEMIST:
+          npcs.push(new NPC("Alchemist", x, y, [
+            "Potions, elixirs, and ancient remedies!",
+            "Tread carefully — not every potion is for the faint-hearted.",
+            "Knowledge is power... and danger.",
+          ]));
+          break;
+
+        // Add future object/item spawns here
+      }
+    }
+  }
+}
+
 const MAP_DATA = {
   fallDale: {
-    npcs: [
-      new NPC("Old Man", 12 * TILE_W, 9 * TILE_H, [
-        "The forest holds many secrets...",
-        "Sometimes I still hear the wind whisper his name.",
-        "I wasn't always this old, you know.",
-        "We lost something out there...",
-      ]),
-      new NPC("Blacksmith", 2 * TILE_W, 4 * TILE_H, [
-        "Need something forged?",
-        "I can sharpen that blade.",
-        "Strong arms make strong steel.",
-      ]),
-      new NPC("Alchemist", 18 * TILE_W + 32, 8 * TILE_H, [
-        "Potions, elixirs, and ancient remedies!",
-        "Tread carefully — not every potion is for the faint-hearted.",
-        "Knowledge is power... and danger."
-    ])
-    
-    ],
     buildings: {
       blacksmithShop: {
         x: 32,
@@ -78,18 +137,9 @@ const MAP_DATA = {
     },
   },
   northForest: {
-    npcs: [],
     buildings: {},
-    monsters: [
-      { type: "Goblin", x: 25 * TILE_W, y: 14 * TILE_H },
-      { type: "Goblin", x: 25 * TILE_W, y: 44 * TILE_H },
-      { type: "Goblin", x: 45 * TILE_W, y: 14 * TILE_H },
-      { type: "Goblin", x: 25 * TILE_W, y: 24 * TILE_H },
-      { type: "Orc", x: 31 * TILE_W, y: 14 * TILE_H }
-    ]
   },
   eastFields: {
-    npcs: [],
     buildings: {},
   },
 };
@@ -101,21 +151,21 @@ const WORLD_MAPS = {
     [0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [4, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 3, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1,100, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 3, 3, 1, 1, 1, 0, 0, 0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 3, 3, 1, 1, 1, 0, 0, 0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3,3,  3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3,102, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 4, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 4, 4, 0, 0, 7, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 4, 4, 0, 0, 7, 0, 0, 0,2,101, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0,90, 0, 0, 0, 0, 0, 0,90, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -132,7 +182,7 @@ const WORLD_MAPS = {
     [0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 0,10],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0,90, 0, 0, 0, 0, 0,90, 0, 0, 0, 0, 0,90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,90, 0, 0, 0, 0, 0, 0, 0],
     [10,0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0],
@@ -140,20 +190,20 @@ const WORLD_MAPS = {
     [10,0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [10,0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,90, 0, 0, 0, 0, 0, 0, 0],
+    [10,0, 0,10, 0,90,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [10, 0, 0,10, 0,0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+    [0, 0, 0, 0, 0,90, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     [0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 2,10, 0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 0,10, 0,10, 0, 0,10],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 2, 2,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0,90, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [10,0, 0,10, 0, 0,10, 0, 0,10, 0, 2, 2, 2, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,90, 0, 0, 0, 0],
     [0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 2, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [10,0, 0,10, 0, 0,10, 0, 0,10, 0, 0, 2, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0],
@@ -240,6 +290,16 @@ function SetupCollisionGridFromBackground() {
     .fill(null)
     .map(() => new Array(TILE_COLS).fill(null));
 
+  const unwalkableTiles = [
+    TILE_WALL,
+    TILE_CLIFF,
+    TILE_TREE,
+    TILE_TREE2,
+    TILE_WATER,
+    TILE_WATER_1,
+    TILE_WATER_2,
+  ];
+
   for (let row = 0; row < TILE_ROWS; row++) {
     for (let col = 0; col < TILE_COLS; col++) {
       const idxHere = tileCoordToIndex(col, row);
@@ -249,11 +309,11 @@ function SetupCollisionGridFromBackground() {
       collisionGrid[row][col].name = `${col},${row}`;
       collisionGrid[row][col].idx = idxHere;
       collisionGrid[row][col].elementType = tileType;
-      collisionGrid[row][col].isWalkable =
-        tileType !== TILE_WALL && tileType !== TILE_CLIFF;
+      collisionGrid[row][col].isWalkable = !unwalkableTiles.includes(tileType);
     }
   }
 }
+
 
 function getMonsterSpawnTiles() {
   const spawns = [];
@@ -317,6 +377,8 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
   const tileImage = tilePics[tileType];
   if (!tileImage) return;
 
+  if(tileType === TILE_GRASS) decorateTile(col*TILE_W, row*TILE_H);
+
   if (tileType === TILE_TREE) {
     // draw the ground tile
     context.drawImage(
@@ -377,8 +439,6 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
       TILE_W,
       TILE_H
     );
-    // add little plants and rocks on grass tiles
-    if (tileType === TILE_GRASS) decorateTile(col*TILE_W,row*TILE_H);
   }
 }
 
@@ -459,3 +519,51 @@ function checkTileTypeForRandomization(tileType) {
 function tileCoordToIndex(col, row) {
   return col + TILE_COLS * row;
 }
+
+const TILE_ENTITY_MAP = {
+  [TILE_GOBLIN_SPAWN]: ({ x, y }) => createMonster({
+    name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee"
+  }),
+  [TILE_ORC_SPAWN]: ({ x, y }) => createMonster({
+    name: "Orc", x, y, damage: 10, maxHealth: 40, type: "melee", size: 40
+  }),
+  [TILE_NPC_OLD_MAN]: ({ x, y }) => new NPC("Old Man", x, y, [
+    "The forest holds many secrets...",
+    "Sometimes I still hear the wind whisper his name.",
+    "I wasn't always this old, you know.",
+    "We lost something out there..."
+  ]),
+  [TILE_NPC_BLACKSMITH]: ({ x, y }) => new NPC("Blacksmith", x, y, [
+    "Need something forged?", "I can sharpen that blade.", "Strong arms make strong steel."
+  ]),
+  [TILE_NPC_ALCHEMIST]: ({ x, y }) => new NPC("Alchemist", x, y, [
+    "Potions, elixirs, and ancient remedies!",
+    "Tread carefully — not every potion is for the faint-hearted.",
+    "Knowledge is power... and danger."
+  ]),
+};
+
+function spawnEntitiesFromTiles() {
+  const grid = backgroundGrid;
+  enemies.length = 0;
+  npcs.length = 0;
+
+  for (let row = 0; row < grid.length; row++) {
+    for (let col = 0; col < grid[row].length; col++) {
+      const tile = grid[row][col];
+      const spawnFunc = TILE_ENTITY_MAP[tile];
+      if (spawnFunc) {
+        const x = col * TILE_W;
+        const y = row * TILE_H;
+        const entity = spawnFunc({ x, y });
+
+        if (entity instanceof Monster) {
+          enemies.push(entity);
+        } else if (entity instanceof NPC) {
+          npcs.push(entity);
+        }
+      }
+    }
+  }
+}
+
