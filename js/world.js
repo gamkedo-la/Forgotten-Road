@@ -377,6 +377,8 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
       TILE_W,
       TILE_H
     );
+    // add little plants and rocks on grass tiles
+    if (tileType === TILE_GRASS) decorateTile(col*TILE_W,row*TILE_H);
   }
 }
 

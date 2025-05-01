@@ -27,6 +27,7 @@ var pendantPic = document.createElement("img");
 var blacksmithPic = document.createElement("img");
 var alchemistPic = document.createElement("img");
 var shadowPic = document.createElement("img");
+var foliagePic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -81,6 +82,7 @@ function loadImages() {
         {varName: blacksmithPic, theFile: "blacksmith.png"},
         {varName: alchemistPic, theFile: "alchemist.png"},
         {varName: shadowPic, theFile: "shadow.png"},
+        {varName: foliagePic, theFile: "foliage.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_WALL, theFile: "wall.png", sX: "0", sY: "0",options: 0},
