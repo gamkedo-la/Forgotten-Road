@@ -252,11 +252,11 @@ function movePlayer(dx, dy, direction) {
   let tileX = Math.floor(newX / TILE_W);
   let tileY = Math.floor(newY / TILE_H);
 
-  if (isWalkable(tileY, tileX)) {
+  if (canMoveTo(newX, newY, player.width, player.height)) {
     player.x = newX;
     player.y = newY;
   }
-
+  
   const directionFacingMap = {
     NORTH: "up",
     SOUTH: "down",
@@ -266,3 +266,28 @@ function movePlayer(dx, dy, direction) {
 
   player.facing = directionFacingMap[direction];
 }
+
+function canMoveTo(x, y, width, height) {
+  const corners = [
+    { x: x, y: y },
+    { x: x + width - 1, y: y },
+    { x: x, y: y + height - 1 },
+    { x: x + width - 1, y: y + height - 1 },
+  ];
+
+  for (const corner of corners) {
+    const col = Math.floor(corner.x / TILE_W);
+    const row = Math.floor(corner.y / TILE_H);
+
+    if (
+      row < 0 || row >= TILE_ROWS ||
+      col < 0 || col >= TILE_COLS ||
+      !collisionGrid[row][col].isWalkable
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
