@@ -603,11 +603,12 @@ function updateUI(deltaTime) {
 }
 
 function drawGoldUI() {
-  colorRect(5, 40, 170, 30, "rgba(0, 0, 0, 0.5)");
+  const goldY = 55
+  colorRect(5, goldY, 170, 30, "rgba(0, 0, 0, 0.5)");
   drawTextWithShadow(
     `Gold: ${player.gold}`,
     15,
-    60,
+    goldY+20,
     UI_TEXT_STYLES.DEFAULT.textColor,
     UI_TEXT_STYLES.DEFAULT.font,
     UI_TEXT_STYLES.DEFAULT.align
@@ -615,7 +616,7 @@ function drawGoldUI() {
   // actually draw each gold coin in stacks of ten! =)
   for (let n = 0; n < player.gold; n++) {
     let x = 100 + Math.floor(n / 10) * 12;
-    let y = 60 + (n % 10) * -2;
+    let y = goldY+20 + (n % 10) * -2;
     ctx.drawImage(coinPic, x, y);
   }
 }
@@ -623,10 +624,9 @@ function drawGoldUI() {
 function drawArrowCount() {
   let text = `Arrows: ${player.arrows}/${player.maxArrows}`;
   let x = 10;
-  let y = 80;
+  let y = 105;
   drawTextWithShadow(text, x, y, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left");
 }
-
 
 
 function drawPauseOverlay() {
@@ -657,7 +657,7 @@ function drawStaminaBar() {
   if (player.currentStamina < 30) barColor = "orange";
   if (player.currentStamina < 10) barColor = "red";
   let x = 5;
-  let y = 85;
+  let y = 35;
   let width = 110;
   let height = 12;
   let fillWidth = (player.currentStamina / player.maxStamina) * width;
