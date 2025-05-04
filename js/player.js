@@ -94,6 +94,12 @@ class Player extends Entity {
     
   }
 
+  cancelPath() {
+    this.path = [];
+    this.moveTarget = null;
+    this.isMoving = false;
+  }
+
   useStamina(amount) {
     this.currentStamina = Math.max(0, this.currentStamina - amount);
   }

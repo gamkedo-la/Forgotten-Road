@@ -80,8 +80,6 @@ document.addEventListener("keydown", (event) => {
     keys.cancel = true;
   }
 
-
-
   // Handle active prompt
   if (dialoguePrompt && pendingQuest) {
     if (event.key.toLowerCase() === "y") {
@@ -120,6 +118,9 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowDown" || event.key === "s") keys.down = true;
   if (event.key === "ArrowLeft" || event.key === "a") keys.left = true;
   if (event.key === "ArrowRight" || event.key === "d") keys.right = true;
+
+  // Cancel pathfinding navigation on movement key presses
+  if (keys.up || keys.down || keys.left || keys.right) player.cancelPath();
 
   // Combat and action
   if (
