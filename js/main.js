@@ -27,11 +27,6 @@ let currentWeather = "clear";
 let weatherTimer = 0;
 let nextWeatherChange = 5 + Math.random() * 5; // change every 1–2 minutes
 
-
-
-
-
-
 //Initialize the world items arrays for each screen
 Object.keys(WORLD_MAPS).forEach((key) => {
   worldItems[key] = [];
@@ -218,49 +213,48 @@ function drawQuestTracker() {
   drawTextWithShadow(status, x, y + 18, "yellow", "12px Arial", "left");
 }
 
+const MAP_TRANSITIONS = {
+  fallDale: {
+    west: { to: "graveYard", col: TILE_COLS - 2 }, // enter graveyard from right
+    north: { to: "northForest", row: TILE_ROWS - 2 },
+    east: { to: "eastFields", col: 1 },
+  },
+  graveYard: {
+    east: { to: "fallDale", col: 1 },
+  },
+  northForest: {
+    south: { to: "fallDale", row: 1 },
+  },
+  eastFields: {
+    west: { to: "fallDale", col: TILE_COLS - 2 },
+  },
+};
+
 function checkForMapEdgeTransition() {
-  var now = performance.now();
+  const now = performance.now();
   if (now - lastMapSwitchTime < MAP_SWITCH_COOLDOWN) return;
 
-  var col = Math.floor(player.x / TILE_W);
-  var row = Math.floor(player.y / TILE_H);
+  const col = Math.floor(player.x / TILE_W);
+  const row = Math.floor(player.y / TILE_H);
+  const transition = MAP_TRANSITIONS[currentMapKey];
 
-  // NORTH
-  if (row === 0 && WORLD_MAPS["northForest"] && currentMapKey === "fallDale") {
-    switchToMap("northForest", col, TILE_ROWS - 2);
+  if (!transition) return;
+
+  if (row === 0 && transition.north) {
+    switchToMap(transition.north.to, col, transition.north.row ?? TILE_ROWS - 2);
     lastMapSwitchTime = now;
-  }
-
-  // SOUTH
-  else if (
-    row === TILE_ROWS - 1 &&
-    WORLD_MAPS["fallDale"] &&
-    currentMapKey === "northForest"
-  ) {
-    switchToMap("fallDale", col, 1);
+  } else if (row === TILE_ROWS - 1 && transition.south) {
+    switchToMap(transition.south.to, col, transition.south.row ?? 1);
     lastMapSwitchTime = now;
-  }
-
-  // EAST
-  else if (
-    col === TILE_COLS - 1 &&
-    WORLD_MAPS["eastFields"] &&
-    currentMapKey === "fallDale"
-  ) {
-    switchToMap("eastFields", 1, row);
+  } else if (col === 0 && transition.west) {
+    switchToMap(transition.west.to, transition.west.col ?? TILE_COLS - 2, row);
     lastMapSwitchTime = now;
-  }
-
-  // WEST
-  else if (
-    col === 0 &&
-    WORLD_MAPS["fallDale"] &&
-    currentMapKey === "eastFields"
-  ) {
-    switchToMap("fallDale", TILE_COLS - 2, row);
+  } else if (col === TILE_COLS - 1 && transition.east) {
+    switchToMap(transition.east.to, transition.east.col ?? 1, row);
     lastMapSwitchTime = now;
   }
 }
+
 
 function switchToMap(newMapKey, playerCol, playerRow) {
   if (!WORLD_MAPS[newMapKey]) return;
@@ -270,7 +264,7 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   SetupCollisionGridFromBackground();
   updateBackground();
 
-  spawnEntitiesFromTiles(newMapKey); // <<< REPLACEMENT
+  spawnEntitiesFromTiles(newMapKey); 
 
   player.x = playerCol * TILE_W;
   player.y = playerRow * TILE_H;
@@ -425,7 +419,6 @@ function renderGameWorld(deltaTime) {
       }
     });
   } 
-
 }
 
 function renderUI() {
