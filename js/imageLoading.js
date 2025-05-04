@@ -93,6 +93,7 @@ function loadImages() {
         {tileType: TILE_WATER, theFile: "water.png", sX: "0", sY: "0",options: 0},
         {tileType: TILE_CLIFF, theFile: "cliff.png", sX: "64", sY: "96",options: 0},
         {tileType: TILE_PRESSURE_PLATE, theFile: "grass.png", sX: "96", sY: "128",options: 0},
+        {tileType: TILE_DIRT, theFile: "dirt.png", sX: "32", sY: "32",options: 0},
     ];
     
     picsToLoad = imageList.length;

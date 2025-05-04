@@ -16,6 +16,7 @@ const TILE_PRESSURE_PLATE = 7;
 const TILE_WATER_1 = 8; //GOAL to automate this tile from water
 const TILE_WATER_2 = 9;//GOAL to automate this tile from water
 const TILE_TREE2 = 10;
+const TILE_DIRT = 11;
 const TILE_GOBLIN_SPAWN = 90;
 const TILE_ORC_SPAWN = 91;
 const TILE_KOBOLD_SPAWN = 92;
@@ -167,11 +168,11 @@ const WORLD_MAPS = {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0,11,11, 0, 0, 0, 0, 0],
+    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0,11,11,11, 11, 0, 0, 0, 0],
+    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0,11,11,11, 11, 0, 0, 0, 0],
+    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0,11,11,11, 0, 0, 0, 0],
+    [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0,11,11, 0, 0, 0, 0, 0],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -476,6 +477,31 @@ function checkTileTypeForConnectors(tileType, x, y) {
       return { sX: 32, sY: 0 }; // default center cliff
     }
   }
+  
+  if (tileType === TILE_DIRT) {
+    const up = y > 0 && backgroundGrid[y - 1][x] === TILE_GRASS;
+    const down = y < backgroundGrid.length - 1 && backgroundGrid[y + 1][x] === TILE_GRASS;
+    const left = x > 0 && backgroundGrid[y][x - 1] === TILE_GRASS;
+    const right = x < backgroundGrid[0].length - 1 && backgroundGrid[y][x + 1] === TILE_GRASS;
+  
+    // Determine sprite based on surroundings
+    let tileIndex = 4; // default center tile (no grass touching)
+    if (up && !down && !left && !right) tileIndex = 1;
+    else if (!up && down && !left && !right) tileIndex = 7;
+    else if (!up && !down && left && !right) tileIndex = 3;
+    else if (!up && !down && !left && right) tileIndex = 5;
+    else if (up && down && !left && !right) tileIndex = 4; // vertical bridge
+    else if (!up && !down && left && right) tileIndex = 4; // horizontal bridge
+    else if (up && left) tileIndex = 0;
+    else if (up && right) tileIndex = 2;
+    else if (down && left) tileIndex = 6;
+    else if (down && right) tileIndex = 8;
+  
+    const sX = (tileIndex % 3) * 32;
+    const sY = Math.floor(tileIndex / 3) * 32;
+    return { sX, sY };
+  }
+
   return null;
 }
 
