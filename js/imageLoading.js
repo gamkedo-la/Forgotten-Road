@@ -28,6 +28,7 @@ var blacksmithPic = document.createElement("img");
 var alchemistPic = document.createElement("img");
 var shadowPic = document.createElement("img");
 var foliagePic = document.createElement("img");
+var chefPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -74,6 +75,7 @@ function loadImages() {
         {varName: leatherArmorIconPic, theFile: "armorIcon.png"},
         {varName: healthPotionPic, theFile: "healthPotion.png"},
         {varName: oldManPic, theFile: "oldman.png"},
+        {varName: chefPic, theFile: "chef.png"},
         {varName: boxPic, theFile: "box.png"},
         {varName: coinPic, theFile: "coin.png"},
         {varName: shieldGlowPic, theFile: "shadowShield.png"},

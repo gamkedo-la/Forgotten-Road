@@ -25,15 +25,20 @@ function colorText(showWords, textX, textY, fillColor, fontSize = 7) {
 }
 
 function drawTextWithShadow(text, x, y, color, font = "13px sans-serif", align = "left") {
-	ctx.textAlign = align;
-	ctx.font = font;
-	ctx.shadowBlur = 8;
-	ctx.shadowColor = "black";
-	ctx.shadowOffsetX = 0;
-	ctx.shadowOffsetY = 0;
-	ctx.fillStyle = color;
-	ctx.fillText(text, x, y);
-	ctx.shadowBlur = 0;
+	// can be >1 line now
+    let lines = text.split("\n");
+    for (let txt of lines) {
+        ctx.textAlign = align;
+        ctx.font = font;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "black";
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.fillStyle = color;
+        ctx.fillText(txt, x, y);
+        ctx.shadowBlur = 0;
+        y += 14; // ready for next line
+    }
 }
 
 const UI_TEXT_STYLES = {

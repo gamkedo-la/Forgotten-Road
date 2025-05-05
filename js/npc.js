@@ -1,3 +1,5 @@
+// the current state for all known quests
+// as used by npc.js and main.js
 const quests = {
     echoesOfTheNorth: {
       started: false,
@@ -9,12 +11,24 @@ const quests = {
     shadowsOfDoubt: {
       started: false,
       completed: false
+    },
+    yesYourEggcellence: {
+      started: false,
+      completed: false,
+      eggsDelivered: 0,
+      eggsFound: 0,
+      mushroomsDelivered: 0,
+      mushroomsFound: 0,
+      rewardGold: 250
     }
   };
   
 
 class NPC extends Entity {
     constructor(name, x, y, dialogue, hoverText = null) {
+
+        console.log("Spawning an NPC named "+name+" at "+x+","+y);
+
         super(name, x, y, 100, 0);
         this.width = 32;
         this.height = 32;
@@ -44,6 +58,26 @@ class NPC extends Entity {
             return;
         }
     
+        if (this.name === "Chef Gormondo") {
+            const quest = quests.yesYourEggcellence;
+            if (!quest.started) {
+                dialoguePrompt = "I was ordered to make breakfast for the king and\nqueen and need 4 eggs and 4 mushrooms.\nPlease help me? I'll make it well worth your while.";
+                pendingQuest = () => {
+                    quest.started = true;
+                    this.dialogue = "Thanks! This will be an omlette to remember.";
+                }
+            } else { // quest is underway
+                if (quest.eggsFound < 4 || quest.mushroomsFound < 4) {
+                    this.dialogue = "We need "+(4-quest.eggsFound)+" more eggs and "+(4-quest.mushroomsFound)+" more mushrooms.";
+                } else {
+                    quest.completed = true;
+                    this.dialogue = "Thank you for the eggs and mushrooms! You saved my life and the king and queen will have their breakfast as ordered. Here is your reward.";
+                    player.gold += quest.rewardGold;
+                }
+            }
+            this.speak();
+        }
+
         if (this.name === "Old Man") {
             const quest = quests.echoesOfTheNorth;
     
@@ -156,11 +190,10 @@ class NPC extends Entity {
         this.bubbleBobTimer += deltaTime;
         const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
         
-        let npcImage = 
-        this.name === "Old Man" ? oldManPic :
-        this.name === "Blacksmith" ? blacksmithPic :
-        this.name === "Alchemist" ? alchemistPic : oldManPic;
-    
+        let npcImage = oldManPic; // default is "Old Man"
+        if (this.name === "Blacksmith") npcImage = blacksmithPic;
+        if (this.name === "Alchemist") npcImage = alchemistPic; 
+        if (this.name === "Chef Gormondo") npcImage = chefPic;
 
         this.drawShadow();
         ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);
@@ -226,7 +259,7 @@ function drawDialoguePrompt() {
     outlineRect(x, y, width, height, "white");
 
     drawTextWithShadow(dialoguePrompt, x + 20, y + 30, "white", "16px Arial", "left");
-    drawTextWithShadow("[Y]es   [N]o", x + 20, y + 60, "gray", "14px Arial", "left");
+    drawTextWithShadow("[Y]es   [N]o", x + 20, y + 80, "gray", "14px Arial", "left");
 }
 
 function spawnGraveyardMystery() {

@@ -28,6 +28,7 @@ const TILE_GHOUL_SPAWN = 95;
 const TILE_NPC_OLD_MAN = 100;
 const TILE_NPC_BLACKSMITH = 101;
 const TILE_NPC_ALCHEMIST = 102;
+const TILE_NPC_CHEF = 103;
 
 function spawnEntitiesFromTiles(mapKey) {
   const grid = WORLD_MAPS[mapKey];
@@ -81,6 +82,17 @@ function spawnEntitiesFromTiles(mapKey) {
           ]));
           break;
 
+        case TILE_NPC_CHEF:
+          // FIXME: this never runs... yet map data has 103 in it...???
+          console.log("CHEF TILE FOUND!");
+          npcs.push(new NPC("Chef Gormondo", x, y, [
+            "Please help me make a royal omlette.",
+            "I am missing a few key ingredients.",
+            "As chef, my duty requires I remain here.",
+            "All I need are 4 eggs and 4 mushrooms.",
+          ]));
+          break;
+          
         case TILE_NPC_BLACKSMITH:
           npcs.push(new NPC("Blacksmith", x, y, [
             "Need something forged?",
@@ -168,7 +180,7 @@ const WORLD_MAPS = {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0,103,0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,],
     [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -602,8 +614,16 @@ const TILE_ENTITY_MAP = {
     "Tread carefully — not every potion is for the faint-hearted.",
     "Knowledge is power... and danger."
   ]),
+  [TILE_NPC_CHEF]: ({ x, y }) => new NPC("Chef Gormondo", x, y, [
+    "Please help me make a royal omlette.",
+    "I am missing a few key ingredients.",
+    "As chef, my duty requires I remain here.",
+    "All I need are 4 eggs and 4 mushrooms.",
+  ]),
 };
 
+// FIXME: there are two functions with this name.............
+// I suggest we delete the other one - I don't think it ever runs
 function spawnEntitiesFromTiles() {
   const grid = backgroundGrid;
   enemies.length = 0;
