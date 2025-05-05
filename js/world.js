@@ -533,7 +533,7 @@ const TILE_ENTITY_MAP = {
     "Please help me make a royal omlette.",
     "I am missing a few key ingredients.",
     "As chef, my duty requires I remain here.",
-    "All I need are 4 eggs and 4 mushrooms.",
+    "All I need are eggs and mushrooms.",
   ]),
 };
 

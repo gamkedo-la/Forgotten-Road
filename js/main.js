@@ -188,21 +188,33 @@ function drawGameFrame(currentTime) {
 }
 
 function drawQuestTracker() {
-  if (!quests.echoesOfTheNorth.started || quests.echoesOfTheNorth.completed)
-    return;
-
-  let title = "Quest: Echoes of the North";
-  let status = quests.echoesOfTheNorth.pendantFound
-    ? "• Return the pendant to the Old Man"
-    : "• Find the lost pendant in the northern forest";
-
   let x = canvas.width - 270;
-  let y = 10;
+  let y = 20;
+  let boxH = 64;
 
-  colorRect(x - 5, y - 30, 260, 50, "rgba(0, 0, 0, 0.5)");
+  if (quests.echoesOfTheNorth.started && !quests.echoesOfTheNorth.completed) {
+    let title = "Quest: Echoes of the North";
+    let status = quests.echoesOfTheNorth.pendantFound
+        ? "• Return the pendant to the Old Man"
+        : "• Find the lost pendant in the northern forest";
+    colorRect(x - 5, y - 30, 260, boxH, "rgba(0, 0, 0, 0.5)");
+    drawTextWithShadow(title, x, y, "white", "14px Arial", "left");
+    drawTextWithShadow(status, x, y + 18, "yellow", "12px Arial", "left");
+    y += boxH;
+  }
 
-  drawTextWithShadow(title, x, y, "white", "14px Arial", "left");
-  drawTextWithShadow(status, x, y + 18, "yellow", "12px Arial", "left");
+
+  if (quests.yesYourEggcellence.started && !quests.yesYourEggcellence.completed) {
+    let title = "Quest: Yes, your Eggcellence";
+    let status1 = "• You need "+quests.yesYourEggcellence.eggsNeeded+" eggs and have "+quests.yesYourEggcellence.eggsFound;
+    let status2 = "• You need "+quests.yesYourEggcellence.mushroomsNeeded+" eggs and have "+quests.yesYourEggcellence.mushroomsFound;
+    colorRect(x - 5, y - 30, 260, boxH+20, "rgba(0, 0, 0, 0.5)");
+    drawTextWithShadow(title, x, y, "white", "14px Arial", "left");
+    drawTextWithShadow(status1, x, y + 18, "yellow", "12px Arial", "left");
+    drawTextWithShadow(status2, x, y + 38, "yellow", "12px Arial", "left");
+    y += boxH+20;
+  }
+
 }
 
 const MAP_TRANSITIONS = {

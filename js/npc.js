@@ -15,10 +15,10 @@ const quests = {
     yesYourEggcellence: {
       started: false,
       completed: false,
-      eggsDelivered: 0,
       eggsFound: 0,
-      mushroomsDelivered: 0,
+      eggsNeeded: 4,
       mushroomsFound: 0,
+      mushroomsNeeded: 4,
       rewardGold: 250
     }
   };
@@ -67,8 +67,8 @@ class NPC extends Entity {
                     this.dialogue = "Thanks! This will be an omlette to remember.";
                 }
             } else { // quest is underway
-                if (quest.eggsFound < 4 || quest.mushroomsFound < 4) {
-                    this.dialogue = "We need "+(4-quest.eggsFound)+" more eggs and "+(4-quest.mushroomsFound)+" more mushrooms.";
+                if (quest.eggsFound < quest.eggsNeeded || quest.mushroomsFound < quest.mushroomsNeeded) {
+                    this.dialogue = "We need "+(quest.eggsNeeded-quest.eggsFound)+" more eggs and "+(quest.mushroomsNeeded-quest.mushroomsFound)+" more mushrooms.";
                 } else {
                     quest.completed = true;
                     this.dialogue = "Thank you for the eggs and mushrooms! You saved my life and the king and queen will have their breakfast as ordered. Here is your reward.";
