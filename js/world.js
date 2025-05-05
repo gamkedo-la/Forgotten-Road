@@ -30,6 +30,7 @@ const TILE_NPC_BLACKSMITH = 101;
 const TILE_NPC_ALCHEMIST = 102;
 const TILE_NPC_CHEF = 103;
 
+/* this function is never used - there's another one defined below
 function spawnEntitiesFromTiles(mapKey) {
   const grid = WORLD_MAPS[mapKey];
   if (!grid) return;
@@ -114,7 +115,7 @@ function spawnEntitiesFromTiles(mapKey) {
     }
   }
 }
-
+*/
 const MAP_DATA = {
   fallDale: {
     buildings: {

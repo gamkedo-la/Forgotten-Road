@@ -152,6 +152,7 @@ function spawnMonstersFromMap() {
   });
 }
 
+/* this function is never used
 function spawnNPCs() {
   const oldMan = new NPC("Old Man", 12 * TILE_W, 8 * TILE_H, [
     "The forest holds many secrets...",
@@ -161,7 +162,7 @@ function spawnNPCs() {
   ]);
   npcs.push(oldMan);
 }
-
+*/
 // Initialization
 window.onload = function () {
   canvas = document.getElementById("gameCanvas");
