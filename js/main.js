@@ -207,7 +207,7 @@ function drawQuestTracker() {
   if (quests.yesYourEggcellence.started && !quests.yesYourEggcellence.completed) {
     let title = "Quest: Yes, your Eggcellence";
     let status1 = "• You need "+quests.yesYourEggcellence.eggsNeeded+" eggs and have "+quests.yesYourEggcellence.eggsFound;
-    let status2 = "• You need "+quests.yesYourEggcellence.mushroomsNeeded+" eggs and have "+quests.yesYourEggcellence.mushroomsFound;
+    let status2 = "• You need "+quests.yesYourEggcellence.mushroomsNeeded+" mushrooms and have "+quests.yesYourEggcellence.mushroomsFound;
     colorRect(x - 5, y - 30, 260, boxH+20, "rgba(0, 0, 0, 0.5)");
     drawTextWithShadow(title, x, y, "white", "14px Arial", "left");
     drawTextWithShadow(status1, x, y + 18, "yellow", "12px Arial", "left");
