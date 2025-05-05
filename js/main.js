@@ -618,7 +618,7 @@ function updateUI(deltaTime) {
 }
 
 function drawGoldUI() {
-  const goldY = 55
+  const goldY = 70
   colorRect(5, goldY, 200, 30, "rgba(0, 0, 0, 0.5)");
   drawTextWithShadow(
     `Gold: ${player.gold}`,
@@ -639,7 +639,7 @@ function drawGoldUI() {
 function drawArrowCount() {
   let text = `Arrows: ${player.arrows}/${player.maxArrows}`;
   let x = 15;
-  let y = 110;
+  let y = 130;
   colorRect(x - 10, y - 20, 200, 30, "rgba(0, 0, 0, 0.5)");
   drawTextWithShadow(text, x, y, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left");
   // actually draw each arrow =)
@@ -677,19 +677,25 @@ function drawBuildings() {
 
 function drawStaminaBar() {
   let barColor = "green";
+  let emptyColor = "rgba(0,0,0,0.5)";
   if (player.currentStamina < 30) barColor = "orange";
   if (player.currentStamina < 10) barColor = "red";
   let x = 5;
   let y = 35;
-  let width = 110;
-  let height = 12;
-  let fillWidth = (player.currentStamina / player.maxStamina) * width;
-
+  let width = 200;
+  let height = 30;
+  let margin = 5;
+  let barW = 1;
+  let barH = 16; 
+  let fillWidth = (player.currentStamina / player.maxStamina) * (width-margin-margin);
+  // bg
   colorRect(x, y, width, height, "rgba(0, 0, 0, 0.5)");
-
-  colorRect(x, y, fillWidth, height, barColor);
-
-  drawTextWithShadow("Stamina", x + 2, y + 10, "white", "12px Arial", "left");
+  // green part
+  colorRect(x+margin, y+margin, fillWidth, height-margin-margin, barColor);
+  // empty part
+  colorRect(x+margin+fillWidth, y+margin, width-margin-margin-fillWidth, height-margin-margin, emptyColor);
+  // numbers
+  drawTextWithShadow("Stamina: "+Math.round(player.currentStamina), x+10, y+19, "white", "12px Arial", "left");
 }
 
 function checkBuildingCollisions() {

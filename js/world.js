@@ -530,7 +530,7 @@ const TILE_ENTITY_MAP = {
     "Knowledge is power... and danger."
   ]),
   [TILE_NPC_CHEF]: ({ x, y }) => new NPC("Chef Gormondo", x, y, [
-    "Please help me make a royal omlette.",
+    "Please help me make a royal omelette.",
     "I am missing a few key ingredients.",
     "As chef, my duty requires I remain here.",
     "All I need are eggs and mushrooms.",
