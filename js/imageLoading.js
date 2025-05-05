@@ -97,6 +97,13 @@ function loadImages() {
         {tileType: TILE_CLIFF, theFile: "cliff.png", sX: "64", sY: "96",options: 0},
         {tileType: TILE_PRESSURE_PLATE, theFile: "grass.png", sX: "96", sY: "128",options: 0},
         {tileType: TILE_DIRT, theFile: "dirt.png", sX: "32", sY: "32",options: 0},
+
+        // this is so NPCs have grass underneath them
+        {tileType: TILE_NPC_ALCHEMIST, theFile: "grass.png", sX: "0", sY: "0", options: 4},
+        {tileType: TILE_NPC_BLACKSMITH, theFile: "grass.png", sX: "0", sY: "0", options: 4},
+        {tileType: TILE_NPC_OLD_MAN, theFile: "grass.png", sX: "0", sY: "32*2",options: 4},
+        {tileType: TILE_NPC_CHEF, theFile: "grass.png", sX: "0", sY: "0", options: 4},
+
     ];
     
     picsToLoad = imageList.length;

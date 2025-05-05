@@ -537,8 +537,6 @@ const TILE_ENTITY_MAP = {
   ]),
 };
 
-// FIXME: there are two functions with this name.............
-// I suggest we delete the other one - I don't think it ever runs
 function spawnEntitiesFromTiles() {
   const grid = backgroundGrid;
   enemies.length = 0;
