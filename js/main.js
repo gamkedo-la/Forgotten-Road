@@ -40,7 +40,7 @@ function createMonster({
   name,
   x,
   y,
-  size = 32,
+  size = TILE_H,
   damage,
   maxHealth,
   type,
@@ -129,8 +129,8 @@ function spawnMonstersFromMap() {
       });
     } else if (tile === TILE_GHOUL_SPAWN) {
       for (let i = 0; i < 5; i++) {
-        const offsetX = Math.random() * 32 * 2;
-        const offsetY = Math.random() * 32 * 2;
+        const offsetX = Math.random() * TILE_W * 2;
+        const offsetY = Math.random() * TILE_H * 2;
         const ghoul = createMonster({
           name: "Ghoul",
           x: x + offsetX,
@@ -405,8 +405,8 @@ function renderGameWorld(deltaTime) {
       block.height,
       block.drawX,
       block.drawY,
-      32,
-      32
+      TILE_W,
+      TILE_H
     );
   });
   
@@ -633,10 +633,10 @@ function drawPauseOverlay() {
 
 function drawWorldItem(item) {
   if (item.sprite instanceof Image && item.sprite.complete) {
-    ctx.drawImage(item.sprite, item.x, item.y, 32, 32);
+    ctx.drawImage(item.sprite, item.x, item.y, TILE_W, TILE_H);
   } else {
     ctx.fillStyle = "orange";
-    ctx.fillRect(item.x, item.y, 32, 32);
+    ctx.fillRect(item.x, item.y, TILE_W, TILE_H);
   }
 }
 
