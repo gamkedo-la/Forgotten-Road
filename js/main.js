@@ -619,7 +619,7 @@ function updateUI(deltaTime) {
 
 function drawGoldUI() {
   const goldY = 55
-  colorRect(5, goldY, 170, 30, "rgba(0, 0, 0, 0.5)");
+  colorRect(5, goldY, 200, 30, "rgba(0, 0, 0, 0.5)");
   drawTextWithShadow(
     `Gold: ${player.gold}`,
     15,
@@ -638,9 +638,17 @@ function drawGoldUI() {
 
 function drawArrowCount() {
   let text = `Arrows: ${player.arrows}/${player.maxArrows}`;
-  let x = 10;
-  let y = 105;
+  let x = 15;
+  let y = 110;
+  colorRect(x - 10, y - 20, 200, 30, "rgba(0, 0, 0, 0.5)");
   drawTextWithShadow(text, x, y, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left");
+  // actually draw each arrow =)
+  let w = 16;
+  let h = 20;
+  let spacing = 6;
+  for (let n = 0; n < player.arrows; n++) {
+    ctx.drawImage(boltPic,0,0,w,h,x+115+n*spacing,y-15,w,h);
+  }  
 }
 
 
