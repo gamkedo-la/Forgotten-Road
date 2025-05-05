@@ -9,6 +9,7 @@ const keys = {
   action: false,
   cancel: false, 
   pause: false,
+  mute: false,
   usePotion: false,
   sprint: false,
   inventory: false,
@@ -155,6 +156,7 @@ document.addEventListener("keydown", (event) => {
 
   // Pause
   if (event.key === "p") keys.pause = true;
+  if (event.key === "m") keys.mute = true;
 
   // Staff attack
   if (event.key === "f") {
@@ -211,6 +213,7 @@ document.addEventListener("keyup", (event) => {
     keys.action = false;
 
   if (event.key === "p") keys.pause = false;
+  if (event.key === "m") keys.mute = false;
 
   if(event.key === 'Shift'){
     isPullingBlock = false;

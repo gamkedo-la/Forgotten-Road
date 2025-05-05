@@ -7,6 +7,8 @@ let lastFrameTime = performance.now();
 
 let paused = false;
 let pressedPause = false;
+let muted = false;
+let pressedMute = false;
 let turnPathFindingDrawingOn = false;
 let insidebuilding = false;
 let projectiles = [];
@@ -276,6 +278,7 @@ function switchToMap(newMapKey, playerCol, playerRow) {
 
 function updateGameState(deltaTime) {
   handlePauseInput();
+  handleMuteInput();
 
   weatherTimer += deltaTime;
 
@@ -447,6 +450,21 @@ function handlePauseInput() {
     pressedPause = true;
   }
   if (!keys.pause) pressedPause = false;
+}
+
+function handleMuteInput() {
+  if ((keys.mute && !pressedMute)) {
+    pressedMute = true;
+    muted = !muted
+    
+    if (muted){
+      muteAllSounds();
+    }
+    else {
+      unmuteAllSounds();
+    }
+  }
+  if (!keys.mute) pressedMute = false;
 }
 
 function handlePlayerMovement() {
