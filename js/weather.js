@@ -13,7 +13,7 @@ class WeatherSystem {
     this.timer += deltaTime;
 
     // Spawn rain particles
-    if (["rain", "storm"].includes(this.type) && this.timer > 1 / this.spawnRate) {
+    if (["rain", "storm", "snow"].includes(this.type) && this.timer > 1 / this.spawnRate) {
       this.timer = 0;
       this.particles.push(this.createParticle());
     }
@@ -46,7 +46,8 @@ class WeatherSystem {
 
   createParticle() {
     const padding = 400;
-    return {
+    
+    const rainobj =  {
       x: camera.x - canvas.width / 2 - padding + Math.random() * (canvas.width + padding * 2),
       y: camera.y - canvas.height / 2 - 50,
       vx: 0,
@@ -54,6 +55,19 @@ class WeatherSystem {
       size: 2,
       color: "lightblue"
     };
+
+    if (this.type === "snow"){
+      return {
+        ...rainobj,
+        vy: Math.random() + 1,
+        size: Math.random() + 3,
+        color: "lightgray"
+      }
+    }
+    return {
+      ...rainobj,
+    }
+
   }
 
   render(ctx) {
@@ -63,8 +77,10 @@ class WeatherSystem {
     } else if (this.type === "storm") {
       ctx.fillStyle = "rgba(50, 50, 50, 0.3)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else if (this.type === "snow") {
+      ctx.fillStyle = "rgba(100, 100, 100, 0.1)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-
     // Rain particles
     for (let p of this.particles) {
       ctx.fillStyle = p.color;

@@ -22,7 +22,7 @@ let lastMapSwitchTime = 0;
 const MAP_SWITCH_COOLDOWN = 1000; // milliseconds
 let inventoryOpen = false;
 let inventoryPressed = false; 
-let weather = new WeatherSystem("rain");
+let weather = new WeatherSystem();
 let currentWeather = "clear"; 
 let weatherTimer = 0;
 let nextWeatherChange = 5 + Math.random() * 5; // change every 1–2 minutes
@@ -284,13 +284,15 @@ function updateGameState(deltaTime) {
       nextWeatherChange = 60 + Math.random() * 60;
 
       // Randomly pick a new weather type
-      const weatherTypes = ["clear", "rain", "storm"];
+      const weatherTypes = ["clear", "rain", "snow","storm" ];
       currentWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
-
+      console.log(currentWeather);
       if (currentWeather === "rain") {
-          weather = new WeatherSystem("rain");
+          weather = new WeatherSystem();
       } else if (currentWeather === "storm") {
-          weather = new WeatherSystem("rain");
+          weather = new WeatherSystem();
+      } else if (currentWeather === "snow"){
+          weather = new WeatherSystem("snow")
       } else {
           weather = null; // no rain particles
       }
