@@ -29,6 +29,7 @@ const TILE_NPC_OLD_MAN = 100;
 const TILE_NPC_BLACKSMITH = 101;
 const TILE_NPC_ALCHEMIST = 102;
 const TILE_NPC_CHEF = 103;
+const TILE_NPC_CHUCK = 104;
 
 const MAP_DATA = {
   fallDale: {
@@ -84,7 +85,7 @@ const WORLD_MAPS = {
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [4, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1,100, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0,104, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 1, 1, 1, 0, 0, 0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3,3,  3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3,102, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -534,6 +535,11 @@ const TILE_ENTITY_MAP = {
     "I am missing a few key ingredients.",
     "As chef, my duty requires I remain here.",
     "All I need are eggs and mushrooms.",
+  ]),
+  [TILE_NPC_CHUCK]: ({ x, y }) => new NPC("Chuck", x, y, [
+    "I miss the days of adventuring.",
+    "Those skeletons came to life!",
+    "I can't believe I lost my sword.",
   ]),
 };
 

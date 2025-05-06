@@ -19,6 +19,7 @@ var skeletonPic = document.createElement("img");
 var orcPic = document.createElement("img");
 var wraithPic = document.createElement("img"); 
 var oldManPic = document.createElement("img");
+var chuckPic = document.createElement("img");
 var boxPic = document.createElement("img");
 var coinPic = document.createElement("img");
 var shieldGlowPic = document.createElement("img");
@@ -75,6 +76,7 @@ function loadImages() {
         {varName: leatherArmorIconPic, theFile: "armorIcon.png"},
         {varName: healthPotionPic, theFile: "healthPotion.png"},
         {varName: oldManPic, theFile: "oldman.png"},
+        {varName: chuckPic, theFile: "chuck.png"},
         {varName: chefPic, theFile: "chef.png"},
         {varName: boxPic, theFile: "box.png"},
         {varName: coinPic, theFile: "coin.png"},
@@ -103,6 +105,7 @@ function loadImages() {
         {tileType: TILE_NPC_BLACKSMITH, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_NPC_OLD_MAN, theFile: "grass.png", sX: "0", sY: "32*2",options: 4},
         {tileType: TILE_NPC_CHEF, theFile: "grass.png", sX: "0", sY: "0", options: 4},
+        {tileType: TILE_NPC_CHUCK, theFile: "grass.png", sX: "0", sY: "0", options: 4},
 
     ];
     
