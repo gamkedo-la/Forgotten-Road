@@ -99,6 +99,27 @@ class NPC extends Entity {
             this.speak();
         }
 
+        if (this.name === "Mick") {
+            //Replace with a Quest from Chuck
+            /*const quest = quests.yesYourEggcellence;ck
+            if (!quest.started) {
+                dialoguePrompt = "I was ordered to make breakfast for the king and\nqueen and need 4 eggs and 4 mushrooms.\nPlease help me? I'll make it well worth your while.";
+                pendingQuest = () => {
+                    quest.started = true;
+                    this.dialogue = "Thanks! This will be an omlette to remember.";
+                }
+            } else { // quest is underway
+                if (quest.eggsFound < quest.eggsNeeded || quest.mushroomsFound < quest.mushroomsNeeded) {
+                    this.dialogue = "We need "+(quest.eggsNeeded-quest.eggsFound)+" more eggs and "+(quest.mushroomsNeeded-quest.mushroomsFound)+" more mushrooms.";
+                } else {
+                    quest.completed = true;
+                    this.dialogue = "Thank you for the eggs and mushrooms! You saved my life and the king and queen will have their breakfast as ordered. Here is your reward.";
+                    player.gold += quest.rewardGold;
+                }
+            }*/
+            this.speak();
+        }
+
         if (this.name === "Old Man") {
             const quest = quests.echoesOfTheNorth;
     
@@ -216,6 +237,7 @@ class NPC extends Entity {
         if (this.name === "Alchemist") npcImage = alchemistPic; 
         if (this.name === "Chef Gormondo") npcImage = chefPic;
         if (this.name === "Chuck") npcImage = chuckPic;
+        if (this.name === "Mick") npcImage = mickPic;
 
         this.drawShadow();
         ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);

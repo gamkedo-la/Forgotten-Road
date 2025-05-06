@@ -30,6 +30,7 @@ var alchemistPic = document.createElement("img");
 var shadowPic = document.createElement("img");
 var foliagePic = document.createElement("img");
 var chefPic = document.createElement("img");
+var mickPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -78,6 +79,7 @@ function loadImages() {
         {varName: oldManPic, theFile: "oldman.png"},
         {varName: chuckPic, theFile: "chuck.png"},
         {varName: chefPic, theFile: "chef.png"},
+        {varName: mickPic, theFile: "mick.png"},
         {varName: boxPic, theFile: "box.png"},
         {varName: coinPic, theFile: "coin.png"},
         {varName: shieldGlowPic, theFile: "shadowShield.png"},
@@ -106,7 +108,7 @@ function loadImages() {
         {tileType: TILE_NPC_OLD_MAN, theFile: "grass.png", sX: "0", sY: "32*2",options: 4},
         {tileType: TILE_NPC_CHEF, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_NPC_CHUCK, theFile: "grass.png", sX: "0", sY: "0", options: 4},
-
+        {tileType: TILE_NPC_MICK, theFile: "grass.png", sX: "0", sY: "0", options: 4},
     ];
     
     picsToLoad = imageList.length;
