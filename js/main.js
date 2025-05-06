@@ -383,12 +383,12 @@ function renderGameWorld(deltaTime) {
   
   // tiles
   if (turnPathFindingDrawingOn) drawPathingFindingTiles();
-  
-  // npcs
-  npcs.forEach((npc) => npc.draw && npc.draw(deltaTime));
-  
+
   // walls
   drawBuildings();
+  
+  // npcs
+  npcs.forEach((npc) => npc.draw && npc.draw(deltaTime)); 
   
   // player
   player.draw(deltaTime);
