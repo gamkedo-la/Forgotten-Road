@@ -45,7 +45,7 @@ const UI_TEXT_STYLES = {
 	DEFAULT: {
 		textColor: "yellow",
 		shadowColor: "black",
-		font: "18px Arial",
+		font: "14px Arial",
 		shadowBlur: 5
 	},
 	HEADER: {

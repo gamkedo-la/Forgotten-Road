@@ -410,15 +410,21 @@ class Player extends Entity {
   
 
   drawHearts() {
+    var guix = 5;
+    var guiy = 5;
+    var guiw = HUD_BAR_WIDTH;
+    var guih = 30;
     var heartSize = 24; 
     var spacing = 3; 
     var totalHearts = Math.ceil(this.maxHP / 10);
     var fullHearts = Math.floor(this.currentHP / 10);
     var hasHalfHeart = this.currentHP % 10 >= 5;
 
+    colorRect(guix, guiy, guiw, guih, "rgba(0, 0, 0, 0.5)");
+
     for (let i = 0; i < totalHearts; i++) {
       let x = 10 + i * (heartSize + spacing);
-      let y = 10;
+      let y = 8;
 
       if (i < fullHearts) {
         ctx.drawImage(heartFullPic, x, y, heartSize, heartSize);

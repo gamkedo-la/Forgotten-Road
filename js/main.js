@@ -4,6 +4,7 @@ const enemies = [];
 const temp_ui_elements = [];
 //const PLAYER_MOVE_SPEED = 4;
 let lastFrameTime = performance.now();
+const HUD_BAR_WIDTH = 195;
 
 let paused = false;
 let pressedPause = false;
@@ -618,36 +619,41 @@ function updateUI(deltaTime) {
 }
 
 function drawGoldUI() {
-  const goldY = 70
-  colorRect(5, goldY, 200, 30, "rgba(0, 0, 0, 0.5)");
+  var guix = 5+HUD_BAR_WIDTH+5+HUD_BAR_WIDTH+5;
+  var guiy = 5;
+  var guiw = HUD_BAR_WIDTH;
+  var guih = 30;
+  colorRect(guix, guiy, guiw, guih, "rgba(0, 0, 0, 0.5)");
   drawTextWithShadow(
     `Gold: ${player.gold}`,
-    15,
-    goldY+20,
+    guix+5,
+    guiy+20,
     UI_TEXT_STYLES.DEFAULT.textColor,
     UI_TEXT_STYLES.DEFAULT.font,
     UI_TEXT_STYLES.DEFAULT.align
   );
   // actually draw each gold coin in stacks of ten! =)
   for (let n = 0; n < player.gold; n++) {
-    let x = 100 + Math.floor(n / 10) * 12;
-    let y = goldY+20 + (n % 10) * -2;
+    let x = guix + 65 + Math.floor(n / 10) * 12;
+    let y = guiy+20 + (n % 10) * -2;
     ctx.drawImage(coinPic, x, y);
   }
 }
 
 function drawArrowCount() {
+  let guix = 5+HUD_BAR_WIDTH+5+HUD_BAR_WIDTH+5+HUD_BAR_WIDTH+5;
+  let guiy = 5;
+  let guiw = HUD_BAR_WIDTH - 5; // this -5 is a hack for nice margin on the right
+  let guih = 30;
   let text = `Arrows: ${player.arrows}/${player.maxArrows}`;
-  let x = 15;
-  let y = 130;
-  colorRect(x - 10, y - 20, 200, 30, "rgba(0, 0, 0, 0.5)");
-  drawTextWithShadow(text, x, y, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left");
+  colorRect(guix, guiy, guiw, guih, "rgba(0, 0, 0, 0.5)");
+  drawTextWithShadow(text, guix+5, guiy+20, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left");
   // actually draw each arrow =)
   let w = 16;
   let h = 20;
   let spacing = 6;
   for (let n = 0; n < player.arrows; n++) {
-    ctx.drawImage(boltPic,0,0,w,h,x+115+n*spacing,y-15,w,h);
+    ctx.drawImage(boltPic,0,0,w,h,guix+90+n*spacing,guiy+5,w,h);
   }  
 }
 
@@ -676,13 +682,14 @@ function drawBuildings() {
 }
 
 function drawStaminaBar() {
-  let barColor = "green";
-  let emptyColor = "rgba(0,0,0,0.5)";
+  let barColor = "rgba(0,100,0,1)";
+  let barColor2 = "rgba(0,50,0,1)";
+  let emptyColor = "rgba(128,0,0,0.5)";
   if (player.currentStamina < 30) barColor = "orange";
   if (player.currentStamina < 10) barColor = "red";
-  let x = 5;
-  let y = 35;
-  let width = 200;
+  let x = 5+HUD_BAR_WIDTH+5;
+  let y = 5;
+  let width = HUD_BAR_WIDTH;
   let height = 30;
   let margin = 5;
   let barW = 1;
@@ -691,11 +698,17 @@ function drawStaminaBar() {
   // bg
   colorRect(x, y, width, height, "rgba(0, 0, 0, 0.5)");
   // green part
-  colorRect(x+margin, y+margin, fillWidth, height-margin-margin, barColor);
-  // empty part
+  // a single solid rectangle:
+  // colorRect(x+margin, y+margin, fillWidth, height-margin-margin, barColor);
+  // as lines just to be fancy
+  for (let i=0; i<Math.ceil(fillWidth/6); i++) {
+    colorRect(x+margin+(i*6), y+margin, 3, height-margin-margin, barColor);
+    colorRect(x+margin+(i*6)+3, y+margin, 3, height-margin-margin, barColor2);
+  }
+  // red part
   colorRect(x+margin+fillWidth, y+margin, width-margin-margin-fillWidth, height-margin-margin, emptyColor);
   // numbers
-  drawTextWithShadow("Stamina: "+Math.round(player.currentStamina), x+10, y+19, "white", "12px Arial", "left");
+  drawTextWithShadow("Stamina: "+Math.round(player.currentStamina), x+10, y+19, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left");
 }
 
 function checkBuildingCollisions() {
