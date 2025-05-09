@@ -31,6 +31,7 @@ var shadowPic = document.createElement("img");
 var foliagePic = document.createElement("img");
 var chefPic = document.createElement("img");
 var mickPic = document.createElement("img");
+var topBarBackgroundPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -89,6 +90,7 @@ function loadImages() {
         {varName: alchemistPic, theFile: "alchemist.png"},
         {varName: shadowPic, theFile: "shadow.png"},
         {varName: foliagePic, theFile: "foliage.png"},
+        {varName: topBarBackgroundPic, theFile: "topBarBackground.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_GRAVES, theFile: "graves.png", sX: "0", sY: "0", options: 4},

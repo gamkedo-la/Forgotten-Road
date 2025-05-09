@@ -429,15 +429,20 @@ function renderGameWorld(deltaTime) {
   } 
 }
 
+function renderTopStatsBar() {
+    // top bar stats HUD display
+    ctx.drawImage(topBarBackgroundPic,0,0);
+    player.drawHearts();
+    drawStaminaBar();
+    drawGoldUI();
+    drawArrowCount();
+ }
+
 function renderUI() {
   drawBackpackUI(ctx, player);
-  drawGoldUI();
   temp_ui_elements.forEach((ui) => ui.draw());
-
   if (paused) drawPauseOverlay();
-  player.drawHearts();
-  drawStaminaBar();
-  drawArrowCount();
+  renderTopStatsBar(); 
   drawQuestTracker();
   drawDialoguePrompt();
   drawIntroText();
