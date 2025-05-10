@@ -392,7 +392,12 @@ class Monster extends Entity {
             if (this.deathFrame === this.maxDeathFrames && !this.removalStarted) {
                 this.removalStarted = true;
                 this.dropLoot();
-    
+
+                if (this.name === "Skeleton" && quests.restlessBones?.started && !quests.restlessBones?.completed) {
+                    quests.restlessBones.skeletonsDefeated++;
+                    console.log(`Skeleton defeated. Progress: ${quests.restlessBones.skeletonsDefeated}/${quests.restlessBones.skeletonsNeeded}`);
+                }
+                
                 setTimeout(() => {
                     const index = enemies.indexOf(this);
                     if (index !== -1) {

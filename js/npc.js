@@ -20,7 +20,13 @@ const quests = {
       mushroomsFound: 0,
       mushroomsNeeded: 4,
       rewardGold: 250
-    }
+    },
+    restlessBones: {
+        started: false,
+        completed: false,
+        skeletonsDefeated: 0,
+        skeletonsNeeded: 5
+      }      
   };
   
 
@@ -57,6 +63,37 @@ class NPC extends Entity {
             console.log("[INTERACT] Skipped — dialogue prompt active");
             return;
         }
+
+        if (this.name === "Chuck") {
+            const quest = quests.restlessBones;
+        
+            if (!quest.started && !quest.completed) {
+                dialoguePrompt = "The dead are rising! I saw skeletons crawling out of the graveyard...\nPlease, I’m too scared to go near it. Can you find out what’s causing it?";
+                pendingQuest = () => {
+                    quest.started = true;
+                    this.dialogue = "Thank you... I just can't face them myself. The graveyard’s to the east.";
+                    console.log("Quest Started: Restless Bones");
+                };
+                return;
+            }
+        
+            if (quest.started && quest.skeletonsDefeated < quest.skeletonsNeeded) {
+                this.dialogue = `Please be careful... ${quest.skeletonsNeeded - quest.skeletonsDefeated} more skeletons still roam the graveyard.`;
+                this.speak();
+                return;
+            }
+        
+            if (quest.started && !quest.completed && quest.skeletonsDefeated >= quest.skeletonsNeeded) {
+                quest.completed = true;
+                player.gold += 200;
+                this.dialogue = "You did it! The graveyard feels still again. Thank you... here's a little something.";
+                console.log("Quest Completed: Restless Bones (+200 gold)");
+                return;
+            }
+        
+            this.speak();
+        }
+        
     
         if (this.name === "Chef Gormondo") {
             const quest = quests.yesYourEggcellence;
