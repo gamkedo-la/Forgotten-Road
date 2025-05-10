@@ -1,3 +1,6 @@
+const WEATHER_CHANGE_MIN_TIME = 5;
+const WEATHER_CHANGE_RANDOM_TIME = 5;
+
 class WeatherSystem {
   constructor(type = "rain") {
     this.type = type;
@@ -7,6 +10,8 @@ class WeatherSystem {
     this.lightningAlpha = 0;
     this.thunderTimer = 0;
     this.nextThunderTime = 5 + Math.random() * 10;
+    this.weatherTimer = 0;
+    this.nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
   }
 
   update(deltaTime) {
@@ -94,5 +99,27 @@ class WeatherSystem {
       ctx.fillStyle = `rgba(255, 255, 255, ${this.lightningAlpha})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+  }
+
+  getWeatherTimerInfo() {
+    return {
+      timer: this.weatherTimer,
+      nextChange: this.nextWeatherChange
+    };
+  }
+
+  updateWeatherTimer(deltaTime) {
+    this.weatherTimer += deltaTime;
+    const shouldChangeWeather = this.weatherTimer > this.nextWeatherChange;
+    if (shouldChangeWeather) {
+      // console.log(`Weather timer reached ${this.weatherTimer.toFixed(2)}s, and threshold to change is ${this.nextWeatherChange.toFixed(2)}s`);
+    }
+    return shouldChangeWeather;
+  }
+
+  resetWeatherTimer() {
+     this.weatherTimer = 0;
+     this.nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
+     console.log(`Weather timer reset. Next change in ${this.nextWeatherChange.toFixed(2)}s`);
   }
 }
