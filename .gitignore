@@ -2,3 +2,5 @@
 .idea/
 .vscode/
 Folder.DotSettings.user
+
+**/.claude/settings.local.json

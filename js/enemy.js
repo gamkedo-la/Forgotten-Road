@@ -670,36 +670,3 @@ function getDistance(x1, y1, x2, y2) {
     const dy = y2 - y1;
     return Math.sqrt(dx * dx + dy * dy);
 }
-  
-// Enemy Factory
-function createMonster({
-    name,
-    x,
-    y,
-    size = 32,
-    damage,
-    maxHealth,
-    type,
-    state = BEHAVIOR_STATES.IDLE,
-    patrolZone = null,
-    image = null,
-    extra = {}
-  }) {
-    monster = new Monster(name, x, y, size, damage, maxHealth, type);
-    monster.maxHealth = maxHealth;
-    monster.health = maxHealth;
-    monster.state = state;
-  
-    if (patrolZone) monster.placeAtRandomPosition(patrolZone);
-    if (image) monster.image = image;
-  
-    Object.assign(monster, extra);
-  
-    if (state === BEHAVIOR_STATES.PATROL || state === BEHAVIOR_STATES.WANDER) {
-      assignDefaultPatrol(monster);
-    }
-  
-    return monster;
-} 
-  
-  
