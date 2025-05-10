@@ -26,7 +26,12 @@ const quests = {
         completed: false,
         skeletonsDefeated: 0,
         skeletonsNeeded: 5
-      }      
+    },      
+    skeletonKing: {
+        started: false,
+        completed: false,
+        bossDefeated: false
+    }      
   };
   
 
@@ -65,35 +70,52 @@ class NPC extends Entity {
         }
 
         if (this.name === "Chuck") {
-            const quest = quests.restlessBones;
+            const graveyardQuest = quests.restlessBones;
+            const bossQuest = quests.skeletonKing;
         
-            if (!quest.started && !quest.completed) {
+            if (!graveyardQuest.started && !graveyardQuest.completed) {
                 dialoguePrompt = "The dead are rising! I saw skeletons crawling out of the graveyard...\nPlease, I’m too scared to go near it. Can you find out what’s causing it?";
                 pendingQuest = () => {
-                    quest.started = true;
+                    graveyardQuest.started = true;
                     this.dialogue = "Thank you... I just can't face them myself. The graveyard’s to the east.";
                     console.log("Quest Started: Restless Bones");
                 };
                 return;
             }
         
-            if (quest.started && quest.skeletonsDefeated < quest.skeletonsNeeded) {
-                this.dialogue = `Please be careful... ${quest.skeletonsNeeded - quest.skeletonsDefeated} more skeletons still roam the graveyard.`;
+            if (graveyardQuest.started && !graveyardQuest.completed) {
+                this.dialogue = `Please be careful... ${graveyardQuest.skeletonsNeeded - graveyardQuest.skeletonsDefeated} more skeletons still roam the graveyard.`;
                 this.speak();
                 return;
             }
         
-            if (quest.started && !quest.completed && quest.skeletonsDefeated >= quest.skeletonsNeeded) {
-                quest.completed = true;
-                player.gold += 200;
-                this.dialogue = "You did it! The graveyard feels still again. Thank you... here's a little something.";
-                console.log("Quest Completed: Restless Bones (+200 gold)");
+            if (graveyardQuest.completed && !bossQuest.started) {
+                dialoguePrompt = "You've done it... but something still feels wrong. The air is heavy...\nCould it be the Skeleton King? Will you face him?";
+                pendingQuest = () => {
+                    bossQuest.started = true;
+                    this.dialogue = "May the gods protect you. The crypt should be open now.";
+                    console.log("Quest Started: Skeleton King");
+                    spawnSkeletonKing(); 
+                    spawnMonstersFromMap(); 
+                    
+                };
+                return;
+            }
+        
+            if (bossQuest.started && !bossQuest.completed) {
+                this.dialogue = "The crypt trembles... the Skeleton King still roams.";
+                this.speak();
+                return;
+            }
+        
+            if (bossQuest.completed) {
+                this.dialogue = "You defeated the Skeleton King. You've done this village a great honor.";
+                this.speak();
                 return;
             }
         
             this.speak();
-        }
-        
+        }        
     
         if (this.name === "Chef Gormondo") {
             const quest = quests.yesYourEggcellence;
@@ -112,27 +134,6 @@ class NPC extends Entity {
                     player.gold += quest.rewardGold;
                 }
             }
-            this.speak();
-        }
-
-        if (this.name === "Chuck") {
-            //Replace with a Quest from Chuck
-            /*const quest = quests.yesYourEggcellence;ck
-            if (!quest.started) {
-                dialoguePrompt = "I was ordered to make breakfast for the king and\nqueen and need 4 eggs and 4 mushrooms.\nPlease help me? I'll make it well worth your while.";
-                pendingQuest = () => {
-                    quest.started = true;
-                    this.dialogue = "Thanks! This will be an omlette to remember.";
-                }
-            } else { // quest is underway
-                if (quest.eggsFound < quest.eggsNeeded || quest.mushroomsFound < quest.mushroomsNeeded) {
-                    this.dialogue = "We need "+(quest.eggsNeeded-quest.eggsFound)+" more eggs and "+(quest.mushroomsNeeded-quest.mushroomsFound)+" more mushrooms.";
-                } else {
-                    quest.completed = true;
-                    this.dialogue = "Thank you for the eggs and mushrooms! You saved my life and the king and queen will have their breakfast as ordered. Here is your reward.";
-                    player.gold += quest.rewardGold;
-                }
-            }*/
             this.speak();
         }
 
