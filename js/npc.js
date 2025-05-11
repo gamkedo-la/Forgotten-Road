@@ -26,12 +26,22 @@ const quests = {
         completed: false,
         skeletonsDefeated: 0,
         skeletonsNeeded: 5
-    },      
+    },
     skeletonKing: {
         started: false,
         completed: false,
         bossDefeated: false
-    }      
+    },
+    dosDoctors: {
+        started: false,
+        completed: false,
+        herbsFound: 0,
+        herbsNeeded: 10,
+        specimensFound: 0,
+        specimensNeeded:6,
+        //insulted: false,
+        rewardGold: 600
+    }
   };
   
 
@@ -214,6 +224,37 @@ class NPC extends Entity {
         } else {
             this.speak();
         }
+
+        
+        if (this.name === "First Doctor" || "Second Doctor") { // Could be bad syntax. Both NPCs should behave the same.
+            const quest = quests.dosDoctors;
+            if (quest.completed) {
+                this.dialogue = "It hasn't yet rotten... yes, I can tell... a sprinkle to preserve... reanimation...";
+                return;
+            }
+
+            if (!quest.started) {
+                this.dialogue = "Oh... you are not yet plagued. We need just a few things... and we will bestow upon you, something, in turn.";
+                dialoguePrompt = "Will you help the Dos Doctors?";
+                pendingQuest = () => {
+                    quest.started = true;
+                    this.dialogue = "Excellent... make haste.";
+                    console.log("Quest Started: Dos Doctors");
+                };
+                return;
+            } else { // quest is underway
+                if (quest.herbsFound < quest.herbsNeeded || quest.specimensFound < quest.specimensNeeded) {
+                    this.dialogue = "We need "+(quest.herbsNeeded-quest.herbsFound)+" more herbs and "+(quest.specimensNeeded-quest.specimensFound)+" more specimens...";
+                } else {
+                    quest.completed = true;
+                    this.dialogue = "Yes... this is what we needed... now, as we promised.";
+                    // A curse of some sort would be cooler than gold,
+                    // that affects interactions with other NPCs.
+                    player.gold += quest.rewardGold;
+                }
+            }
+        }
+        
     }
     
     handleQuestDecline() {
