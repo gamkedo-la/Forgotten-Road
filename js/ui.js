@@ -107,11 +107,16 @@ pushToStack("menu-1");
 // -- ENUMS
 const LAYOUT_DIRECTIONS = Object.freeze({
   TOP_TO_BOTTOM: "top_to_bottom",
+  LEFT_TO_RIGHT: "left_to_right",
 });
 
 // -- UTILS
 const FIXED = (number = 0) => {
   return number;
+};
+
+const FIT = () => {
+  return 0;
 };
 
 // -- MODELS
@@ -121,24 +126,58 @@ const NewUIElement = (layout, position, size, backgroundColor) => {
   }
 };
 
-const Element = (props = {}) => {
-  const { position, sizing, backgroundColor, children, padding } = props;
+//
+const OpenElement = (props = {}) => {
+  const {
+    position,
+    sizing,
+    backgroundColor,
+    children,
+    padding,
+    layout,
+    childGap,
+  } = props;
+
+  //   Draw Pass
   ctx.fillStyle = backgroundColor;
   ctx.fillRect(position?.x, position?.y, sizing?.width, sizing?.height);
 
+  //   Layout Pass
+  let leftOffset = padding?.left ?? 0;
+  let topOffset = padding?.top ?? 0;
   children?.forEach((child) => {
     const childProps = { ...child };
-    const { position: childPosition } = childProps;
+    const { position: childPosition, sizing: childSizing } = childProps;
+
+    // Parenting
+    childProps.parent = props;
 
     //  Parent to child positioning
     childPosition.x = childPosition?.x + position.x;
     childPosition.y = childPosition?.y + position.y;
 
     //  Padding positioning
-    childPosition.x += padding?.left ?? 0;
-    childPosition.y += padding?.top ?? 0;
+    childPosition.x += leftOffset;
+    childPosition.y += topOffset;
 
-    // Recursive render
-    Element(childProps);
+    // Recursive renders
+    OpenElement(childProps);
+
+    CloseElement(childProps);
+
+    // Update offsets
+    leftOffset +=
+      layout?.layoutDirection == LAYOUT_DIRECTIONS.LEFT_TO_RIGHT
+        ? childSizing?.width + childGap
+        : 0;
+    topOffset +=
+      layout?.layoutDirection == LAYOUT_DIRECTIONS.TOP_TO_BOTTOM
+        ? childSizing?.height + childGap
+        : 0;
   });
+};
+
+const CloseElement = (element) => {
+  element.parent.width += element.width;
+  element.parent.height += element.height;
 };

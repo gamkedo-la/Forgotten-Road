@@ -462,26 +462,56 @@ function renderUI() {
   }
 
   // Test code below for various UI elements. Can leave commented for now.
-  // const myButton = Button(
-  //   200,
-  //   200,
-  //   "TEST BUTTON",
-  //   "red",
-  //   "blue",
-  //   "black",
-  //   100,
-  //   50
-  // );
-  // if (myButton) {
-  //   console.log("BUTTON CLICKED!");
-  // }
+  // const childNode1 = {
+  //   sizing: {
+  //     width: FIXED(300),
+  //     height: FIXED(300),
+  //   },
+  //   backgroundColor: "pink",
+  //   position: {
+  //     x: 0,
+  //     y: 0,
+  //   },
+  //   children: [],
+  // };
 
-  // Menu(100, 100, UIElements);
+  // const childNode2 = {
+  //   sizing: {
+  //     width: FIXED(350),
+  //     height: FIXED(200),
+  //   },
+  //   backgroundColor: "yellow",
+  //   position: {
+  //     x: 0,
+  //     y: 0,
+  //   },
+  //   children: [],
+  // };
 
-  // if (UI_STACK.length > 0) {
-  //   const currentMenu = UI_STACK[UI_STACK.length - 1];
-  //   Menu(100, 100, currentMenu.elements);
-  // }
+  // const rootNode = {
+  //   sizing: {
+  //     width: FIXED(960),
+  //     height: FIXED(540),
+  //   },
+  //   layout: {
+  //     layoutDirection: LAYOUT_DIRECTIONS.LEFT_TO_RIGHT,
+  //   },
+  //   backgroundColor: "blue",
+  //   padding: {
+  //     top: 32,
+  //     right: 32,
+  //     bottom: 32,
+  //     left: 32,
+  //   },
+  //   childGap: 32,
+  //   position: {
+  //     x: 0,
+  //     y: 0,
+  //   },
+  //   children: [childNode1, childNode2],
+  // };
+
+  // OpenElement(rootNode);
 }
 
 function handlePauseInput() {
