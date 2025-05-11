@@ -126,7 +126,9 @@ const NewUIElement = (layout, position, size, backgroundColor) => {
   }
 };
 
-//
+// LAYOUT CALCULATION
+
+// -- Layout Pass
 const OpenElement = (props = {}) => {
   const {
     position,
@@ -138,11 +140,6 @@ const OpenElement = (props = {}) => {
     childGap,
   } = props;
 
-  //   Draw Pass
-  ctx.fillStyle = backgroundColor;
-  ctx.fillRect(position?.x, position?.y, sizing?.width, sizing?.height);
-
-  //   Layout Pass
   let leftOffset = padding?.left ?? 0;
   let topOffset = padding?.top ?? 0;
   children?.forEach((child) => {
@@ -160,11 +157,6 @@ const OpenElement = (props = {}) => {
     childPosition.x += leftOffset;
     childPosition.y += topOffset;
 
-    // Recursive renders
-    OpenElement(childProps);
-
-    CloseElement(childProps);
-
     // Update offsets
     leftOffset +=
       layout?.layoutDirection == LAYOUT_DIRECTIONS.LEFT_TO_RIGHT
@@ -174,10 +166,51 @@ const OpenElement = (props = {}) => {
       layout?.layoutDirection == LAYOUT_DIRECTIONS.TOP_TO_BOTTOM
         ? childSizing?.height + childGap
         : 0;
+
+    // Recursive renders
+    OpenElement(childProps);
+
+    CloseElement(childProps);
   });
 };
 
 const CloseElement = (element) => {
-  element.parent.width += element.width;
-  element.parent.height += element.height;
+  if (element.parent) {
+    element.parent.sizing.width += element.sizing.width;
+    element.parent.sizing.height += element.sizing.height;
+  }
+};
+
+const LayoutPass = (root) => {
+  OpenElement(root);
+  CloseElement(root);
+  return root;
+};
+
+// -- Draw Pass
+const DrawElement = (props) => {
+  const {
+    position,
+    sizing,
+    backgroundColor,
+    children,
+    padding,
+    layout,
+    childGap,
+  } = props;
+
+  ctx.fillStyle = backgroundColor;
+  ctx.fillRect(position?.x, position?.y, sizing?.width, sizing?.height);
+
+  children?.forEach((child) => {
+    const childProps = { ...child };
+    const { position: childPosition, sizing: childSizing } = childProps;
+
+    // Recursive renders
+    DrawElement(childProps);
+  });
+};
+
+const DrawPass = (root) => {
+  DrawElement(root);
 };
