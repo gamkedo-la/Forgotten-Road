@@ -158,11 +158,11 @@ const OpenElement = (props = {}) => {
     // Parenting
     childProps.parent = props;
 
-    //  Parent to child positioning
+    // Parent to child positioning
     childPosition.x = childPosition?.x + position.x;
     childPosition.y = childPosition?.y + position.y;
 
-    //  Padding positioning
+    // Padding positioning
     childPosition.x += leftOffset;
     childPosition.y += topOffset;
 
@@ -186,8 +186,8 @@ const CloseElement = (element) => {
   const { parent, padding } = element;
 
   if (padding) {
-    element.width += padding.left + padding.right;
-    element.height += padding.top + padding.bottom;
+    element.sizing.width += padding.left + padding.right;
+    element.sizing.height += padding.top + padding.bottom;
   }
 
   if (!element.parent) {
@@ -196,16 +196,14 @@ const CloseElement = (element) => {
 
   const childGap = (parent?.children?.length - 1) * parent.childGap ?? 0;
   if (parent.layout?.layoutDirection === LAYOUT_DIRECTIONS.LEFT_TO_RIGHT) {
-    element.width += childGap;
-    parent.sizing.width += element.sizing.width;
+    parent.sizing.width += element.sizing.width + childGap;
     parent.sizing.height = Math.max(
       parent.sizing.height,
       element.sizing.height
     );
   } else {
-    element.height += childGap;
     parent.sizing.width = Math.max(parent.sizing.width, element.sizing.width);
-    parent.sizing.height += element.sizing.height;
+    parent.sizing.height += element.sizing.height + childGap;
   }
 };
 
