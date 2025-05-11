@@ -102,3 +102,35 @@ const popFromStack = () => {
 
 // Init test menu
 pushToStack("menu-1");
+
+// NEW UI SYSTEM
+// -- ENUMS
+const LAYOUT_DIRECTIONS = Object.freeze({
+  TOP_TO_BOTTOM: "top_to_bottom",
+});
+
+// -- UTILS
+const FIXED = (number = 0) => {
+  return number;
+};
+
+// -- MODELS
+const NewUIElement = (layout, position, size, backgroundColor) => {
+  {
+    layout, position, size, backgroundColor;
+  }
+};
+
+const Element = (props = {}) => {
+  const { position, sizing, backgroundColor, children } = props;
+  ctx.fillStyle = backgroundColor;
+  ctx.fillRect(position?.x, position?.y, sizing?.width, sizing?.height);
+
+  children?.forEach((child) => {
+    const childProps = { ...child };
+    const { position: childPosition } = childProps;
+    childPosition.x = childPosition?.x + position.x;
+    childPosition.y = childPosition?.y + position.y;
+    Element(childProps);
+  });
+};
