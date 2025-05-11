@@ -460,6 +460,21 @@ function renderUI() {
   if (playState === "gameover") {
     drawGameOverScreen();
   }
+
+  // Test code below for a simple button. Can leave commented for now.
+  // const myButton = Button(
+  //   200,
+  //   200,
+  //   "TEST BUTTON",
+  //   "red",
+  //   "blue",
+  //   "black",
+  //   100,
+  //   50
+  // );
+  // if (myButton) {
+  //   console.log("BUTTON CLICKED!");
+  // }
 }
 
 function handlePauseInput() {
