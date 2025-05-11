@@ -54,6 +54,8 @@ gameCanvas.addEventListener("click", (event) => {
   let playerX = Math.floor(player.x / TILE_W);
   let playerY = Math.floor(player.y / TILE_H);
 
+  player.cancelPath();
+
   if (!player.isMoving) {
     const path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
     if (path.length > 0) {
