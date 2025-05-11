@@ -3,29 +3,6 @@ const UIElement = (type, text, callback) => {
   return { type, text, callback };
 };
 
-const UIElements = [
-  UIElement("button", "TEST 1", () => console.log("BUTTON 1")),
-  UIElement("button", "TEST 2", () => console.log("BUTTON 2")),
-];
-
-const Menu = (_x, _y, elements = []) => {
-  let x = _x;
-  let y = _y;
-  let elementHeight = 80;
-  elements.forEach((element) => {
-    switch (element.type) {
-      case "button":
-        if (Button(x, y, element.text)) {
-          element.callback();
-        }
-        break;
-      default:
-        break;
-    }
-    y += elementHeight;
-  });
-};
-
 const Button = (
   x = 0,
   y = 0,
@@ -72,3 +49,56 @@ const Button = (
   // tell the UI if we have been selected so that we can execute any logic related to this button
   return selected;
 };
+
+// Menus
+const menus = [
+  {
+    id: "menu-1",
+    elements: [
+      UIElement("button", "MENU 1 TEST", () => console.log("MENU 1 TEST")),
+      UIElement("button", "GO TO NEXT MENU", () => pushToStack("menu-2")),
+    ],
+  },
+  {
+    id: "menu-2",
+    elements: [
+      UIElement("button", "MENU 2 TEST", () => console.log("MENU 2 TEST")),
+      UIElement("button", "BACK", () => popFromStack()),
+    ],
+  },
+];
+
+const Menu = (_x, _y, elements = []) => {
+  let x = _x;
+  let y = _y;
+  let elementHeight = 80;
+  elements.forEach((element) => {
+    switch (element.type) {
+      case "button":
+        if (Button(x, y, element.text)) {
+          element.callback();
+        }
+        break;
+      default:
+        break;
+    }
+    y += elementHeight;
+  });
+};
+
+// UI Stack
+const UI_STACK = [];
+
+const pushToStack = (menu_id) => {
+  const menu = menus.find((m) => m.id === menu_id);
+  if (menu && !UI_STACK.find((m) => menu.id == m.id)) {
+    UI_STACK.push(menu);
+  }
+};
+
+const popFromStack = () => {
+  UI_STACK.pop();
+};
+
+// Init test menu
+pushToStack("menu-1");

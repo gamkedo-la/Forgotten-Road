@@ -477,6 +477,11 @@ function renderUI() {
   // }
 
   // Menu(100, 100, UIElements);
+
+  // if (UI_STACK.length > 0) {
+  //   const currentMenu = UI_STACK[UI_STACK.length - 1];
+  //   Menu(100, 100, currentMenu.elements);
+  // }
 }
 
 function handlePauseInput() {
