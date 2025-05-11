@@ -1,4 +1,30 @@
 // UI Elements
+const UIElement = (type, text, callback) => {
+  return { type, text, callback };
+};
+
+const UIElements = [
+  UIElement("button", "TEST 1", () => console.log("BUTTON 1")),
+  UIElement("button", "TEST 2", () => console.log("BUTTON 2")),
+];
+
+const Menu = (_x, _y, elements = []) => {
+  let x = _x;
+  let y = _y;
+  let elementHeight = 80;
+  elements.forEach((element) => {
+    switch (element.type) {
+      case "button":
+        if (Button(x, y, element.text)) {
+          element.callback();
+        }
+        break;
+      default:
+        break;
+    }
+    y += elementHeight;
+  });
+};
 
 const Button = (
   x = 0,

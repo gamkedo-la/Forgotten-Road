@@ -461,7 +461,7 @@ function renderUI() {
     drawGameOverScreen();
   }
 
-  // Test code below for a simple button. Can leave commented for now.
+  // Test code below for various UI elements. Can leave commented for now.
   // const myButton = Button(
   //   200,
   //   200,
@@ -475,6 +475,8 @@ function renderUI() {
   // if (myButton) {
   //   console.log("BUTTON CLICKED!");
   // }
+
+  // Menu(100, 100, UIElements);
 }
 
 function handlePauseInput() {
