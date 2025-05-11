@@ -122,15 +122,23 @@ const NewUIElement = (layout, position, size, backgroundColor) => {
 };
 
 const Element = (props = {}) => {
-  const { position, sizing, backgroundColor, children } = props;
+  const { position, sizing, backgroundColor, children, padding } = props;
   ctx.fillStyle = backgroundColor;
   ctx.fillRect(position?.x, position?.y, sizing?.width, sizing?.height);
 
   children?.forEach((child) => {
     const childProps = { ...child };
     const { position: childPosition } = childProps;
+
+    //  Parent to child positioning
     childPosition.x = childPosition?.x + position.x;
     childPosition.y = childPosition?.y + position.y;
+
+    //  Padding positioning
+    childPosition.x += padding?.left ?? 0;
+    childPosition.y += padding?.top ?? 0;
+
+    // Recursive render
     Element(childProps);
   });
 };
