@@ -1,3 +1,7 @@
+// ------------------------------------
+// UI SYSTEM - First Pass
+// ------------------------------------
+
 // UI Elements
 const UIElement = (type, text, callback) => {
   return { type, text, callback };
@@ -103,7 +107,13 @@ const popFromStack = () => {
 // Init test menu
 pushToStack("menu-1");
 
-// NEW UI SYSTEM
+// ------------------------------------
+// NEW UI SYSTEM - Second Pass (WIP)
+// ------------------------------------
+// Trying out a more complex UI system just for learning's sake.
+// Aiming for dynamic layout calculation, immediate mode rendering, and general reusability.
+// Not at all required for a small game, but I figured it would be fun to try.
+
 // -- ENUMS
 const LAYOUT_DIRECTIONS = Object.freeze({
   TOP_TO_BOTTOM: "top_to_bottom",
@@ -127,7 +137,6 @@ const NewUIElement = (layout, position, size, backgroundColor) => {
 };
 
 // LAYOUT CALCULATION
-
 // -- Layout Pass
 const OpenElement = (props = {}) => {
   const {
@@ -167,17 +176,36 @@ const OpenElement = (props = {}) => {
         ? childSizing?.height + childGap
         : 0;
 
-    // Recursive renders
+    // Recursive layout calc
     OpenElement(childProps);
-
     CloseElement(childProps);
   });
 };
 
 const CloseElement = (element) => {
-  if (element.parent) {
-    element.parent.sizing.width += element.sizing.width;
-    element.parent.sizing.height += element.sizing.height;
+  const { parent, padding } = element;
+
+  if (padding) {
+    element.width += padding.left + padding.right;
+    element.height += padding.top + padding.bottom;
+  }
+
+  if (!element.parent) {
+    return;
+  }
+
+  const childGap = (parent?.children?.length - 1) * parent.childGap ?? 0;
+  if (parent.layout?.layoutDirection === LAYOUT_DIRECTIONS.LEFT_TO_RIGHT) {
+    element.width += childGap;
+    parent.sizing.width += element.sizing.width;
+    parent.sizing.height = Math.max(
+      parent.sizing.height,
+      element.sizing.height
+    );
+  } else {
+    element.height += childGap;
+    parent.sizing.width = Math.max(parent.sizing.width, element.sizing.width);
+    parent.sizing.height += element.sizing.height;
   }
 };
 

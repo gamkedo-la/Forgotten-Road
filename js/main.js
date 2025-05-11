@@ -490,8 +490,8 @@ function renderUI() {
 
   // const rootNode = {
   //   sizing: {
-  //     width: FIXED(960),
-  //     height: FIXED(540),
+  //     width: FIT(),
+  //     height: FIT(),
   //   },
   //   layout: {
   //     layoutDirection: LAYOUT_DIRECTIONS.LEFT_TO_RIGHT,
@@ -511,7 +511,9 @@ function renderUI() {
   //   children: [childNode1, childNode2],
   // };
 
-  // OpenElement(rootNode);
+  // // Separating UI rendering into 2 passes
+  // const root = LayoutPass(rootNode);
+  // DrawPass(root);
 }
 
 function handlePauseInput() {
