@@ -90,7 +90,7 @@ function loadImages() {
         {varName: alchemistPic, theFile: "alchemist.png"},
         {varName: shadowPic, theFile: "shadow.png"},
         {varName: foliagePic, theFile: "foliage.png"},
-        {varName: topBarBackgroundPic, theFile: "topBarBackground.png"},
+        {varName: topBarBackgroundPic, theFile: "tree_top_bar_bg.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_CRYPT_GATE, theFile: "cryptGate.png", sX: "0", sY: "0", options: 4},
