@@ -412,7 +412,7 @@ class Player extends Entity {
   drawHearts() {
     var guix = 5;
     var guiy = 5;
-    var guiw = HUD_BAR_WIDTH;
+    var guiw = HUD_BAR_WIDTH - 75;
     var guih = 30;
     var heartSize = 24; 
     var spacing = 3; 

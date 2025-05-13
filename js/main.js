@@ -446,6 +446,7 @@ function renderTopStatsBar() {
     drawStaminaBar();
     drawGoldUI();
     drawArrowCount();
+    drawSeason(currentWeather)
  }
 
 function renderUI() {
@@ -707,6 +708,32 @@ function drawGoldUI() {
     let y = guiy+20 + (n % 10) * -2;
     ctx.drawImage(coinPic, x, y);
   }
+}
+
+function drawSeason(currentWeather){
+    var guix = 130;
+    var guiy = 5;
+    var guiw = 70;
+    var guih = 30;
+    colorRect(guix, guiy, guiw, guih, "rgba(0, 0, 0, 0.5)");
+
+  const season = {
+    rain : bluethermometerPic,
+    clear : redthermometerPic,
+    tx : 175,
+    ty : 8,
+    tsize : 24
+  }
+  
+  if (currentWeather === "clear"){
+    ctx.drawImage(season.clear, season.tx ,season.ty, season.tsize, season.tsize)
+  }
+  else {
+    ctx.drawImage(season.rain, season.tx ,season.ty, season.tsize, season.tsize)
+
+  }
+  let text = currentWeather + ":";
+  drawTextWithShadow(text, 140, 25, UI_TEXT_STYLES.DEFAULT.textColor, UI_TEXT_STYLES.DEFAULT.font, "left")
 }
 
 function drawArrowCount() {

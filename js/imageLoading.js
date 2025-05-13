@@ -32,6 +32,8 @@ var foliagePic = document.createElement("img");
 var chefPic = document.createElement("img");
 var mickPic = document.createElement("img");
 var topBarBackgroundPic = document.createElement("img");
+var bluethermometerPic = document.createElement("img");
+var redthermometerPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -91,6 +93,8 @@ function loadImages() {
         {varName: shadowPic, theFile: "shadow.png"},
         {varName: foliagePic, theFile: "foliage.png"},
         {varName: topBarBackgroundPic, theFile: "tree_top_bar_bg.png"},
+        {varName: bluethermometerPic, theFile: "thermometer_blue.png"},
+        {varName: redthermometerPic, theFile: "thermometer_red.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_CRYPT_GATE, theFile: "cryptGate.png", sX: "0", sY: "0", options: 4},
