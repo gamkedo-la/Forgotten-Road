@@ -1,3 +1,5 @@
+var dialoguePortraitSX = 0;
+
 // the current state for all known quests
 // as used by npc.js and main.js
 const quests = {
@@ -171,6 +173,7 @@ class NPC extends Entity {
         }
 
         if (this.name === "Old Man") {
+            dialoguePortraitSX = 64*2;
             const quest = quests.echoesOfTheNorth;
     
             if (!quest.started && !quest.permanentlyDeclined) {
@@ -216,6 +219,7 @@ class NPC extends Entity {
             this.speak();
 
         } else if (this.name === "Blacksmith") {
+            dialoguePortraitSX = 64*1;
             let inventory = [basicStaff, leatherArmor, healthPotion, boltPickUp, ringOfEnergy];
             openShopInterface("Blacksmith", inventory);
             return;
@@ -390,6 +394,9 @@ function drawDialoguePrompt() {
 
     drawTextWithShadow(dialoguePrompt, x + 20, y + 30, "white", "16px Arial", "left");
     drawTextWithShadow("[Y]es   [N]o", x + 20, y + 80, "gray", "14px Arial", "left");
+    ctx.drawImage(portraitPic, dialoguePortraitSX, 0, 64, 64, x-85, y+17, 64, 64);
+    console.log("Draw Portrait")
+    
 }
 
 function spawnGraveyardMystery() {
