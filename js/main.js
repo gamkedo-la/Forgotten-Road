@@ -27,8 +27,8 @@ let inventoryOpen = false;
 let inventoryPressed = false; 
 let weather = new WeatherSystem();
 let currentWeather = "clear"; 
-let weatherTimer = 0;
-let nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME; // change every 1–2 minutes
+// let weatherTimer = 0;
+// let nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME; // change every 1–2 minutes
 
 //Initialize the world items arrays for each screen
 Object.keys(WORLD_MAPS).forEach((key) => {
@@ -283,36 +283,42 @@ function updateGameState(deltaTime) {
   handlePauseInput();
   handleMuteInput();
 
-  weatherTimer += deltaTime;
+//   weatherTimer += deltaTime;
 
   if (weather) {
     let shouldChange = weather.updateWeatherTimer(deltaTime);
     if (shouldChange) {
-      let info = weather.getWeatherTimerInfo();
-      console.log(`Weather system timer: ${info.timer.toFixed(2)}s exceeds threshold time for change ${info.nextChange.toFixed(2)}s`);
+      currentWeather = weather.changeWeatherRandomly();
+      //let info = weather.getWeatherTimerInfo();
+      //console.log(`Weather system timer: ${info.timer.toFixed(2)}s exceeds threshold time for change ${info.nextChange.toFixed(2)}s`);
       // plan to handle weather changes here
-      weather.resetWeatherTimer();
+      // weather.resetWeatherTimer();
     }
   }
 
-  if (weatherTimer > nextWeatherChange) {
-      weatherTimer = 0;
-      nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
+//   if (weatherTimer > nextWeatherChange) {
+//       weatherTimer = 0;
+//       nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
 
-      // Randomly pick a new weather type
-      const weatherTypes = ["clear", "rain", "snow","storm" ];
-      currentWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
-      console.log(currentWeather);
-      if (currentWeather === "rain") {
-          weather = new WeatherSystem();
-      } else if (currentWeather === "storm") {
-          weather = new WeatherSystem();
-      } else if (currentWeather === "snow"){
-          weather = new WeatherSystem("snow")
-      } else {
-          weather = null; // no rain particles
-      }
-  }
+//       // Randomly pick a new weather type
+//       const weatherTypes = ["clear", "rain", "snow","storm" ];
+//       currentWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+//       console.log(currentWeather);
+
+//       if (!weather) {
+//           weather = new WeatherSystem(currentWeather);
+//       }
+//       weather.setWeatherType(currentWeather);
+//       // if (currentWeather === "rain") {
+//       //     weather = new WeatherSystem();
+//       // } else if (currentWeather === "storm") {
+//       //     weather = new WeatherSystem();
+//       // } else if (currentWeather === "snow"){
+//       //     weather = new WeatherSystem("snow")
+//       // } else {
+//       //     weather = null; // no rain particles
+//       // }
+//   }
 
   handleInventoryInput(); 
   if (paused && !inventoryOpen && !shopOpen) return; 

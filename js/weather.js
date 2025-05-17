@@ -1,8 +1,8 @@
-const WEATHER_CHANGE_MIN_TIME = 5;
-const WEATHER_CHANGE_RANDOM_TIME = 5;
+const WEATHER_CHANGE_MIN_TIME = 10;
+const WEATHER_CHANGE_RANDOM_TIME = 10;
 
 class WeatherSystem {
-  constructor(type = "rain") {
+  constructor(type = "clear") {
     this.type = type;
     this.particles = [];
     this.spawnRate = 40; 
@@ -12,13 +12,21 @@ class WeatherSystem {
     this.nextThunderTime = 5 + Math.random() * 10;
     this.weatherTimer = 0;
     this.nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
+    this.weatherChangeTriggered = false;
+    this.weatherTypes = ["clear", "rain", "snow", "storm"];
   }
 
   update(deltaTime) {
     this.timer += deltaTime;
 
-    // Spawn rain particles
-    if (["rain", "storm", "snow"].includes(this.type) && this.timer > 1 / this.spawnRate) {
+    // No particles needed if clear weather
+    if (this.type === "clear") return;
+
+    // Snow higher spawn rate to compensate for slower falling
+    const effectiveSpawnRate = this.type === "snow" ? this.spawnRate * 3 : this.spawnRate;
+
+    // Spawn different particles depending on type of weather
+    if (["rain", "storm", "snow"].includes(this.type) && this.timer > 1 / effectiveSpawnRate) {
       this.timer = 0;
       this.particles.push(this.createParticle());
     }
@@ -64,6 +72,7 @@ class WeatherSystem {
     if (this.type === "snow"){
       return {
         ...rainobj,
+        y: camera.y - canvas.height / 4,  // snow spawn inside visible area
         vy: Math.random() + 1,
         size: Math.random() + 3,
         color: "lightgray"
@@ -101,6 +110,13 @@ class WeatherSystem {
     }
   }
 
+  changeWeatherRandomly() {
+    const newType = this.weatherTypes[Math.floor(Math.random() * this.weatherTypes.length)];
+    this.setWeatherType(newType);
+    this.resetWeatherTimer();
+    return newType;
+  }
+
   getWeatherTimerInfo() {
     return {
       timer: this.weatherTimer,
@@ -108,18 +124,41 @@ class WeatherSystem {
     };
   }
 
-  updateWeatherTimer(deltaTime) {
-    this.weatherTimer += deltaTime;
-    const shouldChangeWeather = this.weatherTimer > this.nextWeatherChange;
-    if (shouldChangeWeather) {
-      // console.log(`Weather timer reached ${this.weatherTimer.toFixed(2)}s, and threshold to change is ${this.nextWeatherChange.toFixed(2)}s`);
-    }
-    return shouldChangeWeather;
-  }
+   updateWeatherTimer(deltaTime) {
+      this.weatherTimer += deltaTime;
+      // check if timer exceeds threshold and we haven't already recently triggered a change
+      if (this.weatherTimer > this.nextWeatherChange) {
+         if (!this.weatherChangeTriggered) {
+            // console.log(`Weather timer reached threshold: ${this.weatherTimer.toFixed(2)}s > ${this.nextWeatherChange.toFixed(2)}s. Triggering change.`);
+            this.weatherChangeTriggered = true;
+            return true;
+         }
+      } else if (this.weatherTimer <= this.nextWeatherChange) {
+         this.weatherChangeTriggered = false;
+      }
+      return false;
+   }
 
   resetWeatherTimer() {
      this.weatherTimer = 0;
+     this.weatherChangeTriggered = false;
      this.nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
      console.log(`Weather timer reset. Next change in ${this.nextWeatherChange.toFixed(2)}s`);
+  }
+
+  setWeatherType(type) {
+    // Validate weather type
+    if (!this.weatherTypes.includes(type)) {
+      console.error(`Invalid weather type: ${type}`);
+      return;
+    }
+    this.type = type;
+    console.log(`Weather changing to - ${type} - via weather system`);
+
+    this.particles = [];
+  }
+
+  getWeatherType() {
+    return this.type;
   }
 }
