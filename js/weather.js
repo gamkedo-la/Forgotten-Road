@@ -72,7 +72,7 @@ class WeatherSystem {
     if (this.type === "snow"){
       return {
         ...rainobj,
-        y: camera.y - canvas.height / 4,  // snow spawn inside visible area
+        y: camera.y - canvas.height / 2,  // snow spawn inside visible area
         vy: Math.random() + 1,
         size: Math.random() + 3,
         color: "lightgray"
