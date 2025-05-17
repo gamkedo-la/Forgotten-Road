@@ -1,5 +1,6 @@
 var wizardPic = document.createElement("img");
 var warriorPic = document.createElement("img");
+var portraitPic = document.createElement("img");
 var townMapPic = document.createElement("img");
 var blacksmithShopPic = document.createElement("img");
 var alchemistShopPic = document.createElement("img");
@@ -63,6 +64,7 @@ function loadImages() {
         {varName: townMapPic, theFile: "townMap.png"},
         {varName: wizardPic, theFile: "wizard.png"},
         {varName: warriorPic, theFile: "warrior.png"},
+        {varName: portraitPic, theFile: "PlayerPotrait.png"},
         {varName: goblinPic, theFile: "goblin.png"},
         {varName: koboldPic, theFile: "Kobald.png"},
         {varName: skeletonPic, theFile: "skeleton.png"},

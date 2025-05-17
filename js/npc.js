@@ -61,6 +61,8 @@ class NPC extends Entity {
         this._dialogue = this.dialogueLines[0];
         this.hoverText = hoverText || name;
         this.bubbleBobTimer = 0;
+        this.portraitImage = portraitPic;
+        this.portraitSX = 0; 
     }
     
 
@@ -312,11 +314,29 @@ class NPC extends Entity {
         const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
         
         let npcImage = oldManPic; // default is "Old Man"
-        if (this.name === "Blacksmith") npcImage = blacksmithPic;
-        if (this.name === "Alchemist") npcImage = alchemistPic; 
-        if (this.name === "Chef Gormondo") npcImage = chefPic;
-        if (this.name === "Chuck") npcImage = chuckPic;
-        if (this.name === "Mick") npcImage = mickPic;
+        this.portraitSX = 64 * 2; // default portrait pic
+
+        if (this.name === "Blacksmith") { 
+            npcImage = blacksmithPic;
+            this.portraitSX = 64 * 1;
+        }
+        if (this.name === "Alchemist") npcImage = alchemistPic;
+        {
+            //npcImage = alchmesitPic
+            this.portraitSX = 64 * 0;
+        } 
+        if (this.name === "Chef Gormondo"){
+            this.portraitSX = 64 * 0; 
+            npcImage = chefPic;
+        }
+        if (this.name === "Chuck") {
+            this.portraitSX = 64 * 0;
+            npcImage = chuckPic;
+        }
+        if (this.name === "Mick"){
+            this.portraitSX = 64 * 0;  
+            npcImage = mickPic;
+        }
 
         this.drawShadow();
         ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);
@@ -337,11 +357,12 @@ class NPC extends Entity {
             let bubbleX = this.x + this.width / 2 - bubbleWidth / 2;
             let bubbleY = this.y - bubbleHeight - 10 + bobOffset;
 
+            ctx.drawImage(portraitPic, this.portraitSX, 0, 64, 64, bubbleX-37, bubbleY-5, 32, 32);
+
             colorRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "white");              // background
             outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");           // border
             drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14,    // text
                             "black", "12px Arial", "center");
-
         }
     }
 }
@@ -357,6 +378,10 @@ function drawDialogueBox(npc) {
     ctx.fillStyle = "white";
     ctx.font = "16px Arial";
     ctx.fillText(`${npc.name}: "${npc.dialogue}"`, x + 10, y + 30);
+
+    if (npc.portraitImage) {
+        ctx.drawImage(npc.portraitImage, x + 10, y + 10, 64, 64); 
+    }
 }
 
 function drawDialoguePrompt() {
