@@ -23,7 +23,7 @@ class WeatherSystem {
     if (this.type === "clear") return;
 
     // Snow higher spawn rate to compensate for slower falling
-    const effectiveSpawnRate = this.type === "snow" ? this.spawnRate * 3 : this.spawnRate;
+    const effectiveSpawnRate = this.type === "snow" ? this.spawnRate * 1.5 : this.spawnRate;
 
     // Spawn different particles depending on type of weather
     if (["rain", "storm", "snow"].includes(this.type) && this.timer > 1 / effectiveSpawnRate) {
