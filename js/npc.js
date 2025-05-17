@@ -320,9 +320,8 @@ class NPC extends Entity {
             npcImage = blacksmithPic;
             this.portraitSX = 64 * 1;
         }
-        if (this.name === "Alchemist") npcImage = alchemistPic;
-        {
-            //npcImage = alchmesitPic
+        if (this.name === "Alchemist"){
+            npcImage = alchemistPic;
             this.portraitSX = 64 * 0;
         } 
         if (this.name === "Chef Gormondo"){
@@ -364,23 +363,6 @@ class NPC extends Entity {
             drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14,    // text
                             "black", "12px Arial", "center");
         }
-    }
-}
-
-function drawDialogueBox(npc) {
-    let boxWidth = 300;
-    let boxHeight = 100;
-    let x = canvas.width / 2 - boxWidth / 2;
-    let y = canvas.height - boxHeight - 20;
-
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    ctx.fillRect(x, y, boxWidth, boxHeight);
-    ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
-    ctx.fillText(`${npc.name}: "${npc.dialogue}"`, x + 10, y + 30);
-
-    if (npc.portraitImage) {
-        ctx.drawImage(npc.portraitImage, x + 10, y + 10, 64, 64); 
     }
 }
 
