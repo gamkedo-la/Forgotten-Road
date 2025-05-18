@@ -1,114 +1,5 @@
 // ------------------------------------
-// UI SYSTEM - First Pass
-// ------------------------------------
-
-// UI Elements
-const UIElement = (type, text, callback) => {
-  return { type, text, callback };
-};
-
-const Button = (
-  x = 0,
-  y = 0,
-  text = "TEXT",
-  baseColor = "red",
-  highlightColor = "green",
-  textColor = "black",
-  minWidth = 100,
-  minHeight = 50,
-  font = "13px sans-serif"
-) => {
-  // states
-  let selected = false;
-  let highlighted = false;
-
-  // highlighted check
-  highlighted =
-    mouse.x >= x &&
-    mouse.x <= x + minWidth &&
-    mouse.y >= y &&
-    mouse.y <= y + minHeight;
-
-  // selected check
-  selected = highlighted && mouse.clicked;
-
-  // background
-  ctx.fillStyle = highlighted ? highlightColor : baseColor;
-  ctx.fillRect(x, y, minWidth, minHeight);
-  ctx.fillStyle = textColor;
-
-  // text
-  let metrics = ctx.measureText(text);
-  let fontHeight =
-    metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-  drawTextWithShadow(
-    text,
-    x + minWidth / 2,
-    y + minHeight / 2 + fontHeight / 2,
-    textColor,
-    font,
-    "center"
-  );
-
-  // tell the UI if we have been selected so that we can execute any logic related to this button
-  return selected;
-};
-
-// Menus
-const menus = [
-  {
-    id: "menu-1",
-    elements: [
-      UIElement("button", "MENU 1 TEST", () => console.log("MENU 1 TEST")),
-      UIElement("button", "GO TO NEXT MENU", () => pushToStack("menu-2")),
-    ],
-  },
-  {
-    id: "menu-2",
-    elements: [
-      UIElement("button", "MENU 2 TEST", () => console.log("MENU 2 TEST")),
-      UIElement("button", "BACK", () => popFromStack()),
-    ],
-  },
-];
-
-const Menu = (_x, _y, elements = []) => {
-  let x = _x;
-  let y = _y;
-  let elementHeight = 80;
-  elements.forEach((element) => {
-    switch (element.type) {
-      case "button":
-        if (Button(x, y, element.text)) {
-          element.callback();
-        }
-        break;
-      default:
-        break;
-    }
-    y += elementHeight;
-  });
-};
-
-// UI Stack
-const UI_STACK = [];
-
-const pushToStack = (menu_id) => {
-  const menu = menus.find((m) => m.id === menu_id);
-  if (menu && !UI_STACK.find((m) => menu.id == m.id)) {
-    UI_STACK.push(menu);
-  }
-};
-
-const popFromStack = () => {
-  UI_STACK.pop();
-};
-
-// Init test menu
-pushToStack("menu-1");
-
-// ------------------------------------
-// NEW UI SYSTEM - Second Pass (WIP)
+// NEW UI SYSTEM - WIP
 // ------------------------------------
 // Trying out a more complex UI system just for learning's sake.
 // Aiming for dynamic layout calculation, immediate mode rendering, and general reusability.
@@ -120,6 +11,76 @@ const LAYOUT_DIRECTIONS = Object.freeze({
   LEFT_TO_RIGHT: "left_to_right",
 });
 
+const SIZING_TYPES = Object.freeze({
+  FIXED: "fixed",
+  GROW: "grow",
+  FIT: "fit",
+  PERCENT: "percent",
+});
+
+const HORIZONTAL_ALIGNMENT = Object.freeze({
+  LEFT: "left",
+  CENTER: "center",
+  RIGHT: "right",
+});
+
+const VERTICAL_ALIGNMENT = Object.freeze({
+  TOP: "top",
+  CENTER: "center",
+  MIDDLE: "middle",
+});
+
+// STRUCTS
+const CORNER_RADIUS = {
+  topLeft: 0,
+  topRight: 0,
+  bottomLeft: 0,
+  bottomRight: 0,
+};
+
+const CHILD_ALIGNMENT = {
+  x: HORIZONTAL_ALIGNMENT.LEFT,
+  y: VERTICAL_ALIGNMENT.TOP,
+};
+
+const CHILD_SIZING_MINMAX = {
+  min: 0,
+  max: 0,
+};
+
+const SIZING_AXIS = {
+  size: {
+    minMax: { ...CHILD_SIZING_MINMAX },
+    percent: 0.0,
+  },
+  type: SIZING_TYPES.FIXED,
+};
+
+const SIZING = {
+  width: { ...SIZING_AXIS },
+  height: { ...SIZING_AXIS },
+};
+
+const POSITION = {
+  x: 0,
+  y: 0,
+};
+
+const PADDING = {
+  left: 0,
+  right: 0,
+  top: 0,
+  bottom: 0,
+};
+
+const LAYOUT_CONFIG = {
+  sizing: { ...SIZING },
+  padding: { ...PADDING },
+  childGap: 0,
+  childAlignment: { ...CHILD_ALIGNMENT },
+  layoutDirection: LAYOUT_DIRECTIONS.LEFT_TO_RIGHT,
+};
+
 // -- UTILS
 const FIXED = (number = 0) => {
   return number;
@@ -130,10 +91,17 @@ const FIT = () => {
 };
 
 // -- MODELS
-const NewUIElement = (layout, position, size, backgroundColor) => {
-  {
-    layout, position, size, backgroundColor;
-  }
+const UI_ELEMENT = {
+  id: "",
+  layout: { ...LAYOUT_CONFIG },
+  position: { ...POSITION },
+  backgroundColor: "white",
+  cornerRadius: { ...CORNER_RADIUS },
+  children: [],
+};
+
+const UIElement = () => {
+  return { ...UI_ELEMENT };
 };
 
 // LAYOUT CALCULATION
