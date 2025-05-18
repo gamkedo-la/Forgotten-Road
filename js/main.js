@@ -437,54 +437,28 @@ function renderUI() {
   }
 
   // Test code below for various UI elements. Can leave commented for now.
-  // const childNode1 = {
-  //   sizing: {
-  //     width: FIXED(300),
-  //     height: FIXED(300),
-  //   },
-  //   backgroundColor: "pink",
-  //   position: {
-  //     x: 0,
-  //     y: 0,
-  //   },
-  //   children: [],
-  // };
+  // const childNode1 = UIElement();
+  // childNode1.backgroundColor = "pink";
+  // childNode1.layout.sizing.width = 300;
+  // childNode1.layout.sizing.height = 300;
 
-  // const childNode2 = {
-  //   sizing: {
-  //     width: FIXED(350),
-  //     height: FIXED(200),
-  //   },
-  //   backgroundColor: "yellow",
-  //   position: {
-  //     x: 0,
-  //     y: 0,
-  //   },
-  //   children: [],
-  // };
+  // const childNode2 = UIElement();
+  // childNode2.backgroundColor = "yellow";
+  // childNode2.layout.sizing.width = 350;
+  // childNode2.layout.sizing.height = 200;
 
-  // const rootNode = {
-  //   sizing: {
-  //     width: FIT(),
-  //     height: FIT(),
-  //   },
-  //   layout: {
-  //     layoutDirection: LAYOUT_DIRECTIONS.LEFT_TO_RIGHT,
-  //   },
-  //   backgroundColor: "blue",
-  //   padding: {
-  //     top: 32,
-  //     right: 32,
-  //     bottom: 32,
-  //     left: 32,
-  //   },
-  //   childGap: 32,
-  //   position: {
-  //     x: 0,
-  //     y: 0,
-  //   },
-  //   children: [childNode1, childNode2],
+  // const rootNode = UIElement();
+  // rootNode.layout.padding = {
+  //   top: 32,
+  //   right: 32,
+  //   left: 32,
+  //   bottom: 32,
   // };
+  // rootNode.layout.sizing.width = 0;
+  // rootNode.layout.sizing.height = 0;
+  // rootNode.layout.childGap = 32;
+  // rootNode.backgroundColor = "blue";
+  // rootNode.children = [childNode1, childNode2];
 
   // // Separating UI rendering into 2 passes
   // const root = LayoutPass(rootNode);
@@ -492,7 +466,7 @@ function renderUI() {
 }
 
 function handlePauseInput() {
-  if ((keys.pause && !pressedPause)) {
+  if (keys.pause && !pressedPause) {
     paused = !paused;
     pressedPause = true;
   }
