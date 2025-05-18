@@ -337,7 +337,7 @@ class NPC extends Entity {
             npcImage = chuckPic;
         }
         if (this.name === "Mick"){
-            this.portraitSX = 64 * 0;  
+            this.portraitSX = 64 * 3;  
             npcImage = mickPic;
         }
 
