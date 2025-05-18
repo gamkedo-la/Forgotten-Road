@@ -37,6 +37,8 @@ gameCanvas.addEventListener("mousedown", (event) => {
 });
 
 gameCanvas.addEventListener("click", (event) => {
+  if (dialoguePrompt) return; // Prevent click to move while prompt is active
+
   let rect = gameCanvas.getBoundingClientRect();
 
   // Screen coords
