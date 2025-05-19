@@ -267,7 +267,7 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   SetupCollisionGridFromBackground();
   updateBackground();
 
-  spawnEntitiesFromTiles(newMapKey); 
+  spawnEntitiesFromTiles(); 
 
   player.x = playerCol * TILE_W;
   player.y = playerRow * TILE_H;
