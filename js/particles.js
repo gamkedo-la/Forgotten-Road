@@ -5,9 +5,11 @@ function renderParticles(deltaTime) {
     // dust particles / fireflies
     drawFireflies();
 
-    // and a couple smokestacks in town
-    drawSmoke(750,170);
-    drawSmoke(210,40);
+    // a couple smokestacks in town
+    if (currentMapKey == "fallDale") {
+        drawSmoke(750,170);
+        drawSmoke(210,40);
+    }
 
 }
 
