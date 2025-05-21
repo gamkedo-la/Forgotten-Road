@@ -11,6 +11,11 @@ function renderParticles(deltaTime) {
         drawSmoke(210,40);
     }
 
+    // fog near the mysterious clearing
+    if (currentMapKey == "eastFields") {
+        drawFog(850,850);
+    }
+
 }
 
 function drawFireflies() {
@@ -23,6 +28,25 @@ function drawFireflies() {
         ctx.fillStyle="rgba(255,255,255,"+a+")";
         ctx.fillRect(x,y,2,2);
     }
+}
+
+function drawFog(xx,yy) {
+    let now = performance.now();
+    let maxSize = 256;
+    let minSize = 128;
+    let moveSpeed = 0.1;
+    let fadeSpeed = 0.1;
+    for (let n=0; n<64; n++) {
+        let a = (Math.cos(n*123+now*fadeSpeed/12340)+now*fadeSpeed/12340) % 1;
+        if (a<0) a=0; if (a>1) a=1;
+        let x = xx + Math.cos(n*1237+now*moveSpeed/888)*200;
+        let y = yy + a*-100 + Math.cos(n*5437+now*moveSpeed/745)*200;;
+        let opacity = 1-a;
+        opacity *= 0.25;
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(fogPic,x,y);
+    }
+    ctx.globalAlpha = 1;
 }
 
 function drawSmoke(xx,yy) {
