@@ -16,6 +16,14 @@ function renderParticles(deltaTime) {
         drawFog(850,850);
     }
 
+    // fog near the graveyard
+    if (currentMapKey == "graveYard") {
+        drawFog(640,250);
+        drawFog(200,300);
+        drawFog(600,600);
+    }
+
+
 }
 
 function drawFireflies() {
