@@ -268,6 +268,7 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   updateBackground();
 
   spawnEntitiesFromTiles(); 
+  spawnRandomChickens();
 
   player.x = playerCol * TILE_W;
   player.y = playerRow * TILE_H;
