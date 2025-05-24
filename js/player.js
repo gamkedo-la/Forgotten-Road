@@ -437,6 +437,8 @@ class Player extends Entity {
   }
 
   draw(deltaTime) {
+    ctx.globalAlpha = 1;
+    
     let frameWidth, srcX, srcY;
 
     if (this.state === "attacking") {
