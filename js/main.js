@@ -536,6 +536,8 @@ function handlePlayerMovement() {
             player.gold += sellPrice;
             player.inventory.splice(player.inventory.indexOf(item), 1);
             console.log(`Sold ${item.name} for ${sellPrice}g`);
+            const sellMessage = new TextEntity(`Sold ${item.name} for ${sellPrice} gold`, canvas.width / 2, canvas.height / 2 - 50, "yellow", 0, -20, 3, "32px Arial");
+            temp_ui_elements.push(sellMessage);
         } else {
             if (player.gold >= item.cost) {
                 player.gold -= item.cost;
@@ -547,6 +549,8 @@ function handlePlayerMovement() {
 
             } else {
                 console.log("Not enough gold!");
+                const noMoneyMessage = new TextEntity(`Not enough gold to buy ${item.name}!`, canvas.width / 2, canvas.height / 2 - 50, "yellow", 0, -20, 2, "32px Arial");
+                temp_ui_elements.push(noMoneyMessage);
             }
         }
 
