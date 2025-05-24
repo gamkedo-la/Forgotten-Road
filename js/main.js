@@ -434,13 +434,7 @@ function renderUI() {
   drawIntroText();
   if (shopOpen) drawShopUI();
 
-  if (shopOpen) {
-    temp_ui_elements.forEach((ui) => {
-      if (ui.constructor.name === 'TextEntity') {
-        ui.draw();
-      }
-    });
-  }
+  temp_ui_elements.forEach((ui) => ui.draw());
 
   if (playState === "gameover") {
     drawGameOverScreen();
