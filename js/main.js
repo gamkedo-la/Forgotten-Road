@@ -433,6 +433,15 @@ function renderUI() {
   drawDialoguePrompt();
   drawIntroText();
   if (shopOpen) drawShopUI();
+
+  if (shopOpen) {
+    temp_ui_elements.forEach((ui) => {
+      if (ui.constructor.name === 'TextEntity') {
+        ui.draw();
+      }
+    });
+  }
+
   if (playState === "gameover") {
     drawGameOverScreen();
   }
@@ -538,6 +547,10 @@ function handlePlayerMovement() {
                 player.gold -= item.cost;
                 player.inventory.push(item);
                 console.log(`Bought ${item.name}`);
+
+                const buyMessage = new TextEntity(`You bought ${item.name}`, canvas.width / 2, canvas.height / 2 - 50, "yellow", 0, -20, 3, "32px Arial");
+                temp_ui_elements.push(buyMessage);
+
             } else {
                 console.log("Not enough gold!");
             }
