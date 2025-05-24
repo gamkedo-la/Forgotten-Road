@@ -372,6 +372,7 @@ class NPC extends Entity {
 
 function drawDialoguePrompt() {
     if (!dialoguePrompt) {
+      if (!shopOpen) {
         for (let npc of npcs) {
             const dx = player.x - npc.x;
             const dy = player.y - npc.y;
@@ -380,8 +381,9 @@ function drawDialoguePrompt() {
             if (dist < 40) {
                 drawTextWithShadow("Press X to Interact", player.x + 20, player.y + 60, "white", "14px Arial", "left");
             }
-          }
-        return;
+         }
+      }
+      return;
     }
     
     const width = 400;

@@ -143,7 +143,7 @@ class WeatherSystem {
      this.weatherTimer = 0;
      this.weatherChangeTriggered = false;
      this.nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
-     console.log(`Weather timer reset. Next change in ${this.nextWeatherChange.toFixed(2)}s`);
+     //console.log(`Weather timer reset. Next change in ${this.nextWeatherChange.toFixed(2)}s`);
   }
 
   setWeatherType(type) {
@@ -153,7 +153,7 @@ class WeatherSystem {
       return;
     }
     this.type = type;
-    console.log(`Weather changing to - ${type} - via weather system`);
+    //console.log(`Weather changing to - ${type} - via weather system`);
 
     this.particles = [];
   }
