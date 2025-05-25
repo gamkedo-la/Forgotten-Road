@@ -45,9 +45,11 @@ class Chicken extends Entity {
         let spritesheetFrame = this.anim[this.currentAnimFrame];
         let flipped = (this.dir<=0);
         if (flipped) {
+            ctx.save();
             ctx.scale(-1,1);
             ctx.drawImage(chickenPic,this.w*spritesheetFrame,0,this.w,this.h,this.x-this.w,this.y,-this.w,this.h);
             ctx.scale(1,1);
+            ctx.restore();
         } else {
             ctx.drawImage(chickenPic,this.w*spritesheetFrame,0,this.w,this.h,this.x,this.y,this.w,this.h);
         }
