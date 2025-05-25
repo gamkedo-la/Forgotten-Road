@@ -552,7 +552,7 @@ function handlePlayerMovement() {
         } else {
             if (player.gold >= item.cost) {
                 player.gold -= item.cost;
-                player.inventory.push(item);
+                player.inventory.push(cloneItem(item));
                 console.log(`Bought ${item.name}`);
 
                 const buyMessage = new TextEntity(`You bought ${item.name}`, canvas.width / 4, canvas.height / 2 + 150, "yellow", 0, -20, 3, "32px Arial");

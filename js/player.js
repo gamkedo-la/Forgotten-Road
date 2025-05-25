@@ -276,6 +276,7 @@ class Player extends Entity {
 
     if (this.inventory.length < 20) {
       this.inventory.push({ ...item });
+
       console.log(`${item.name} added to backpack.`);
     } else {
       console.log("Backpack is full!");
@@ -302,7 +303,7 @@ class Player extends Entity {
 
   equipItem(item) {
     if (item.type && this.equipment.hasOwnProperty(item.type)) {
-      this.equipment[item.type] = item;
+      this.equipment[item.type] = cloneItem(item);
       console.log(`Equipped ${item.name} as ${item.type}.`);
     } else {
       console.log("Item cannot be equipped.");

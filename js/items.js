@@ -191,5 +191,23 @@ function drawBackpackUI(ctx, player) {
     mouse.clicked = false;
 }
 
+function cloneItem(item) {
+  const clone = {};
+  for (let key in item) {
+    const value = item[key];
+    if (typeof value === 'object' && value !== null) {
+      if (value instanceof Image || typeof value === 'function') {
+        clone[key] = value;
+      } else {
+        clone[key] = { ...value };
+      }
+    } else {
+      clone[key] = value;
+    }
+  }
+  return clone;
+}
+
+
 
 
