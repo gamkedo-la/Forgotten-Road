@@ -30,6 +30,58 @@ const VERTICAL_ALIGNMENT = Object.freeze({
   MIDDLE: "middle",
 });
 
+const TEXT_WRAP_MODE = Object.freeze({
+  WRAP_WORDS: "wrap_words",
+  WRAP_NEWLINES: "wrap_newlines",
+  WRAP_NONE: "wrap_none",
+});
+
+const TEXT_ALIGNMENT = Object.freeze({
+  LEFT: "align_left",
+  CENTER: "align_center",
+  RIGHT: "align_right",
+});
+
+const FLOATING_ATTACH_POINT_TYPE = Object.freeze({
+  LEFT_TOP: "left_top",
+  LEFT_CENTER: "left_center",
+  LEFT_BOTTOM: "left_bottom",
+  CENTER_TOP: "center_top",
+  CENTER_CENTER: "center_center",
+  CENTER_BOTTOM: "center_bottm",
+  RIGHT_TOP: "right_top",
+  RIGHT_CENTER: "right_center",
+  RIGHT_BOTTOM: "right_bottom",
+});
+
+const POINTER_CAPTURE_MODE = Object.freeze({
+  CAPTURE: "capture",
+  PASSTHROUGH: "passthrough",
+});
+
+const ATTACH_TO_ELEMENT = Object.freeze({
+  NONE: "none",
+  PARENT: "parent",
+  ELEMENT_WITH_ID: "element_with_id",
+  ROOT: "root",
+});
+
+const FLOATING_CLIP_TO_ELEMENT = Object.freeze({
+  NONE: "none",
+  PARENT: "parent",
+});
+
+const ELEMENT_TYPE = Object.freeze({
+  NONE: "none",
+  BORDER: "border",
+  FLOATING: "floating",
+  CLIP: "clip",
+  IMAGE: "image",
+  TEXT: "text",
+  CUSTOM: "custom",
+  SHARED: "shared",
+});
+
 // STRUCTS
 const CORNER_RADIUS = Object.seal({
   topLeft: 0,
@@ -61,6 +113,11 @@ const SIZING = Object.seal({
   height: { ...SIZING_AXIS },
 });
 
+const DIMENSIONS = Object.seal({
+  width: 0,
+  height: 0,
+});
+
 const POSITION = Object.seal({
   x: 0,
   y: 0,
@@ -73,6 +130,14 @@ const PADDING = Object.seal({
   bottom: 0,
 });
 
+const BORDER = Object.seal({
+  left: 0,
+  top: 0,
+  right: 0,
+  bottom: 0,
+  betweenChildren: 0,
+});
+
 const LAYOUT_CONFIG = Object.seal({
   sizing: { ...SIZING },
   padding: { ...PADDING },
@@ -81,18 +146,127 @@ const LAYOUT_CONFIG = Object.seal({
   layoutDirection: LAYOUT_DIRECTIONS.LEFT_TO_RIGHT,
 });
 
+const TEXT_CONFIG = Object.seal({
+  textColor: "#000000",
+  fontId: 0,
+  fontSize: 16,
+  letterSpacing: 0,
+  lineHeight: 16,
+  wrapMode: TEXT_WRAP_MODE.WRAP_NONE,
+  textAlignment: TEXT_ALIGNMENT.LEFT,
+});
+
+const IMAGE_CONFIG = Object.seal({
+  dimensions: { ...DIMENSIONS },
+  imageData: "",
+});
+
+const FLOATING_ELEMENT_CONFIG = Object.seal({
+  offset: { x: 0, y: 0 },
+  expand: { ...DIMENSIONS },
+  parentId: 0,
+  zIndex: 0,
+  attachPoints: {
+    element: FLOATING_ATTACH_POINT_TYPE.LEFT_TOP,
+    parent: FLOATING_ATTACH_POINT_TYPE.LEFT_TOP,
+  },
+  pointerCaptureMode: POINTER_CAPTURE_MODE.CAPTURE,
+  attachTo: ATTACH_TO_ELEMENT.NONE,
+  clipTo: FLOATING_CLIP_TO_ELEMENT.NONE,
+});
+
+const CUSTOM_ELEMENT_CONFIG = Object.seal({
+  customData: {},
+});
+
+const CLIP_ELEMENT_CONFIG = Object.seal({
+  horizontal: false,
+  vertical: false,
+  childOffset: {
+    x: 0,
+    y: 0,
+  },
+});
+
+const BORDER_ELEMENT_CONFIG = Object.seal({
+  color: "#000000",
+  width: { ...BORDER },
+});
+
+const SHARED_ELEMENT_CONFIG = Object.seal({
+  backgroundColor: "#FFFFFF",
+  cornerRadius: { ...CORNER_RADIUS },
+});
+
+const ELEMENT_CONFIG = Object.seal({
+  type: ELEMENT_TYPE.NONE,
+  config: {},
+});
+
 // -- MODELS
 const UI_ELEMENT = Object.seal({
-  id: "",
+  id: 0,
   layout: { ...LAYOUT_CONFIG },
   position: { ...POSITION },
   backgroundColor: "white",
   cornerRadius: { ...CORNER_RADIUS },
+  parent: null,
   children: [],
+  dimensions: { ...DIMENSIONS },
+  elementConfig: { ...ELEMENT_CONFIG },
 });
 
-const UIElement = () => {
-  return JSON.parse(JSON.stringify(UI_ELEMENT));
+const UIElement = (type = ELEMENT_TYPE.NONE, customConfig = {}) => {
+  const newElement = JSON.parse(JSON.stringify(UI_ELEMENT));
+
+  newElement.elementConfig.type = type;
+  switch (type) {
+    case ELEMENT_TYPE.TEXT:
+      newElement.elementConfig.config = { ...TEXT_CONFIG };
+      break;
+
+    case ELEMENT_TYPE.IMAGE:
+      newElement.elementConfig.config = { ...IMAGE_CONFIG };
+      break;
+
+    case ELEMENT_TYPE.BORDER:
+      newElement.elementConfig.config = { ...BORDER_ELEMENT_CONFIG };
+      break;
+
+    case ELEMENT_TYPE.FLOATING:
+      newElement.elementConfig.config = { ...FLOATING_ELEMENT_CONFIG };
+      break;
+
+    case ELEMENT_TYPE.CLIP:
+      newElement.elementConfig.config = { ...CLIP_ELEMENT_CONFIG };
+      break;
+
+    case ELEMENT_TYPE.SHARED:
+      newElement.elementConfig.config = {
+        ...SHARED_ELEMENT_CONFIG_ELEMENT_CONFIG,
+      };
+      break;
+
+    case ELEMENT_TYPE.CUSTOM:
+      newElement.elementConfig.config = { ...CUSTOM_ELEMENT_CONFIG };
+      newElement.elementConfig.config.customData = customConfig;
+      break;
+
+    default:
+      break;
+  }
+
+  return newElement;
+};
+
+// CONSTANTS
+const EPSILON = 0.01;
+const MAX_FLOAT = 3.40282346638528859812e38;
+
+// UTILS
+const floatEqual = (left, right) => {
+  let subtracted = left - right;
+  return subtracted < EPSILON && subtracted > -1 * EPSILON;
 };
 
 // LAYOUT CALCULATION
