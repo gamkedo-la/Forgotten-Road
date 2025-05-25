@@ -13,6 +13,7 @@ class Player extends Entity {
     super(name, x, y, health, damage);
     this._level = level;
     this._gold = gold;
+    this.sprite = warriorPic;
     this.color = "blue";
     this.image = warriorPic;
     this.sX = 32 * 0; //sprite sheet X pos
@@ -487,6 +488,10 @@ class Player extends Entity {
     }
 
     this.drawShadow();
+
+    if (!this.sprite || !this.sprite.complete) {
+      console.warn("Player sprite missing or not ready", this.sprite);
+    }
 
     ctx.drawImage(
       player.image,

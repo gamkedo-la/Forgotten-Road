@@ -85,6 +85,7 @@ class WeatherSystem {
   }
 
   render(ctx) {
+    ctx.save();
     if (this.type === "rain") {
       ctx.fillStyle = "rgba(100, 100, 100, 0.2)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -108,6 +109,7 @@ class WeatherSystem {
       ctx.fillStyle = `rgba(255, 255, 255, ${this.lightningAlpha})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+    ctx.restore();
   }
 
   changeWeatherRandomly() {

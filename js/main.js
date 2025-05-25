@@ -174,12 +174,14 @@ function drawGameFrame(currentTime) {
 
   camera.update(deltaTime);
   ctx.save();
-  camera.applyTransform(ctx);
-  renderGameWorld(deltaTime); 
-  renderParticles(deltaTime);
-  weather?.update(deltaTime);
+    camera.applyTransform(ctx);
+    renderGameWorld(deltaTime); 
+    renderParticles(deltaTime);
+    weather?.update(deltaTime);
   ctx.restore();
-  weather?.render(ctx);  
+  ctx.save(); 
+    weather?.render(ctx);
+  ctx.restore();  
   renderUI();                
   requestAnimationFrame(drawGameFrame);
 
@@ -258,7 +260,6 @@ function checkForMapEdgeTransition() {
   }
 }
 
-
 function switchToMap(newMapKey, playerCol, playerRow) {
   if (!WORLD_MAPS[newMapKey]) return;
 
@@ -275,6 +276,8 @@ function switchToMap(newMapKey, playerCol, playerRow) {
 
   buildings = MAP_DATA[newMapKey]?.buildings || {};
   console.log(`Switched to ${newMapKey}`);
+  console.log("Player moved to", player.x, player.y, "on map", newMapKey);
+
 }
 
 
@@ -364,6 +367,10 @@ function renderGameWorld(deltaTime) {
   ctx.fillStyle="rgba(60,103,140,1)"; // water blue
   ctx.fillRect(0,0,4000,4000); // if we use canvas.width and height it's too small due to scrolling
 
+  console.log("boxPic", boxPic);
+  console.log("shadowPic", shadowPic);
+  console.log("player.sprite", player.sprite);
+
   // ground
   drawBackground();
   
@@ -377,7 +384,11 @@ function renderGameWorld(deltaTime) {
   npcs.forEach((npc) => npc.draw && npc.draw(deltaTime)); 
   
   // player
+  ctx.globalAlpha = 1.0;
+  ctx.globalCompositeOperation = "source-over";
+  console.log("Drawing player at", player.x, player.y);
   player.draw(deltaTime);
+
   
   // pickups
   worldItems[currentMapKey].forEach((item) => drawWorldItem(item));
