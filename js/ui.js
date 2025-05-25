@@ -364,3 +364,286 @@ const DrawElement = (props) => {
 const DrawPass = (root) => {
   DrawElement(root);
 };
+
+// Attempt 3
+const OPEN_LAYOUT_ELEMENTS = [];
+const LAYOUT_ELEMENT_TREE_ROOTS = [];
+const LAYOUT_ELEMENT_CHILDREN_BUFFER = [];
+
+const SizeContainersAlongAxis = (xAxis = true) => {
+  const RESIZEABLE_CONTAINER_BUFFER = OPEN_LAYOUT_ELEMENTS;
+
+  LAYOUT_ELEMENT_TREE_ROOTS?.forEach((element) => {
+    LAYOUT_ELEMENT_CHILDREN_BUFFER.length = 0;
+
+    const layoutElement = element ?? UIElement();
+
+    // Size Floating Containers
+
+    // Setting min/max dimensions
+    const { layout } = layoutElement;
+    const { sizing, dimensions } = layout;
+    dimensions.width = Math.min(
+      Math.max(dimensions.width, sizing.width.size.minMax.min),
+      sizing.width.size.minMax.max
+    );
+    dimensions.height = Math.min(
+      Math.max(dimensions.height, sizing.height.size.minMax.min),
+      sizing.height.size.minMax.max
+    );
+
+    // Get Parent Layout
+    const { parent } = layoutElement;
+    if (parent) {
+      const { layout: parentLayout, dimensions: parentDimensions } = parent;
+      let parentSize = xAxis ? parentDimensions.width : parentDimensions.height;
+      let parentPadding = xAxis
+        ? parentLayout.padding.left + parentLayout.padding.right
+        : parentLayout.padding.top + parentLayout.padding.bottom;
+      let totalPaddingAndChildGaps = parentPadding;
+      let growContainerCount = 0;
+      let innerContentSize = 0;
+      let sizingAlongAxis =
+        (xAxis &&
+          parentLayout.layoutDirection == LAYOUT_DIRECTIONS.LEFT_TO_RIGHT) ||
+        (!xAxis &&
+          parentLayout.layoutDirection == LAYOUT_DIRECTIONS.TOP_TO_BOTTOM);
+      let parentChildGap = parentLayout.childGap;
+
+      // Grow and Shrink Sizing
+      const { children } = parent;
+      children?.forEach((childElement, i) => {
+        const childOffset = i;
+        const { layout: childLayout, dimensions: childDimensions } =
+          childElement;
+        const childSizing = xAxis
+          ? childLayout.sizing.width
+          : childLayout.sizing.height;
+        let childSize = xAxis ? childDimensions.width : childDimensions.height;
+
+        // TODO: check if element is not text and if element has no children; add to bfsBuffer?
+
+        // TODO: add to resizeable contaner buffer if sizing is not fixed/percent and the element is not text or image
+        if (
+          childSizing.type != SIZING_TYPES.PERCENT &&
+          childSizing.type != SIZING_TYPES.FIXED
+        ) {
+        }
+
+        //
+        if (sizingAlongAxis) {
+          innerContentSize +=
+            childSizing.type == SIZING_TYPES.PERCENT ? 0 : childSize;
+
+          if (childSizing.type == SIZING_TYPES.GROW) {
+            growContainerCount++;
+          }
+
+          if (childOffset > 0) {
+            innerContentSize += parentChildGap;
+            totalPaddingAndChildGaps += parentChildGap;
+          }
+        } else {
+          innerContentSize = Math.max(childSize, innerContentSize);
+        }
+      });
+
+      // Percentage Sizing
+      children?.forEach((childElement, i) => {
+        const childOffset = i;
+        const { layout: childLayout, dimensions: childDimensions } =
+          childElement;
+        const childSizing = xAxis
+          ? childLayout.sizing.width
+          : childLayout.sizing.height;
+        let childSize = xAxis ? childDimensions.width : childDimensions.height;
+
+        if (childSizing.type == SIZING_TYPES.PERCENT) {
+          childSize =
+            (parentSize - totalPaddingAndChildGaps) * childSizing.size.percent;
+          if (sizingAlongAxis) {
+            innerContentSize += childSize;
+
+            // TODO: udpate aspect ratio if element is image
+          }
+        }
+      });
+
+      if (sizingAlongAxis) {
+        let sizeToDistribute = parentSize - parentPadding - innerContentSize;
+
+        // if the content is too large, compress the children
+        if (sizeToDistribute < 0) {
+          // TODO: add support for clipping children
+
+          // TODO: Scrolling containers will compress before other containers
+          while (
+            sizeToDistribute < EPSILON &&
+            RESIZEABLE_CONTAINER_BUFFER.length > 0
+          ) {
+            let largest = 0;
+            let secondLargest = 0;
+            let widthToAdd = sizeToDistribute;
+
+            //
+            RESIZEABLE_CONTAINER_BUFFER?.forEach((resizeableElement) => {
+              let childSize = xAxis
+                ? resizeableElement.dimensions.width
+                : resizeableElement.dimensions.height;
+
+              if (floatEqual(childSize, largest)) {
+                return;
+              }
+
+              if (childSize > largest) {
+                secondLargest = largest;
+                largest = childSize;
+              }
+
+              if (childSize < largest) {
+                secondLargest = Math.max(secondLargest, childSize);
+                widthToAdd = secondLargest - largest;
+              }
+            });
+
+            //
+            widthToAdd = Math.max(
+              widthToAdd,
+              sizeToDistribute / RESIZEABLE_CONTAINER_BUFFER.length
+            );
+
+            //
+            RESIZEABLE_CONTAINER_BUFFER.forEach((resizeableElement) => {
+              let childSize = xAxis
+                ? resizeableElement.dimensions.width
+                : resizeableElement.dimensions.height;
+
+              let minSize = xAxis
+                ? resizeableElement.minDimensions.width
+                : resizeableElement.minDimensions.height;
+
+              let previousWidth = childSize;
+
+              if (floatEqual(childSize, largest)) {
+                childSize += widthToAdd;
+                if (childSize <= minSize) {
+                  childSize - minSize;
+                  // TODO: remove swapback?
+                }
+                sizeToDistribute -= childSize - previousWidth;
+              }
+            });
+          }
+        }
+        // if the content is too small, expand grow containers
+        else if (sizeToDistribute > 0 && growContainerCount > 0) {
+          RESIZEABLE_CONTAINER_BUFFER.forEach((resizeableElement) => {
+            childSizing = xAxis
+              ? resizeableElement.layoutConfig.sizing.width.type
+              : resizeableElement.layoutConfig.sizing.height.type;
+
+            if (childSizing != SIZING_TYPES.GROW) {
+              // TODO: remove swapback?
+            }
+          });
+
+          while (sizeToDistribute > EPSILON && resizeableElement.length > 0) {
+            let smallest = MAX_FLOAT;
+            let secondSmallest = MAX_FLOAT;
+            let widthToAdd = sizeToDistribute;
+
+            //
+            RESIZEABLE_CONTAINER_BUFFER.forEach((resizeableElement) => {
+              let childSize = xAxis
+                ? resizeableElement.dimensions.width
+                : resizeableElement.dimensions.height;
+
+              if (floatEqual(childSize, smallest)) {
+                return;
+              }
+
+              if (childSize < smallest) {
+                secondSmallest = smallest;
+                smallest = childSize;
+              }
+
+              if (childSize > smallest) {
+                secondSmallest = Math.min(secondSmallest, childSize);
+                widthToAdd = secondSmallest - smallest;
+              }
+            });
+
+            //
+            widthToAdd = Math.min(
+              widthToAdd,
+              sizeToDistribute / resizeableElement.length
+            );
+
+            //
+            RESIZEABLE_CONTAINER_BUFFER.forEach((resizeableElement) => {
+              let childSize = xAxis
+                ? resizeableElement.dimensions.width
+                : resizeableElement.dimensions.height;
+
+              let maxSize = xAxis
+                ? resizeableElement.layoutConfig.sizing.width.minMax.max
+                : resizeableElement.layoutConfig.sizing.height.minMax.max;
+
+              let previousWidth = childSize;
+
+              if (floatEqual(childSize, smallest)) {
+                childSize += widthToAdd;
+                if (childSize >= maxSize) {
+                  childSize = maxSize;
+                  // TODO: remove swapback?
+                }
+                sizeToDistribute -= childSize - previousWidth;
+              }
+            });
+          }
+        }
+      }
+      // Sizing along non layout axis
+      else {
+        RESIZEABLE_CONTAINER_BUFFER.forEach((resizeableElement) => {
+          let childSizing = xAxis
+            ? resizeableElement.layoutConfig.sizing.width.type
+            : resizeableElement.layoutConfig.sizing.height.type;
+
+          let childSize = xAxis
+            ? resizeableElement.dimensions.width
+            : resizeableElement.dimensions.height;
+
+          let minSize = xAxis
+            ? resizeableElement.minDimensions.width
+            : resizeableElement.minDimensions.height;
+
+          // TODO: skip resizing image elements on y-axis
+          // if (!xAxis) {
+          // return;
+          // }
+
+          //
+          let maxSize = parentSize - parentPadding;
+          // If we're laying out the children of a scroll panel, grow containers expand to the size of the inner content, not the outer container
+          // TODO:check if element clips children
+
+          if (childSizing.type == SIZING_TYPES.GROW) {
+            childSize = Math.min(maxSize, childSizing.size.minMax.max);
+          }
+
+          childSize = Math.max(minSize, Math.min(childSize, maxSize));
+        });
+      }
+    }
+  });
+};
+
+const CalculateFinalLayout = () => {
+  // Sizing Pass
+  SizeContainersAlongAxis(true);
+
+  // Text Wrap Pass
+  // Positioning
+  // Draw commands
+};
