@@ -2,7 +2,7 @@ const NUM_CHICKENS = 20;
 
 class Chicken extends Entity {
     // spritesheet frames
-    anim = [0,1,0,1,0,1,0,1,0,1,2,2,2,2,1,1,1,1,2,2,2,2,1,1,1,1,0,1,0,1,0,1,0,1,3,3,3,3,3,3,3,3,3,3,0,1,0,1,0,1,0,1,0,1,0,1,0,1];
+    anim = [0,1,0,1,0,1,0,1,0,1,2,0,2,0,2,0,2,0,1,0,1,0,1,0,1,3,3,3,3,3,3,3,3,3,3,0,1,0,1,0,1,0,1,0,1,0,1,0,1];
     // current
     currentAnimFrame = 0;
     // anim speed
@@ -10,8 +10,8 @@ class Chicken extends Entity {
     // movement on frames 0+1
     dir = 1; // pixels per frame of movement
     // sprite size
-    w = 8;
-    h = 8;
+    w = 16;
+    h = 16;
     // anim
     nextFrameTimestamp = 0;
 

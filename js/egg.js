@@ -1,8 +1,8 @@
 class Egg extends Entity {
 
     // sprite size
-    w = 8;
-    h = 8;
+    w = 16;
+    h = 16;
     spriteNum = 4; // on chicken.png
 
     constructor(x, y, hp=1, dam=0) {
