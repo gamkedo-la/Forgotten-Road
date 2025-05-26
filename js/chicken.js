@@ -66,12 +66,12 @@ class Chicken extends Entity {
 
 function spawnRandomChickens() {
     for (let n=0; n<NUM_CHICKENS; n++) {
-        let buck = new Chicken(Math.round(Math.random()*1000),Math.round(Math.random()*1000));
+        let buck = new Chicken(Math.round(Math.random()*1000),Math.round(Math.random()*550));
         npcs.push(buck);
     }
     // a few eggs to start us off, too
     for (let n=0; n<NUM_CHICKENS; n++) {
-        let e = new Chicken(Math.round(Math.random()*1000),Math.round(Math.random()*1000));
+        let e = new Chicken(Math.round(Math.random()*1000),Math.round(Math.random()*550));
         npcs.push(e);
     }
 }
