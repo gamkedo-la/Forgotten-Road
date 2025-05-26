@@ -367,9 +367,10 @@ function renderGameWorld(deltaTime) {
   ctx.fillStyle="rgba(60,103,140,1)"; // water blue
   ctx.fillRect(0,0,4000,4000); // if we use canvas.width and height it's too small due to scrolling
 
-  console.log("boxPic", boxPic);
-  console.log("shadowPic", shadowPic);
-  console.log("player.sprite", player.sprite);
+  // debug only
+  // console.log("boxPic", boxPic);
+  // console.log("shadowPic", shadowPic);
+  // console.log("player.sprite", player.sprite);
 
   // ground
   drawBackground();
@@ -386,7 +387,7 @@ function renderGameWorld(deltaTime) {
   // player
   ctx.globalAlpha = 1.0;
   ctx.globalCompositeOperation = "source-over";
-  console.log("Drawing player at", player.x, player.y);
+  //console.log("Drawing player at", player.x, player.y);
   player.draw(deltaTime);
 
   
