@@ -20,7 +20,9 @@ class Chicken extends Entity {
         // starts at a different frame so they don't synch up
         this.currentAnimFrame = Math.floor(Math.random()*this.anim.length);
         this.secsPerFrame += Math.random(0.05);
-        if (Math.random()<0.5) this.dir *= -1;
+        if (Math.random()<0.5) {
+            this.dir = -1; // random dir to start
+        }
     }
 
     layEgg() {
@@ -38,10 +40,13 @@ class Chicken extends Entity {
             this.nextFrameTimestamp = now + this.secsPerFrame;
             this.currentAnimFrame++;
             if (this.currentAnimFrame > this.anim.length-1) this.currentAnimFrame = 0;
+
             // sometimes, change direction
             if (Math.random() < 0.005) { this.dir *= -1; }
+
             // very rarely, lay an egg
-            if (Math.random() < 0.001) { this.layEgg(); }
+            if (Math.random() < 0.002) { this.layEgg(); }
+
             // is this a walk frame? then move
             let spritesheetFrame = this.anim[this.currentAnimFrame];
             if (spritesheetFrame==0 || spritesheetFrame==1) { // walking?
@@ -51,18 +56,10 @@ class Chicken extends Entity {
     }
     
     draw() {
-        //this.drawShadow();
         let spritesheetFrame = this.anim[this.currentAnimFrame];
-        let flipped = (this.dir<=0);
-        if (flipped) {
-            ctx.save();
-            ctx.scale(-1,1);
-            ctx.drawImage(chickenPic,this.w*spritesheetFrame,0,this.w,this.h,this.x-this.w,this.y,-this.w,this.h);
-            ctx.scale(1,1);
-            ctx.restore();
-        } else {
-            ctx.drawImage(chickenPic,this.w*spritesheetFrame,0,this.w,this.h,this.x,this.y,this.w,this.h);
-        }
+        let sx = this.w*spritesheetFrame;
+        let sy = (this.dir<0) ? this.h : 0;
+        ctx.drawImage(chickenPic,sx,sy,this.w,this.h,this.x,this.y,this.w,this.h);
     }
 
 }
