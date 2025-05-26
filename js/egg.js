@@ -1,3 +1,5 @@
+const EGG_PICKUP_RANGE = 24;
+
 class Egg extends Entity {
 
     // sprite size
@@ -10,8 +12,21 @@ class Egg extends Entity {
     }
 
     update(deltaTime) {
-        // fixme: hatch into a new chicken after some time?
-        return;
+        
+        // TODO: hatch into a new chicken after some time?
+
+        if (this.distanceFromPlayer()<EGG_PICKUP_RANGE) {
+            // console.log("we are touching an egg!");
+            
+            // TODO:
+            // player.inventory.pickup("egg");
+            pickupSound.play();
+
+            // remove from world
+            const index = npcs.indexOf(this);
+            if (index !== -1) npcs.splice(index, 1);
+
+        }
     }
     
     draw() {

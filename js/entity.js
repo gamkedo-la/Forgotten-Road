@@ -44,6 +44,17 @@ class Entity {
     this._y = value;
   }
 
+  distanceFromEntity(e) {
+    return Math.sqrt(Math.pow((this.x-e.x), 2) + Math.pow((this.y-e.y), 2) );
+  }
+
+  distanceFromPlayer() {
+    // calculated from CENTER of player sprite
+    let px = player.x + 16;
+    let py = player.y + 16;
+    return Math.sqrt(Math.pow((this.x-px), 2) + Math.pow((this.y-py), 2) );
+  }
+
   takeDamage(amount) {
     // Skeleton takes reduced damage
     if (this.type === "Skeleton") {

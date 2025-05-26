@@ -1,4 +1,5 @@
 const NUM_MUSHROOMS = 6;
+const MUSHROOM_PICKUP_RANGE = 24;
 
 class Mushroom extends Entity {
 
@@ -12,7 +13,18 @@ class Mushroom extends Entity {
     }
 
     update(deltaTime) {
-        return;
+        if (this.distanceFromPlayer()<MUSHROOM_PICKUP_RANGE) {
+            // console.log("we are touching a mushroom!");
+            
+            // TODO:
+            // player.inventory.pickup("mushroom");
+            pickupSound.play();
+
+            // remove from world
+            const index = npcs.indexOf(this);
+            if (index !== -1) npcs.splice(index, 1);
+
+        }
     }
     
     draw() {
