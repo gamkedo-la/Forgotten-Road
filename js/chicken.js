@@ -1,4 +1,5 @@
-const NUM_CHICKENS = 20;
+const NUM_CHICKENS = 8;
+const NUM_EGGS = 4; // more will be laid
 
 class Chicken extends Entity {
     // spritesheet frames
@@ -70,8 +71,8 @@ function spawnRandomChickens() {
         npcs.push(buck);
     }
     // a few eggs to start us off, too
-    for (let n=0; n<NUM_CHICKENS; n++) {
-        let e = new Chicken(Math.round(Math.random()*1000),Math.round(Math.random()*550));
+    for (let n=0; n<NUM_EGGS; n++) {
+        let e = new Egg(Math.round(Math.random()*1000),Math.round(Math.random()*550));
         npcs.push(e);
     }
 }

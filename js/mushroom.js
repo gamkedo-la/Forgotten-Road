@@ -1,4 +1,4 @@
-const NUM_MUSHROOMS = 12;
+const NUM_MUSHROOMS = 6;
 
 class Mushroom extends Entity {
 
