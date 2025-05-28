@@ -186,6 +186,9 @@ function drawGameFrame(currentTime) {
   requestAnimationFrame(drawGameFrame);
 
   mouse.clicked = false;
+  if (!keys.up && !keys.down && !keys.left && !keys.right) {
+  player.isMoving = false;
+}
 }
 
 function drawQuestTracker() {

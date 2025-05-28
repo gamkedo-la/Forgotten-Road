@@ -263,6 +263,7 @@ function movePlayer(dx, dy, direction) {
   if (canMoveTo(newX, newY, player.width, player.height)) {
     player.x = newX;
     player.y = newY;
+    player.isMoving = true;
   }
   
   const directionFacingMap = {
