@@ -347,6 +347,16 @@ class Player extends Entity {
       if (this.path.length === 0) {
         this.isMoving = false;
         this.moveTarget = null;
+        // Auto-interact with NPC if adjacent
+        for (let npc of npcs) {
+          const dx = Math.abs(npc.x - this.x);
+          const dy = Math.abs(npc.y - this.y);
+          const withinRange = dx <= TILE_W && dy <= TILE_H;
+          if (withinRange) {
+            npc.interact();
+            break;
+          }
+        }
       } else {
         const next = this.path[0];
         this.moveTarget = {

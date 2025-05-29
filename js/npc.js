@@ -297,21 +297,25 @@ class NPC extends Entity {
     
     update(deltaTime) {
         this.dialogueCooldown -= deltaTime * 1000; 
-    
         if (this.dialogueCooldown > 0) return;
-    
+
+        // 🚫 Suppress idle chatter if player is near
+        const dx = Math.abs(player.x - this.x);
+        const dy = Math.abs(player.y - this.y);
+        const nearPlayer = dx <= TILE_W && dy <= TILE_H;
+
         const showNothing = Math.random() < 0.3;
-    
-        if (showNothing) {
-            this.dialogue = "";
+
+        if (showNothing || nearPlayer || dialoguePrompt) {
+            this.dialogue = ""; // Quiet if not supposed to talk
         } else {
             const newIndex = Math.floor(Math.random() * this.dialogueLines.length);
             this.dialogue = this.dialogueLines[newIndex];
         }
-  
+
         this.dialogueCooldown = (3 + Math.random() * 3) * 1000;
     }
-    
+   
     draw(deltaTime) {
          // Update bobbing timer
         this.bubbleBobTimer += deltaTime;
@@ -366,6 +370,23 @@ class NPC extends Entity {
             outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");           // border
             drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14,    // text
                             "black", "12px Arial", "center");
+        }
+
+        ctx.font = "bold 20px Arial";
+        ctx.textAlign = "center";
+
+        const quest = this.associatedQuest;
+
+        if (quest && !dialoguePrompt) {
+            if (!quests[quest].started) {
+                // Quest not accepted yet
+                ctx.fillStyle = "gold";
+                ctx.fillText("!", this.x + this.width / 2, this.y - 10);
+            } else if (quests[quest].completed) {
+                // Quest ready to turn in
+                ctx.fillStyle = "cyan";
+                ctx.fillText("?", this.x + this.width / 2, this.y - 10);
+            }
         }
     }
 }

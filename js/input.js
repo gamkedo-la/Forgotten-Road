@@ -56,15 +56,54 @@ gameCanvas.addEventListener("click", (event) => {
   let playerX = Math.floor(player.x / TILE_W);
   let playerY = Math.floor(player.y / TILE_H);
 
-  player.cancelPath();
+  // First, check if we clicked on an NPC
+  let npcClicked = false;
 
-  if (!player.isMoving) {
-    const path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
-    if (path.length > 0) {
-      console.log("Click path to:", clickX, clickY);
-      player.setPath(path);
+  for (let npc of npcs) {
+    let npcTileX = Math.floor(npc.x / TILE_W);
+    let npcTileY = Math.floor(npc.y / TILE_H);
+
+    if (clickX === npcTileX && clickY === npcTileY) {
+      npcClicked = true;
+      const directions = [
+        { dx: -1, dy: 0 },
+        { dx: 1, dy: 0 },
+        { dx: 0, dy: -1 },
+        { dx: 0, dy: 1 },
+      ];
+
+      for (let dir of directions) {
+        let adjX = npcTileX + dir.dx;
+        let adjY = npcTileY + dir.dy;
+
+        if (
+          adjX >= 0 && adjY >= 0 &&
+          adjX < TILE_COLS && adjY < TILE_ROWS &&
+          collisionGrid[adjY][adjX].isWalkable
+        ) {
+          const path = findPath(playerX, playerY, adjX, adjY, collisionGrid);
+          if (path.length > 0) {
+            console.log(`Pathing to talk to ${npc.name}`);
+            player.cancelPath();
+            player.setPath(path);
+            return; // Don't continue with click-to-move
+          }
+        }
+      }
     }
   }
+
+player.cancelPath();
+
+// If not clicking on NPC, default click-to-move
+if (!npcClicked && !player.isMoving) {
+  const path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
+  if (path.length > 0) {
+    console.log("Click path to:", clickX, clickY);
+    player.setPath(path);
+  }
+}
+
 });
 
 function screenToWorld(x, y) {
