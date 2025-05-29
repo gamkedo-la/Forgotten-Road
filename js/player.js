@@ -476,16 +476,15 @@ class Player extends Entity {
       srcY = 4 * 34; // 5th row
     } else {
       // Walking or idle
-    if (this.isMoving) {
-      this.walkTimer += deltaTime;
-      if (this.walkTimer > frameDuration) {
-        this.walkTimer = 0;
-        this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+      if (this.isMoving) {
+        this.walkTimer += deltaTime;
+        if (this.walkTimer > frameDuration) {
+          this.walkTimer = 0;
+          this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+        }
+      } else {
+        this.currentWalkFrame = -1; 
       }
-    } else {
-      this.currentWalkFrame = 0; 
-    }
-
 
       frameWidth = FRAME_WALK_WIDTH;
       srcX = (this.currentWalkFrame + 1) * frameWidth;
