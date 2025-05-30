@@ -19,6 +19,9 @@ class Mushroom extends Entity {
             // TODO:
             // player.inventory.pickup("mushroom");
             pickupSound.play();
+            // quest item
+            //if (quests.yesYourEggcellence.started) 
+                quests.yesYourEggcellence.mushroomsFound++;
 
             // remove from world
             const index = npcs.indexOf(this);

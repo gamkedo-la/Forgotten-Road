@@ -21,6 +21,9 @@ class Egg extends Entity {
             // TODO:
             // player.inventory.pickup("egg");
             pickupSound.play();
+            // quest item
+            // if (quests.yesYourEggcellence.started) 
+                quests.yesYourEggcellence.eggsFound++;
 
             // remove from world
             const index = npcs.indexOf(this);

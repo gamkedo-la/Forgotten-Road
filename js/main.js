@@ -436,6 +436,7 @@ function renderTopStatsBar() {
     player.drawHearts();
     drawStaminaBar();
     drawGoldUI();
+    drawQuestCounts();
     drawArrowCount();
     drawSeason(currentWeather)
  }
@@ -684,6 +685,23 @@ function drawGoldUI() {
     let y = guiy+20 + (n % 10) * -2;
     ctx.drawImage(coinPic, x, y);
   }
+}
+
+function drawQuestCounts() {
+    //console.log("drawQuestCounts eggs="+quests.yesYourEggcellence.eggsFound+" mushrooms="+quests.yesYourEggcellence.mushroomsFound);
+    var guix = 5+HUD_BAR_WIDTH+5+HUD_BAR_WIDTH+5+HUD_BAR_WIDTH-18;
+    var guiy = 7;
+    for (let n = 0; n < quests.yesYourEggcellence.eggsFound; n++) {
+        let x = guix-n*4;
+        let y = guiy;
+        //ctx.drawImage(eggPic, x, y);
+        ctx.drawImage(chickenPic,4*16,0,16,16,x,y,16,16); // it's on this spritesheet
+    }
+    for (let n = 0; n < quests.yesYourEggcellence.mushroomsFound; n++) {
+        let x = guix-n*4;
+        let y = guiy+10;
+        ctx.drawImage(mushroomPic, x, y);
+    }
 }
 
 function drawSeason(currentWeather){

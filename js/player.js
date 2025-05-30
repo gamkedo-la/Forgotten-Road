@@ -353,7 +353,7 @@ class Player extends Entity {
           const dy = Math.abs(npc.y - this.y);
           const withinRange = dx <= TILE_W && dy <= TILE_H;
           if (withinRange) {
-            npc.interact();
+            if (npc.interact) npc.interact(); else console.log("missing npc.interact function");
             break;
           }
         }
