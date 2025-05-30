@@ -104,10 +104,10 @@ class WeatherSystem {
     
     for (let p of this.particles) {
       if (particleSprite) {
-        // draw particles using an image (fast)
+        // draw particles using an image
         ctx.drawImage(particleSprite,p.x,p.y);
       } else {
-        // draw particles using vectors (very slow to render)
+        // draw particles using vectors
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
