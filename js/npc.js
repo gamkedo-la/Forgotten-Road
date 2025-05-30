@@ -1,3 +1,4 @@
+const FADE_BUBBLES = true; // smoothly fade in the speech bubbles?
 var dialoguePortraitSX = 0;
 
 // the current state for all known quests
@@ -314,6 +315,7 @@ class NPC extends Entity {
         }
 
         this.dialogueCooldown = (3 + Math.random() * 3) * 1000;
+        this.bubbleBobTimer = 0; // reset so fade-in knows how old the bubble is
     }
    
     draw(deltaTime) {
@@ -364,12 +366,13 @@ class NPC extends Entity {
             let bubbleX = this.x + this.width / 2 - bubbleWidth / 2;
             let bubbleY = this.y - bubbleHeight - 10 + bobOffset;
 
+            if (FADE_BUBBLES) ctx.globalAlpha = Math.min(1.0,Math.min(this.bubbleBobTimer,this.dialogueCooldown));
             ctx.drawImage(portraitPic, this.portraitSX, 0, 64, 64, bubbleX-37, bubbleY-5, 32, 32);
-
             colorRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "white");              // background
             outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");           // border
             drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14,    // text
                             "black", "12px Arial", "center");
+            if (FADE_BUBBLES) ctx.globalAlpha = 1;
         }
 
         ctx.font = "bold 20px Arial";
