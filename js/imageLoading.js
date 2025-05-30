@@ -38,6 +38,8 @@ var redthermometerPic = document.createElement("img");
 var fogPic = document.createElement("img");
 var chickenPic = document.createElement("img");
 var mushroomPic = document.createElement("img");
+var rainPic = document.createElement("img");
+var snowPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -103,6 +105,8 @@ function loadImages() {
         {varName: fogPic, theFile: "fog.png"},
         {varName: chickenPic, theFile: "chicken.png"},
         {varName: mushroomPic, theFile: "mushroom.png"},
+        {varName: rainPic, theFile: "rain.png"},
+        {varName: snowPic, theFile: "snow.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_CRYPT_GATE, theFile: "cryptGate.png", sX: "0", sY: "0", options: 4},

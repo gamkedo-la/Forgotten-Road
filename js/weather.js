@@ -86,22 +86,33 @@ class WeatherSystem {
 
   render(ctx) {
     ctx.save();
+    let particleSprite;
     if (this.type === "rain") {
-      ctx.fillStyle = "rgba(100, 100, 100, 0.2)";
+      ctx.fillStyle = "rgba(100, 100, 200, 0.1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      particleSprite = rainPic;
     } else if (this.type === "storm") {
       ctx.fillStyle = "rgba(50, 50, 50, 0.3)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      particleSprite = rainPic;
     } else if (this.type === "snow") {
-      ctx.fillStyle = "rgba(100, 100, 100, 0.1)";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      particleSprite = snowPic;
     }
-    // Rain particles
+    
+    
     for (let p of this.particles) {
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
+      if (particleSprite) {
+        // draw particles using an image (fast)
+        ctx.drawImage(particleSprite,p.x,p.y);
+      } else {
+        // draw particles using vectors (very slow to render)
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     // Lightning flash
