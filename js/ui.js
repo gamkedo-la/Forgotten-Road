@@ -379,6 +379,18 @@ const SizeContainersAlongAxis = (xAxis = true) => {
     const layoutElement = element ?? UIElement();
 
     // Size Floating Containers
+    if (layoutElement.elementConfig.type == ELEMENT_TYPE.FLOATING) {
+      const { parent, layoutConfig } = layoutElement;
+      if (parent) {
+        if (layoutConfig.sizing.width.type == SIZING_TYPES.GROW) {
+          layoutElement.dimensions.width = parent.dimensions.width;
+        }
+
+        if (layoutConfig.sizing.height.type == SIZING_TYPES.GROW) {
+          layoutElement.dimensions.height = parent.dimensions.height;
+        }
+      }
+    }
 
     // Setting min/max dimensions
     const { layout } = layoutElement;
