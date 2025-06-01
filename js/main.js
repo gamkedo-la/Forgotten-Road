@@ -441,6 +441,40 @@ function renderTopStatsBar() {
     drawSeason(currentWeather)
  }
 
+ // Test code below for UI system. Can leave commented for now.
+  // const childNode1 = UIElement();
+  // childNode1.backgroundColor = "pink";
+  // childNode1.dimensions.width = 50;
+  // childNode1.dimensions.height = 50;
+
+  // const childNode2 = UIElement();
+  // childNode2.backgroundColor = "yellow";
+  // childNode2.dimensions.width = 400;
+  // childNode2.dimensions.height = 200;
+  // childNode2.layout.sizing.width.size.minMax.min = 100;
+  // childNode2.layout.sizing.width.size.minMax.max = 200;
+  // childNode2.children = [childNode1];
+
+  // const rootNode = UIElement();
+  // rootNode.layout.padding = {
+  //   top: 32,
+  //   right: 32,
+  //   left: 32,
+  //   bottom: 32,
+  // };
+  // rootNode.dimensions.width = 500;
+  // rootNode.dimensions.height = 500;
+  // rootNode.layout.childGap = 32;
+  // rootNode.backgroundColor = "blue";
+  // rootNode.children = [childNode2];
+  // populateLayoutElements(rootNode);
+  // LAYOUT_ELEMENT_TREE_ROOTS.push(rootNode);
+  // SizeContainersAlongAxis(true);
+  // SizeContainersAlongAxis(false);
+
+  // console.log(LAYOUT_ELEMENTS);
+  // console.log(LAYOUT_ELEMENT_TREE_ROOTS);
+
 function renderUI() {
   drawBackpackUI(ctx, player);
   temp_ui_elements.forEach((ui) => ui.draw());
@@ -458,32 +492,7 @@ function renderUI() {
   }
 
   // Test code below for various UI elements. Can leave commented for now.
-  // const childNode1 = UIElement();
-  // childNode1.backgroundColor = "pink";
-  // childNode1.layout.sizing.width = 300;
-  // childNode1.layout.sizing.height = 300;
-
-  // const childNode2 = UIElement();
-  // childNode2.backgroundColor = "yellow";
-  // childNode2.layout.sizing.width = 350;
-  // childNode2.layout.sizing.height = 200;
-
-  // const rootNode = UIElement();
-  // rootNode.layout.padding = {
-  //   top: 32,
-  //   right: 32,
-  //   left: 32,
-  //   bottom: 32,
-  // };
-  // rootNode.layout.sizing.width = 0;
-  // rootNode.layout.sizing.height = 0;
-  // rootNode.layout.childGap = 32;
-  // rootNode.backgroundColor = "blue";
-  // rootNode.children = [childNode1, childNode2];
-
-  // // Separating UI rendering into 2 passes
-  // const root = LayoutPass(rootNode);
-  // DrawPass(root);
+  // DrawPass(rootNode);
 }
 
 function handlePauseInput() {

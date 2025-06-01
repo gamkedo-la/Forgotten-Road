@@ -96,8 +96,8 @@ const CHILD_ALIGNMENT = Object.seal({
 });
 
 const CHILD_SIZING_MINMAX = Object.seal({
-  min: 0,
-  max: 0,
+  min: null,
+  max: null,
 });
 
 const SIZING_AXIS = Object.seal({
@@ -215,6 +215,7 @@ const UI_ELEMENT = Object.seal({
   parent: null,
   children: [],
   dimensions: { ...DIMENSIONS },
+  minDimensions: { ...DIMENSIONS },
   elementConfig: { ...ELEMENT_CONFIG },
 });
 
@@ -347,15 +348,10 @@ const LayoutPass = (root) => {
 
 // -- Draw Pass
 const DrawElement = (props) => {
-  const { position, backgroundColor, children, layout } = props;
+  const { position, backgroundColor, children, layout, dimensions } = props;
 
   ctx.fillStyle = backgroundColor;
-  ctx.fillRect(
-    position?.x,
-    position?.y,
-    layout?.sizing?.width,
-    layout?.sizing?.height
-  );
+  ctx.fillRect(position?.x, position?.y, dimensions?.width, dimensions?.height);
 
   children?.forEach((child) => {
     const childProps = { ...child };
@@ -401,14 +397,22 @@ const SizeContainersAlongAxis = (xAxis = true) => {
     // Setting min/max dimensions
     const { layout, dimensions } = layoutElement;
     const { sizing } = layout;
-    dimensions.width = Math.min(
-      Math.max(dimensions.width, sizing.width.size.minMax.min),
-      sizing.width.size.minMax.max
-    );
+
+    const { min: minWidth } = sizing.width.size.minMax;
+    const { max: maxWidth } = sizing.width.size.minMax;
+
+    const { min: minHeight } = sizing.height.size.minMax;
+    const { max: maxHeight } = sizing.height.size.minMax;
+
+    dimensions.width = Math.min(Math.max(dimensions.width, minWidth), maxWidth);
+
     dimensions.height = Math.min(
-      Math.max(dimensions.height, sizing.height.size.minMax.min),
-      sizing.height.size.minMax.max
+      Math.max(dimensions.height, minHeight),
+      maxHeight
     );
+
+    console.log("dimensions");
+    console.log(dimensions);
 
     for (
       var layoutElementIndex = 0;
@@ -440,7 +444,7 @@ const SizeContainersAlongAxis = (xAxis = true) => {
         // Grow and Shrink Sizing
         const { children } = parent;
         children?.forEach((childElement, childIndex) => {
-          const childOffset = i;
+          const childOffset = childIndex;
           const { layout: childLayout, dimensions: childDimensions } =
             childElement;
           const childSizing = xAxis
@@ -451,8 +455,8 @@ const SizeContainersAlongAxis = (xAxis = true) => {
             : childDimensions.height;
 
           if (
-            child.elementConfig.type != ELEMENT_TYPE.TEXT &&
-            child.children.length > 0
+            childElement.elementConfig.type != ELEMENT_TYPE.TEXT &&
+            childElement.children.length > 0
           ) {
             BFS_BUFFER.push(childElement.elementIndex);
           }
@@ -460,14 +464,14 @@ const SizeContainersAlongAxis = (xAxis = true) => {
           if (
             childSizing.type != SIZING_TYPES.PERCENT &&
             childSizing.type != SIZING_TYPES.FIXED &&
-            (child.elementConfig.type != ELEMENT_TYPE.TEXT ||
-              child.elementConfig?.wrapMode == TEXT_WRAP_MODE.WRAP_WORDS) &&
-            (xAxis || child.elementConfig.type != ELEMENT_TYPE.IMAGE)
+            (childElement.elementConfig.type != ELEMENT_TYPE.TEXT ||
+              childElement.elementConfig?.wrapMode ==
+                TEXT_WRAP_MODE.WRAP_WORDS) &&
+            (xAxis || childElement.elementConfig.type != ELEMENT_TYPE.IMAGE)
           ) {
             RESIZEABLE_CONTAINER_BUFFER.push(childElement.elementIndex);
           }
 
-          //
           if (sizingAlongAxis) {
             innerContentSize +=
               childSizing.type == SIZING_TYPES.PERCENT ? 0 : childSize;
@@ -486,23 +490,20 @@ const SizeContainersAlongAxis = (xAxis = true) => {
         });
 
         // Percentage Sizing
-        children?.forEach((childElement, childIndex) => {
-          const childOffset = childIndex;
+        children?.forEach((childElement) => {
           const { layout: childLayout, dimensions: childDimensions } =
             childElement;
           const childSizing = xAxis
             ? childLayout.sizing.width
             : childLayout.sizing.height;
-          let childSize = xAxis
-            ? childDimensions.width
-            : childDimensions.height;
+          let childSize = xAxis ? "width" : "height";
 
           if (childSizing.type == SIZING_TYPES.PERCENT) {
-            childSize =
+            childDimensions[childSize] =
               (parentSize - totalPaddingAndChildGaps) *
               childSizing.size.percent;
             if (sizingAlongAxis) {
-              innerContentSize += childSize;
+              innerContentSize += childDimensions[childSize];
 
               if (childElement.elementConfig.type == ELEMENT_TYPE.IMAGE) {
                 const { sourceDimensions } = childElement.elementConfig;
@@ -551,7 +552,7 @@ const SizeContainersAlongAxis = (xAxis = true) => {
 
             // Scrolling containers will compress before other containers
             while (
-              sizeToDistribute < -EPSILON &&
+              sizeToDistribute < -1 * EPSILON &&
               RESIZEABLE_CONTAINER_BUFFER.length > 0
             ) {
               let largest = 0;
@@ -602,26 +603,29 @@ const SizeContainersAlongAxis = (xAxis = true) => {
                     RESIZEABLE_CONTAINER_BUFFER[resizeableElementIndex]
                   ];
 
-                let childSize = xAxis
-                  ? resizeableElement.dimensions.width
-                  : resizeableElement.dimensions.height;
+                let childSize = xAxis ? "width" : "height";
 
-                let minSize = xAxis
-                  ? resizeableElement.minDimensions.width
-                  : resizeableElement.minDimensions.height;
+                let minSize = xAxis ? "width" : "height";
 
-                let previousWidth = childSize;
+                let previousWidth = resizeableElement.dimensions[childSize];
 
-                if (floatEqual(childSize, largest)) {
-                  childSize += widthToAdd;
-                  if (childSize <= minSize) {
-                    childSize = minSize;
+                if (
+                  floatEqual(resizeableElement.dimensions[childSize], largest)
+                ) {
+                  resizeableElement.dimensions[childSize] += widthToAdd;
+                  if (
+                    resizeableElement.dimensions[childSize] <=
+                    resizeableElement.minDimensions[minSize]
+                  ) {
+                    resizeableElement.dimensions[childSize] =
+                      resizeableElement.minDimensions[minSize];
                     RESIZEABLE_CONTAINER_BUFFER.splice(
                       resizeableElementIndex,
-                      0
+                      1
                     );
                   }
-                  sizeToDistribute -= childSize - previousWidth;
+                  sizeToDistribute -=
+                    resizeableElement.dimensions[childSize] - previousWidth;
                 }
               }
             }
@@ -686,7 +690,7 @@ const SizeContainersAlongAxis = (xAxis = true) => {
 
               widthToAdd = Math.min(
                 widthToAdd,
-                sizeToDistribute / resizeableElement.length
+                sizeToDistribute / RESIZEABLE_CONTAINER_BUFFER.length
               );
 
               for (
@@ -699,9 +703,7 @@ const SizeContainersAlongAxis = (xAxis = true) => {
                     RESIZEABLE_CONTAINER_BUFFER[resizeableElementIndex]
                   ];
 
-                let childSize = xAxis
-                  ? resizeableElement.dimensions.width
-                  : resizeableElement.dimensions.height;
+                let childSize = xAxis ? "width" : "height";
 
                 let maxSize = xAxis
                   ? resizeableElement.layout.sizing.width.minMax.max
@@ -709,16 +711,19 @@ const SizeContainersAlongAxis = (xAxis = true) => {
 
                 let previousWidth = childSize;
 
-                if (floatEqual(childSize, smallest)) {
-                  childSize += widthToAdd;
-                  if (childSize >= maxSize) {
-                    childSize = maxSize;
+                if (
+                  floatEqual(resizeableElement.dimensions[childSize], smallest)
+                ) {
+                  resizeableElement.dimensions[childSize] += widthToAdd;
+                  if (resizeableElement.dimensions[childSize] >= maxSize) {
+                    resizeableElement.dimensions[childSize] = maxSize;
                     RESIZEABLE_CONTAINER_BUFFER.splice(
                       resizeableElementIndex,
                       0
                     );
                   }
-                  sizeToDistribute -= childSize - previousWidth;
+                  sizeToDistribute -=
+                    resizeableElement.dimensions[childSize] - previousWidth;
                 }
               }
             }
@@ -737,12 +742,10 @@ const SizeContainersAlongAxis = (xAxis = true) => {
               ];
 
             let childSizing = xAxis
-              ? resizeableElement.layout.sizing.width.type
-              : resizeableElement.layout.sizing.height.type;
+              ? resizeableElement.layout.sizing.width
+              : resizeableElement.layout.sizing.height;
 
-            let childSize = xAxis
-              ? resizeableElement.dimensions.width
-              : resizeableElement.dimensions.height;
+            let childSize = xAxis ? "width" : "height";
 
             let minSize = xAxis
               ? resizeableElement.minDimensions.width
@@ -768,16 +771,54 @@ const SizeContainersAlongAxis = (xAxis = true) => {
             }
 
             if (childSizing.type == SIZING_TYPES.GROW) {
-              childSize = Math.min(maxSize, childSizing.size.minMax.max);
+              resizeableElement.dimensions[childSize] = Math.min(
+                maxSize,
+                childSizing.size.minMax.max
+              );
             }
 
-            childSize = Math.max(minSize, Math.min(childSize, maxSize));
+            resizeableElement.dimensions[childSize] = Math.max(
+              minSize,
+              Math.min(resizeableElement.dimensions[childSize], maxSize)
+            );
           }
         }
       }
     }
   });
 };
+
+const populateLayoutElements = (root) => {
+  root.elementIndex = LAYOUT_ELEMENTS.length;
+
+  // Initialize min/max dimenensions
+  if (root.layout.sizing.width.size.minMax.min == null) {
+    root.layout.sizing.width.size.minMax.min = root.dimensions.width;
+  }
+
+  if (root.layout.sizing.height.size.minMax.min == null) {
+    root.layout.sizing.height.size.minMax.min = root.dimensions.height;
+  }
+
+  if (root.layout.sizing.width.size.minMax.max == null) {
+    root.layout.sizing.width.size.minMax.max = root.dimensions.width;
+  }
+
+  if (root.layout.sizing.height.size.minMax.max == null) {
+    root.layout.sizing.height.size.minMax.max = root.dimensions.height;
+  }
+
+  root.minDimensions.width = root.layout.sizing.width.size.minMax.min;
+  root.minDimensions.height = root.layout.sizing.height.size.minMax.min;
+
+  LAYOUT_ELEMENTS.push(root);
+  root?.children?.forEach((child) => {
+    child.parentIndex = root.elementIndex;
+    populateLayoutElements(child);
+  });
+};
+
+const readDrawCommands = () => {};
 
 const CalculateFinalLayout = () => {
   // Sizing Pass
