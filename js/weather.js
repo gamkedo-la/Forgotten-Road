@@ -4,6 +4,7 @@ const WEATHER_CHANGE_RANDOM_TIME = 10;
 class WeatherSystem {
   constructor(type = "clear") {
     this.type = type;
+    this.nextType = null;
     this.particles = [];
     this.spawnRate = 40; 
     this.timer = 0;
@@ -14,19 +15,20 @@ class WeatherSystem {
     this.nextWeatherChange = WEATHER_CHANGE_MIN_TIME + Math.random() * WEATHER_CHANGE_RANDOM_TIME;
     this.weatherChangeTriggered = false;
     this.weatherTypes = ["clear", "rain", "snow", "storm"];
+    this.inTransition = false;
   }
 
   update(deltaTime) {
     this.timer += deltaTime;
 
-    // No particles needed if clear weather
-    if (this.type === "clear") return;
+    // No particles needed if clear weather and in transition to the next weather
+    if (this.type === "clear" && !this.inTransition) return;
 
     // Snow higher spawn rate to compensate for slower falling
     const effectiveSpawnRate = this.type === "snow" ? this.spawnRate * 1.5 : this.spawnRate;
 
     // Spawn different particles depending on type of weather
-    if (["rain", "storm", "snow"].includes(this.type) && this.timer > 1 / effectiveSpawnRate) {
+    if (!this.inTransition && ["rain", "storm", "snow"].includes(this.type) && this.timer > 1 / effectiveSpawnRate) {
       this.timer = 0;
       this.particles.push(this.createParticle());
     }
@@ -54,6 +56,13 @@ class WeatherSystem {
       }
     } else {
       this.lightningAlpha = 0;
+    }
+
+    if (this.inTransition && this.particles.length === 0) {
+      this.type = this.nextType;
+      this.nextType = null;
+      this.inTransition = false;
+      this.timer = 0;
     }
   }
 
@@ -165,10 +174,13 @@ class WeatherSystem {
       console.error(`Invalid weather type: ${type}`);
       return;
     }
-    this.type = type;
-    //console.log(`Weather changing to - ${type} - via weather system`);
 
-    this.particles = [];
+    if (this.type !== type) {
+      this.nextType = type;
+      this.inTransition = true;
+    }
+
+    //console.log(`Weather changing to - ${type} - via weather system`);
   }
 
   getWeatherType() {
