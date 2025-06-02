@@ -6,9 +6,8 @@ var pickupSound = new Audio("sound/pickup.mp3");
 
 const FOOTSTEP_VOLUME = 1;
 var footstepSound = new Audio("sound/FootStepFaster.mp3");
-footstepSound.loop = true; // always on
+footstepSound.loop = true;
 footstepSound.volume = FOOTSTEP_VOLUME;
-console.log(footstepSound);
 
 const MUSIC_VOLUME = 0.2;
 var music = new Audio("sound/four-chords.mp3");
