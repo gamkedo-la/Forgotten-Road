@@ -5,7 +5,7 @@ var intro_voiceover_4 = new Audio("sound/forgotten-road-voiceover-4.mp3");
 var pickupSound = new Audio("sound/pickup.mp3");
 
 const FOOTSTEP_VOLUME = 1;
-var footstepSound = new Audio("sound/FootStep1.mp3");
+var footstepSound = new Audio("sound/FootStepFaster.mp3");
 footstepSound.loop = true; // always on
 footstepSound.volume = FOOTSTEP_VOLUME;
 console.log(footstepSound);
