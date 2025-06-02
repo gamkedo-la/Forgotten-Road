@@ -33,7 +33,7 @@ gameCanvas.addEventListener("mousemove", (event) => {
 
 gameCanvas.addEventListener("mousedown", (event) => {
   mouse.clicked = true;
-  if (music.currentTime == 0) startIntro();
+  if (music!=null && music.currentTime == 0) startIntro();
 });
 
 gameCanvas.addEventListener("click", (event) => {

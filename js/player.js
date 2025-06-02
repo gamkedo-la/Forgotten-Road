@@ -491,9 +491,14 @@ class Player extends Entity {
         if (this.walkTimer > frameDuration) {
           this.walkTimer = 0;
           this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+          footstepSound.play();
         }
       } else {
         this.currentWalkFrame = -1; 
+        if (footstepSound.currentTime!=0) {
+          footstepSound.pause();
+          footstepSound.currentTime = 0;
+        }
       }
 
       frameWidth = FRAME_WALK_WIDTH;
