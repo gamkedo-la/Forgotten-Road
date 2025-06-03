@@ -20,6 +20,7 @@ const TILE_DIRT = 11;
 const TILE_GRAVES = 12;
 const TILE_CRYPT_GATE = 13;
 const TILE_FENCE = 14;
+const TILE_LAMP = 15;
 
 const TILE_GOBLIN_SPAWN = 90;
 const TILE_ORC_SPAWN = 91;
@@ -93,14 +94,14 @@ const WORLD_MAPS = {
     [4, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0,104, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 3, 3, 1, 1, 1, 0, 0, 0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3,3,  3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 3, 3, 1, 1, 1, 0, 15,0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3,3,  3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3,102, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 4, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0,105, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 4, 4, 0, 0, 7, 0, 0, 0,2,101, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 4, 4, 0, 0, 7, 0, 0, 0,2,101, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15],
     [0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2,100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2,15,100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0,103,0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -351,19 +352,17 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
 
   if(tileType === TILE_GRASS) decorateTile(col*TILE_W, row*TILE_H);
 
-  if (tileType === TILE_TREE) {
+  // NOTE: these larger-than-tile-size special props
+  // need to be offset left and up or else the next tile
+  // will draw on top of it (grass etc)
+  if (tileType === TILE_LAMP) {
     // draw the ground tile
-    context.drawImage(
-      tilePics[TILE_GRASS],
-      0,
-      0,
-      32,
-      32,
-      col * TILE_W,
-      row * TILE_H,
-      TILE_W,
-      TILE_H
-    );
+    context.drawImage(tilePics[TILE_GRASS],0,0,32,32,col*TILE_W,row*TILE_H,TILE_W,TILE_H);
+    // draw the lamp over top of it
+    context.drawImage(tileImage, col * TILE_W - 52, row * TILE_H - 32);
+  } else if (tileType === TILE_TREE) {
+    // draw the ground tile
+    context.drawImage(tilePics[TILE_GRASS],0,0,32,32,col*TILE_W,row*TILE_H,TILE_W,TILE_H);
     // add a shadow just for fun
     context.globalAlpha = 0.5;
     context.drawImage(shadowPic,col * TILE_W - 32, row * TILE_H+4);
@@ -372,17 +371,8 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
     context.drawImage(tileImage, col * TILE_W - 32, row * TILE_H - 40);
   } else if (tileType === TILE_TREE2) {
     // Draw ground first
-    context.drawImage(
-      tilePics[TILE_GRASS],
-      0, 0,
-      32, 32,
-      col * TILE_W,
-      row * TILE_H,
-      TILE_W,
-      TILE_H
-    );
-  
-    // shadow (shifted like the tree)
+    context.drawImage(tilePics[TILE_GRASS],0,0,32,32,col*TILE_W,row*TILE_H,TILE_W,TILE_H);
+      // shadow (shifted like the tree)
     context.globalAlpha = 0.5;
     context.drawImage(
       shadowPic,
