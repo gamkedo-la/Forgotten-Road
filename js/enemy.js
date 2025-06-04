@@ -120,6 +120,21 @@ class Monster extends Entity {
             this.currentHP = 20;
             this.speed = 0.4; 
             this.isMindless = true;
+        } else if (name === "Skeleton Champion") {
+            this.behavior = "elite";
+            this.image = skeletonPic; // reuse your existing skeleton sprite
+            this.maxHP = 80;
+            this.currentHP = 80;
+            this.width = 32;
+            this.height = 32;
+            this.speed = 0.9;
+            this.minDamage = 10;
+            this.maxDamage = 20;
+            this.critChance = 0.25;
+            this.critMultiplier = 2.0;
+            this.cooldownTime = 800;
+            this.specialAttackCooldown = 5000;
+            this.lastSpecialAttack = 0;
         }
 
         this.patrolPath = [
@@ -150,6 +165,25 @@ class Monster extends Entity {
             target.health -= this.damage;
         }
     }
+
+
+
+    performSpecialAttack(player) {
+        const now = performance.now();
+        if (now - this.lastSpecialAttack > this.specialAttackCooldown) {
+            this.lastSpecialAttack = now;
+            // Knockback
+            const dx = player.x - this.x;
+            const dy = player.y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < TILE_W * 2) {
+                player.x += (dx / dist) * TILE_W;
+                player.y += (dy / dist) * TILE_H;
+                console.log("Skeleton Champion used Shield Bash!");
+            }
+        }
+    };
+
 
     placeAtRandomPosition(minDistanceFromPlayer = 5) {
         let validSpawnPositions = [];
@@ -592,6 +626,9 @@ function updateEnemy(enemy, player) {
                     enemy.chooseNewPath(player, collisionGrid);
                     enemy.state = BEHAVIOR_STATES.CHASE;
                 }
+            }
+            if (enemy.name === "Skeleton Champion") {
+                enemy.performSpecialAttack(player);
             }
             break;
 
