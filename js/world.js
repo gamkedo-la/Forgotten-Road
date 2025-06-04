@@ -533,24 +533,84 @@ const TILE_ENTITY_MAP = {
     "I am missing a few key ingredients.",
     "As chef, my duty requires I remain here.",
     "All I need are eggs and mushrooms.",
-  ]),
+  ], null, {   
+      day: {
+        active: true,
+        destination: { x, y },
+        dialogueSet: "day"
+      },
+      night: {
+        active: false,
+        destination: { x: 320, y: 768 },
+        dialogueSet: "night"
+      },
+    }
+  ),
   [TILE_NPC_CHUCK]: ({ x, y }) => new NPC("Chuck", x, y, [
     "I miss the days of adventuring.",
     "Those skeletons came to life!",
     "I can't believe I lost my sword.",
-  ]),
+  ], null, {   
+      day: {
+        active: true,
+        destination: { x, y },
+        dialogueSet: "day"
+      },
+      night: {
+        active: false,
+        destination: { x: 320, y: 768 },
+        dialogueSet: "night"
+      },
+    }
+  ),
   [TILE_NPC_MICK]: ({ x, y }) => new NPC("Mick", x, y, [
     "A hard days work on the farm.",
     "I wish I had mushrooms for Chef",
-  ]),
+  ], null, {   
+      day: {
+        active: true,
+        destination: { x, y },
+        dialogueSet: "day"
+      },
+      night: {
+        active: false,
+        destination: { x: 320, y: 768 },
+        dialogueSet: "night"
+      },
+    }
+  ),
   [TILE_NPC_DOSDOCTORA]: ({ x, y }) => new NPC("First Doctor", x, y, [
     "The melody of the cosmos speaks to me.",
     "If only I could sing it.",
-  ]),
+  ], null, {   
+      day: {
+        active: true,
+        destination: { x, y },
+        dialogueSet: "day"
+      },
+      night: {
+        active: false,
+        destination: { x: 320, y: 768 },
+        dialogueSet: "night"
+      },
+    }
+  ),
   [TILE_NPC_DOSDOCTORB]: ({ x, y }) => new NPC("Second Doctor", x, y, [
     "We had to know the inner workings.",
     "It didn't feel a thing.",
-  ]),
+  ], null, {   
+      day: {
+        active: true,
+        destination: { x, y },
+        dialogueSet: "day"
+      },
+      night: {
+        active: false,
+        destination: { x: 320, y: 768 },
+        dialogueSet: "night"
+      },
+    }
+  ),
 };
 
 function spawnEntitiesFromTiles() {

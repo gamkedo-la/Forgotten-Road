@@ -320,7 +320,7 @@ function updateGameState(deltaTime) {
     player.fireProjectile();
   }  
   player.regenStamina(deltaTime);
-  npcs.forEach((npc) => npc.update && npc.update(deltaTime));
+  npcs.forEach((npc) => npc.update && npc.update(deltaTime, timeOfDay));
   handleQuickUseKeys();
   globalUsedFlankTiles.clear();
   updateEnemiesAndProjectiles(deltaTime);

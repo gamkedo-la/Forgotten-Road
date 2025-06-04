@@ -49,7 +49,7 @@ const quests = {
   
 
 class NPC extends Entity {
-    constructor(name, x, y, dialogue, hoverText = null) {
+    constructor(name, x, y, dialogue, hoverText = null, schedule = null) {
 
         console.log("Spawning an NPC named "+name+" at "+x+","+y);
 
@@ -65,7 +65,9 @@ class NPC extends Entity {
         this.hoverText = hoverText || name;
         this.bubbleBobTimer = 0;
         this.portraitImage = portraitPic;
-        this.portraitSX = 0; 
+        this.portraitSX = 0;
+        this.schedule = schedule; 
+        this.active = true;        
     }
     
 
@@ -75,10 +77,27 @@ class NPC extends Entity {
     // Setter for dialogue
     set dialogue(newDialogue) { this._dialogue = newDialogue; }
 
+    applySchedule(timeOfDay) {
+        if (!this.schedule) return;
+
+        const phase = this.schedule[timeOfDay];
+        if (!phase) return;
+
+        this.active = phase.active ?? true;
+        this.dialogueSet = phase.dialogueSet ?? "default";
+
+        if (phase.destination && this.active) {
+            this.x = phase.destination.x;
+            this.y = phase.destination.y;
+        }
+    }
+
     speak() {
         console.log(`${this.name}: "${this._dialogue}"`);
     }
+    
     interact() {
+        if (!this.active) return;
         if (dialoguePrompt || pendingQuest) {
             console.log("[INTERACT] Skipped — dialogue prompt active");
             return;
@@ -295,8 +314,10 @@ class NPC extends Entity {
         this.dialogue = response;
     }
     
-    
-    update(deltaTime) {
+    update(deltaTime, timeOfDay = "day") {
+        this.applySchedule(timeOfDay);
+        if (!this.active) return;
+
         this.dialogueCooldown -= deltaTime * 1000; 
         if (this.dialogueCooldown > 0) return;
 
@@ -319,6 +340,7 @@ class NPC extends Entity {
     }
    
     draw(deltaTime) {
+        if (!this.active) return;
          // Update bobbing timer
         this.bubbleBobTimer += deltaTime;
         const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
