@@ -93,44 +93,65 @@ class WeatherSystem {
 
   }
 
-  render(ctx) {
-    ctx.save();
-    let particleSprite;
-    if (this.type === "rain") {
-      ctx.fillStyle = "rgba(100, 100, 200, 0.1)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      particleSprite = rainPic;
-    } else if (this.type === "storm") {
-      ctx.fillStyle = "rgba(50, 50, 50, 0.3)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      particleSprite = rainPic;
-    } else if (this.type === "snow") {
-      ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      particleSprite = snowPic;
-    }
-    
-    
+render(ctx, timeOfDay = 'day') {
+  camera.applyTransform(ctx); // Particle positions depend on camera
+
+  // Draw weather particles
+  ctx.save();
+  let particleSprite;
+
+  if (["rain", "storm", "snow"].includes(this.type)) {
     for (let p of this.particles) {
+      if (this.type === "rain" || this.type === "storm") {
+        particleSprite = rainPic;
+      } else if (this.type === "snow") {
+        particleSprite = snowPic;
+      }
+
       if (particleSprite) {
-        // draw particles using an image
-        ctx.drawImage(particleSprite,p.x,p.y);
+        ctx.drawImage(particleSprite, p.x, p.y);
       } else {
-        // draw particles using vectors
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
       }
     }
-
-    // Lightning flash
-    if (this.lightningAlpha > 0) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${this.lightningAlpha})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    ctx.restore();
   }
+  ctx.restore();
+
+  // Overlay tint after camera (screen space)
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset camera transform
+
+  // Base tint from weather
+  if (this.type === "rain") {
+    ctx.fillStyle = "rgba(100, 100, 200, 0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  } else if (this.type === "storm") {
+    ctx.fillStyle = "rgba(50, 50, 50, 0.3)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  } else if (this.type === "snow") {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Add night tint on top
+  if (timeOfDay === "night") {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Flash lightning (storm)
+  if (this.lightningAlpha > 0) {
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.lightningAlpha})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  ctx.restore();
+}
+
+
 
   changeWeatherRandomly() {
     const newType = this.weatherTypes[Math.floor(Math.random() * this.weatherTypes.length)];
@@ -182,6 +203,7 @@ class WeatherSystem {
 
     //console.log(`Weather changing to - ${type} - via weather system`);
   }
+
 
   getWeatherType() {
     return this.type;

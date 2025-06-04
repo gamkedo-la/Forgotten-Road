@@ -27,6 +27,11 @@ let inventoryOpen = false;
 let inventoryPressed = false; 
 let weather = new WeatherSystem();
 let currentWeather = "clear"; 
+let timeOfDay = "day";
+let dayNightTimer = 0;
+const DAY_DURATION = 300;   
+const NIGHT_DURATION = 180; 
+
 
 //Initialize the world items arrays for each screen
 Object.keys(WORLD_MAPS).forEach((key) => {
@@ -180,7 +185,7 @@ function drawGameFrame(currentTime) {
     weather?.update(deltaTime);
   ctx.restore();
   ctx.save(); 
-    weather?.render(ctx);
+    weather?.render(ctx, timeOfDay);
   ctx.restore();  
   renderUI();                
   requestAnimationFrame(drawGameFrame);
@@ -295,6 +300,18 @@ function updateGameState(deltaTime) {
       currentWeather = weather.changeWeatherRandomly();
     }
   }
+
+  dayNightTimer += deltaTime;
+
+  if (timeOfDay === "day" && dayNightTimer > DAY_DURATION) {
+    timeOfDay = "night";
+    dayNightTimer = 0;
+    console.log("Night falls...");
+  } else if (timeOfDay === "night" && dayNightTimer > NIGHT_DURATION) {
+    timeOfDay = "day";
+    dayNightTimer = 0;
+    console.log("Dawn breaks...");
+  } 
 
   handleInventoryInput(); 
   if (paused && !inventoryOpen && !shopOpen) return; 
