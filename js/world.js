@@ -539,99 +539,64 @@ const TILE_ENTITY_MAP = {
     "Sometimes I still hear the wind whisper his name.",
     "I wasn't always this old, you know.",
     "We lost something out there..."
-  ]),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x - 32, y: y + 96 }, dialogueSet: "night" } // near bench
+  }),
   [TILE_NPC_BLACKSMITH]: ({ x, y }) => new NPC("Blacksmith", x, y, [
     "Need something forged?", "I can sharpen that blade.", "Strong arms make strong steel."
-  ]),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x + 96, y: y + 32 }, dialogueSet: "night" } // side of forge
+  }),
   [TILE_NPC_ALCHEMIST]: ({ x, y }) => new NPC("Alchemist", x, y, [
     "Potions, elixirs, and ancient remedies!",
     "Tread carefully — not every potion is for the faint-hearted.",
     "Knowledge is power... and danger."
-  ]),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x - 64, y: y + 64 }, dialogueSet: "night" } // tucked near back room
+  }),
   [TILE_NPC_CHEF]: ({ x, y }) => new NPC("Chef Gormondo", x, y, [
     "Please help me make a royal omelette.",
     "I am missing a few key ingredients.",
     "As chef, my duty requires I remain here.",
     "All I need are eggs and mushrooms.",
-  ], null, {   
-      day: {
-        active: true,
-        destination: { x, y },
-        dialogueSet: "day"
-      },
-      night: {
-        active: false,
-        destination: { x: 320, y: 768 },
-        dialogueSet: "night"
-      },
-    }
-  ),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x + 64, y: y + 96 }, dialogueSet: "night" } // behind the inn
+  }),
   [TILE_NPC_CHUCK]: ({ x, y }) => new NPC("Chuck", x, y, [
     "I miss the days of adventuring.",
     "Those skeletons came to life!",
     "I can't believe I lost my sword.",
-  ], null, {   
-      day: {
-        active: true,
-        destination: { x, y },
-        dialogueSet: "day"
-      },
-      night: {
-        active: false,
-        destination: { x: 320, y: 768 },
-        dialogueSet: "night"
-      },
-    }
-  ),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x - 96, y: y + 32 }, dialogueSet: "night" } // next to guard house
+  }),
   [TILE_NPC_MICK]: ({ x, y }) => new NPC("Mick", x, y, [
-    "A hard days work on the farm.",
+    "A hard day's work on the farm.",
     "I wish I had mushrooms for Chef",
-  ], null, {   
-      day: {
-        active: true,
-        destination: { x, y },
-        dialogueSet: "day"
-      },
-      night: {
-        active: false,
-        destination: { x: 320, y: 768 },
-        dialogueSet: "night"
-      },
-    }
-  ),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x + 96, y: y + 64 }, dialogueSet: "night" } // barn/home edge
+  }),
   [TILE_NPC_DOSDOCTORA]: ({ x, y }) => new NPC("First Doctor", x, y, [
     "The melody of the cosmos speaks to me.",
     "If only I could sing it.",
-  ], null, {   
-      day: {
-        active: true,
-        destination: { x, y },
-        dialogueSet: "day"
-      },
-      night: {
-        active: false,
-        destination: { x: 320, y: 768 },
-        dialogueSet: "night"
-      },
-    }
-  ),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x, y: y + 64 }, dialogueSet: "night" } // bottom of lab
+  }),
   [TILE_NPC_DOSDOCTORB]: ({ x, y }) => new NPC("Second Doctor", x, y, [
     "We had to know the inner workings.",
     "It didn't feel a thing.",
-  ], null, {   
-      day: {
-        active: true,
-        destination: { x, y },
-        dialogueSet: "day"
-      },
-      night: {
-        active: false,
-        destination: { x: 320, y: 768 },
-        dialogueSet: "night"
-      },
-    }
-  ),
+  ], null, {
+    day: { active: true, destination: { x, y }, dialogueSet: "day" },
+    night: { active: false, destination: { x: x + 64, y: y + 64 }, dialogueSet: "night" } // back of lab
+  }),
 };
+
 
 function spawnEntitiesFromTiles() {
   const grid = backgroundGrid;

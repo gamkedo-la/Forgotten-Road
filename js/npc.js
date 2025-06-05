@@ -5,24 +5,24 @@ var dialoguePortraitSX = 0;
 // as used by npc.js and main.js
 const quests = {
     echoesOfTheNorth: {
-      started: false,
-      completed: false,
-      pendantFound: false,
-      declinedCount: 0,
-      permanentlyDeclined: false 
+        started: false,
+        completed: false,
+        pendantFound: false,
+        declinedCount: 0,
+        permanentlyDeclined: false
     },
     shadowsOfDoubt: {
-      started: false,
-      completed: false
+        started: false,
+        completed: false
     },
     yesYourEggcellence: {
-      started: false,
-      completed: false,
-      eggsFound: 0,
-      eggsNeeded: 4,
-      mushroomsFound: 0,
-      mushroomsNeeded: 4,
-      rewardGold: 250
+        started: false,
+        completed: false,
+        eggsFound: 0,
+        eggsNeeded: 4,
+        mushroomsFound: 0,
+        mushroomsNeeded: 4,
+        rewardGold: 250
     },
     restlessBones: {
         started: false,
@@ -41,22 +41,22 @@ const quests = {
         herbsFound: 0,
         herbsNeeded: 10,
         specimensFound: 0,
-        specimensNeeded:6,
+        specimensNeeded: 6,
         //insulted: false,
         rewardGold: 600
     }
-  };
-  
+};
+
 
 class NPC extends Entity {
     constructor(name, x, y, dialogue, hoverText = null, schedule = null) {
 
-        console.log("Spawning an NPC named "+name+" at "+x+","+y);
+        console.log("Spawning an NPC named " + name + " at " + x + "," + y);
 
         super(name, x, y, 100, 0);
         this.width = 32;
         this.height = 32;
-    
+
         this.dialogueLines = Array.isArray(dialogue) ? dialogue : [dialogue];
         this.dialogueIndex = 0;
         this.dialogueCooldown = 0; // seconds until next speech
@@ -66,16 +66,24 @@ class NPC extends Entity {
         this.bubbleBobTimer = 0;
         this.portraitImage = portraitPic;
         this.portraitSX = 0;
-        this.schedule = schedule; 
-        this.active = true;        
+        this.schedule = schedule;
+        this.active = true;
+        this.targetX = null;
+        this.targetY = null;
+        this._schedulePhase = null;
+        this.speed = 30;
     }
-    
+
 
     // Getter for dialogue
-    get dialogue() { return this._dialogue; }
+    get dialogue() {
+        return this._dialogue;
+    }
 
     // Setter for dialogue
-    set dialogue(newDialogue) { this._dialogue = newDialogue; }
+    set dialogue(newDialogue) {
+        this._dialogue = newDialogue;
+    }
 
     applySchedule(timeOfDay) {
         if (!this.schedule) return;
@@ -83,19 +91,21 @@ class NPC extends Entity {
         const phase = this.schedule[timeOfDay];
         if (!phase) return;
 
-        this.active = phase.active ?? true;
         this.dialogueSet = phase.dialogueSet ?? "default";
 
-        if (phase.destination && this.active) {
-            this.x = phase.destination.x;
-            this.y = phase.destination.y;
+        if (phase.destination) {
+            this.targetX = phase.destination.x;
+            this.targetY = phase.destination.y;
+            this.active = true; // Active while walking
         }
+
+        this._schedulePhase = phase;
     }
 
     speak() {
         console.log(`${this.name}: "${this._dialogue}"`);
     }
-    
+
     interact() {
         if (!this.active) return;
         if (dialoguePrompt || pendingQuest) {
@@ -106,7 +116,7 @@ class NPC extends Entity {
         if (this.name === "Chuck") {
             const graveyardQuest = quests.restlessBones;
             const bossQuest = quests.skeletonKing;
-        
+
             if (!graveyardQuest.started && !graveyardQuest.completed) {
                 dialoguePrompt = "The dead are rising! I saw skeletons crawling out of the graveyard...\nPlease, I’m too scared to go near it. Can you find out what’s causing it?";
                 pendingQuest = () => {
@@ -116,41 +126,41 @@ class NPC extends Entity {
                 };
                 return;
             }
-        
+
             if (graveyardQuest.started && !graveyardQuest.completed) {
                 this.dialogue = `Please be careful... ${graveyardQuest.skeletonsNeeded - graveyardQuest.skeletonsDefeated} more skeletons still roam the graveyard.`;
                 this.speak();
                 return;
             }
-        
+
             if (graveyardQuest.completed && !bossQuest.started) {
                 dialoguePrompt = "You've done it... but something still feels wrong. The air is heavy...\nCould it be the Skeleton King? Will you face him?";
                 pendingQuest = () => {
                     bossQuest.started = true;
                     this.dialogue = "May the gods protect you. The crypt should be open now.";
                     console.log("Quest Started: Skeleton King");
-                    spawnSkeletonKing(); 
-                    spawnMonstersFromMap(); 
-                    
+                    spawnSkeletonKing();
+                    spawnMonstersFromMap();
+
                 };
                 return;
             }
-        
+
             if (bossQuest.started && !bossQuest.completed) {
                 this.dialogue = "The crypt trembles... the Skeleton King still roams.";
                 this.speak();
                 return;
             }
-        
+
             if (bossQuest.completed) {
                 this.dialogue = "You defeated the Skeleton King. You've done this village a great honor.";
                 this.speak();
                 return;
             }
-        
+
             this.speak();
-        }        
-    
+        }
+
         if (this.name === "Chef Gormondo") {
             const quest = quests.yesYourEggcellence;
             if (!quest.started) {
@@ -161,7 +171,7 @@ class NPC extends Entity {
                 }
             } else { // quest is underway
                 if (quest.eggsFound < quest.eggsNeeded || quest.mushroomsFound < quest.mushroomsNeeded) {
-                    this.dialogue = "We need "+(quest.eggsNeeded-quest.eggsFound)+" more eggs and "+(quest.mushroomsNeeded-quest.mushroomsFound)+" more mushrooms.";
+                    this.dialogue = "We need " + (quest.eggsNeeded - quest.eggsFound) + " more eggs and " + (quest.mushroomsNeeded - quest.mushroomsFound) + " more mushrooms.";
                 } else {
                     quest.completed = true;
                     this.dialogue = "Thank you for the eggs and mushrooms! You saved my life and the king and queen will have their breakfast as ordered. Here is your reward.";
@@ -193,12 +203,12 @@ class NPC extends Entity {
         }
 
         if (this.name === "Old Man") {
-            dialoguePortraitSX = 64*2;
+            dialoguePortraitSX = 64 * 2;
             const quest = quests.echoesOfTheNorth;
-    
+
             if (!quest.started && !quest.permanentlyDeclined) {
                 const declines = quest.declinedCount;
-    
+
                 if (declines === 0) {
                     dialoguePrompt = "Would you help me find a pendant I lost in the forest?";
                 } else if (declines === 1) {
@@ -206,7 +216,7 @@ class NPC extends Entity {
                 } else if (declines === 2) {
                     dialoguePrompt = "This is your last chance. Will you help me?";
                 }
-    
+
                 pendingQuest = () => {
                     quest.started = true;
                     this.dialogue = "Thank you... it should be somewhere in the northern forest. Be careful.";
@@ -214,7 +224,7 @@ class NPC extends Entity {
                 };
                 return;
             }
-    
+
             if (quest.permanentlyDeclined && !quests.shadowsOfDoubt.started) {
                 this.dialogue = "Have you reconsidered? I still need someone to investigate the graveyard.";
                 dialoguePrompt = "Will you help with the cloaked figure?";
@@ -225,7 +235,7 @@ class NPC extends Entity {
                 };
                 return;
             }
-    
+
             // Handle quest turn-in
             if (quest.pendantFound && !quest.completed) {
                 quest.completed = true;
@@ -234,12 +244,12 @@ class NPC extends Entity {
                 console.log("Quest Completed! +100 gold");
                 return;
             }
-    
+
             // Default response if none of the conditions matched
             this.speak();
 
         } else if (this.name === "Blacksmith") {
-            dialoguePortraitSX = 64*1;
+            dialoguePortraitSX = 64 * 1;
             let inventory = [basicStaff, leatherArmor, healthPotion, boltPickUp, ringOfEnergy];
             openShopInterface("Blacksmith", inventory);
             return;
@@ -251,7 +261,7 @@ class NPC extends Entity {
             this.speak();
         }
 
-        
+
         if (this.name === "First Doctor" || "Second Doctor") { // Could be bad syntax. Both NPCs should behave the same.
             const quest = quests.dosDoctors;
             if (quest.completed) {
@@ -270,7 +280,7 @@ class NPC extends Entity {
                 return;
             } else { // quest is underway
                 if (quest.herbsFound < quest.herbsNeeded || quest.specimensFound < quest.specimensNeeded) {
-                    this.dialogue = "We need "+(quest.herbsNeeded-quest.herbsFound)+" more herbs and "+(quest.specimensNeeded-quest.specimensFound)+" more specimens...";
+                    this.dialogue = "We need " + (quest.herbsNeeded - quest.herbsFound) + " more herbs and " + (quest.specimensNeeded - quest.specimensFound) + " more specimens...";
                 } else {
                     quest.completed = true;
                     this.dialogue = "Yes... this is what we needed... now, as we promised.";
@@ -280,14 +290,14 @@ class NPC extends Entity {
                 }
             }
         }
-        
+
     }
-    
+
     handleQuestDecline() {
         quests.echoesOfTheNorth.declinedCount++;
-    
+
         let response = "";
-    
+
         switch (quests.echoesOfTheNorth.declinedCount) {
             case 1:
                 response = "I understand. Not everyone is ready for what lies beyond.";
@@ -310,128 +320,132 @@ class NPC extends Entity {
                 }, 2000);
                 break;
         }
-    
+
         this.dialogue = response;
     }
-    
+
     update(deltaTime, timeOfDay = "day") {
         this.applySchedule(timeOfDay);
-        if (!this.active) return;
 
-        this.dialogueCooldown -= deltaTime * 1000; 
-        if (this.dialogueCooldown > 0) return;
+        // Movement toward destination
+        if (this.targetX !== null && this.active) {
+            const dx = this.targetX - this.x;
+            const dy = this.targetY - this.y;
+            const dist = Math.hypot(dx, dy);
 
-        // 🚫 Suppress idle chatter if player is near
-        const dx = Math.abs(player.x - this.x);
-        const dy = Math.abs(player.y - this.y);
-        const nearPlayer = dx <= TILE_W && dy <= TILE_H;
+            if (dist > 1) {
+                const moveAmount = (this.speed * deltaTime) / 1000;
+                this.x += (dx / dist) * moveAmount;
+                this.y += (dy / dist) * moveAmount;
+            } else {
+                // Arrived
+                this.x = this.targetX;
+                this.y = this.targetY;
+                this.targetX = null;
+                this.targetY = null;
 
-        const showNothing = Math.random() < 0.3;
-
-        if (showNothing || nearPlayer || dialoguePrompt) {
-            this.dialogue = ""; // Quiet if not supposed to talk
-        } else {
-            const newIndex = Math.floor(Math.random() * this.dialogueLines.length);
-            this.dialogue = this.dialogueLines[newIndex];
-        }
-
-        this.dialogueCooldown = (3 + Math.random() * 3) * 1000;
-        this.bubbleBobTimer = 0; // reset so fade-in knows how old the bubble is
-    }
-   
-    draw(deltaTime) {
-        if (!this.active) return;
-         // Update bobbing timer
-        this.bubbleBobTimer += deltaTime;
-        const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
-        
-        let npcImage = oldManPic; // default is "Old Man"
-        this.portraitSX = 64 * 2; // default portrait pic
-
-        if (this.name === "Blacksmith") { 
-            npcImage = blacksmithPic;
-            this.portraitSX = 64 * 1;
-        }
-        if (this.name === "Alchemist"){
-            npcImage = alchemistPic;
-            this.portraitSX = 64 * 0;
-        } 
-        if (this.name === "Chef Gormondo"){
-            this.portraitSX = 64 * 0; 
-            npcImage = chefPic;
-        }
-        if (this.name === "Chuck") {
-            this.portraitSX = 64 * 0;
-            npcImage = chuckPic;
-        }
-        if (this.name === "Mick"){
-            this.portraitSX = 64 * 3;  
-            npcImage = mickPic;
-        }
-
-        this.drawShadow();
-        ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);
-
-        // Dialogue 
-        if (this.dialogue) {
-            // Update bobbing animation
-            this.bubbleBobTimer += deltaTime;
-            let bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
-
-            // Bubble position and size
-            let bubblePadding = 6;
-            ctx.font = "12px Arial"; 
-            let textWidth = ctx.measureText(this.dialogue).width;
-            let bubbleWidth = textWidth + bubblePadding * 2;
-            let bubbleHeight = 20;
-
-            let bubbleX = this.x + this.width / 2 - bubbleWidth / 2;
-            let bubbleY = this.y - bubbleHeight - 10 + bobOffset;
-
-            if (FADE_BUBBLES) ctx.globalAlpha = Math.min(1.0,Math.min(this.bubbleBobTimer,this.dialogueCooldown));
-            ctx.drawImage(portraitPic, this.portraitSX, 0, 64, 64, bubbleX-37, bubbleY-5, 32, 32);
-            colorRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "white");              // background
-            outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");           // border
-            drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14,    // text
-                            "black", "12px Arial", "center");
-            if (FADE_BUBBLES) ctx.globalAlpha = 1;
-        }
-
-        ctx.font = "bold 20px Arial";
-        ctx.textAlign = "center";
-
-        const quest = this.associatedQuest;
-
-        if (quest && !dialoguePrompt) {
-            if (!quests[quest].started) {
-                // Quest not accepted yet
-                ctx.fillStyle = "gold";
-                ctx.fillText("!", this.x + this.width / 2, this.y - 10);
-            } else if (quests[quest].completed) {
-                // Quest ready to turn in
-                ctx.fillStyle = "cyan";
-                ctx.fillText("?", this.x + this.width / 2, this.y - 10);
+                // Deactivate if instructed by schedule
+                if (this._schedulePhase && this._schedulePhase.active === false) {
+                    this.active = false;
+                }
             }
         }
+
+        if (!this.active) return;
+
+        this.dialogueCooldown -= deltaTime * 1000;
     }
-}
+
+
+    draw(deltaTime) {
+    this.bubbleBobTimer += deltaTime;
+    const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
+
+    // Choose NPC image
+    let npcImage = oldManPic;
+    this.portraitSX = 64 * 2;
+
+    if (this.name === "Blacksmith") {
+        npcImage = blacksmithPic;
+        this.portraitSX = 64 * 1;
+    } else if (this.name === "Alchemist") {
+        npcImage = alchemistPic;
+        this.portraitSX = 64 * 0;
+    } else if (this.name === "Chef Gormondo") {
+        npcImage = chefPic;
+        this.portraitSX = 64 * 0;
+    } else if (this.name === "Chuck") {
+        npcImage = chuckPic;
+        this.portraitSX = 64 * 0;
+    } else if (this.name === "Mick") {
+        npcImage = mickPic;
+        this.portraitSX = 64 * 3;
+    }
+
+    this.drawShadow();
+    ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);
+
+    // Draw Zzz if inactive
+    if (!this.active) {
+        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("Zzz", this.x + this.width / 2, this.y - 10 + bobOffset);
+    }
+
+    // Draw dialogue bubble
+    if (this.dialogue && this.active) {
+        let bubblePadding = 6;
+        ctx.font = "12px Arial";
+        let textWidth = ctx.measureText(this.dialogue).width;
+        let bubbleWidth = textWidth + bubblePadding * 2;
+        let bubbleHeight = 20;
+
+        let bubbleX = this.x + this.width / 2 - bubbleWidth / 2;
+        let bubbleY = this.y - bubbleHeight - 10 + bobOffset;
+
+        if (FADE_BUBBLES) ctx.globalAlpha = Math.min(1.0, Math.min(this.bubbleBobTimer, this.dialogueCooldown));
+        ctx.drawImage(portraitPic, this.portraitSX, 0, 64, 64, bubbleX - 37, bubbleY - 5, 32, 32);
+        colorRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "white");
+        outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");
+        drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14, "black", "12px Arial", "center");
+        if (FADE_BUBBLES) ctx.globalAlpha = 1;
+    }
+
+    // Quest marker (! or ?)
+    ctx.font = "bold 20px Arial";
+    ctx.textAlign = "center";
+
+    const quest = this.associatedQuest;
+    if (quest && !dialoguePrompt) {
+        if (!quests[quest].started) {
+        ctx.fillStyle = "gold";
+        ctx.fillText("!", this.x + this.width / 2, this.y - 10);
+        } else if (quests[quest].completed) {
+        ctx.fillStyle = "cyan";
+        ctx.fillText("?", this.x + this.width / 2, this.y - 10);
+        }
+    } // last if (quest...)
+  } // END draw()
+} // END class NPC
+
 
 function drawDialoguePrompt() {
     if (!dialoguePrompt) {
-      if (!shopOpen) {
-        for (let npc of npcs) {
-            const dx = player.x - npc.x;
-            const dy = player.y - npc.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-       
-            if (dist < 40) {
-                drawTextWithShadow("Press X to Interact", player.x + 20, player.y + 60, "white", "14px Arial", "left");
+        if (!shopOpen) {
+            for (let npc of npcs) {
+                const dx = player.x - npc.x;
+                const dy = player.y - npc.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 40) {
+                    drawTextWithShadow("Press X to Interact", player.x + 20, player.y + 60, "white", "14px Arial", "left");
+                }
             }
-         }
-      }
-      return;
+        }
+        return;
     }
-    
+
     const width = 400;
     const height = 100;
     const x = canvas.width / 2 - width / 2;
@@ -442,9 +456,9 @@ function drawDialoguePrompt() {
 
     drawTextWithShadow(dialoguePrompt, x + 20, y + 30, "white", "16px Arial", "left");
     drawTextWithShadow("[Y]es   [N]o", x + 20, y + 80, "gray", "14px Arial", "left");
-    ctx.drawImage(portraitPic, dialoguePortraitSX, 0, 64, 64, x-85, y+17, 64, 64);
+    ctx.drawImage(portraitPic, dialoguePortraitSX, 0, 64, 64, x - 85, y + 17, 64, 64);
     console.log("Draw Portrait")
-    
+
 }
 
 function spawnGraveyardMystery() {
@@ -458,10 +472,3 @@ function spawnGraveyardMystery() {
 
     npcs.push(figure);
 }
-
-
-
-
-  
-
-
