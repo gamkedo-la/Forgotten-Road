@@ -311,7 +311,7 @@ class Monster extends Entity {
 
         if (startX === endX && startY === endY) return;
 
-        const path = findPath(startX, startY, endX, endY, collisionGrid);
+        const path = findPathForEnemy(startX, startY, endX, endY, collisionGrid);
         if (path && path.length > 0) {
             this.setPath(path);
             this.state = BEHAVIOR_STATES.CHASE;
@@ -539,7 +539,7 @@ function updateEnemy(enemy, player) {
                 const endY = target.y;
 
                 if (collisionGrid[endY]?.[endX] !== TILE_WALL) {
-                    enemy.path = findPath(startX, startY, endX, endY, collisionGrid);
+                    enemy.path = findPathForEnemy(startX, startY, endX, endY, collisionGrid);
                 }
 
                 enemy.pathIndex = (enemy.pathIndex + 1) % enemy.patrolPath.length;
@@ -574,7 +574,7 @@ function updateEnemy(enemy, player) {
 
                         const startX = Math.floor(enemy.x / TILE_W);
                         const startY = Math.floor(enemy.y / TILE_H);
-                        const flankPath = findPath(startX, startY, flankPos.x, flankPos.y, collisionGrid);
+                        const flankPath = findPathForEnemy(startX, startY, flankPos.x, flankPos.y, collisionGrid);
 
                         if (flankPath && flankPath.length > 0) {
                             enemy.setPath(flankPath);
@@ -660,7 +660,7 @@ function updateEnemy(enemy, player) {
                     collisionGrid[newY] &&
                     collisionGrid[newY][newX] !== TILE_WALL
                 ) {
-                    enemy.path = findPath(
+                    enemy.path = findPathForEnemy(
                         Math.floor(enemy.x / TILE_W),
                         Math.floor(enemy.y / TILE_H),
                         newX,

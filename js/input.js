@@ -84,7 +84,7 @@ gameCanvas.addEventListener("click", (event) => {
           adjX < TILE_COLS && adjY < TILE_ROWS &&
           collisionGrid[adjY][adjX].isWalkable
         ) {
-          const path = findPath(playerX, playerY, adjX, adjY, collisionGrid);
+          const path = findPathForPlayer(playerX, playerY, adjX, adjY, collisionGrid);
           if (path.length > 0) {
             console.log(`Pathing to talk to ${npc.name}`);
             player.cancelPath();
@@ -100,7 +100,7 @@ player.cancelPath();
 
 // If not clicking on NPC, default click-to-move
 if (!npcClicked && !player.isMoving) {
-  const path = findPath(playerX, playerY, clickX, clickY, collisionGrid);
+  const path = findPathForPlayer(playerX, playerY, clickX, clickY, collisionGrid);
   if (path.length > 0) {
     console.log("Click path to:", clickX, clickY);
     player.setPath(path);

@@ -105,7 +105,7 @@ class NPC extends Entity {
             const endTileX = Math.floor(phase.destination.x / TILE_W);
             const endTileY = Math.floor(phase.destination.y / TILE_H);
 
-            this.path = findPath(startTileX, startTileY, endTileX, endTileY, collisionGrid);
+            this.path = findPathForNPC(startTileX, startTileY, endTileX, endTileY, collisionGrid);
             this.targetX = phase.destination.x;
             this.targetY = phase.destination.y;
             this.active = true;
