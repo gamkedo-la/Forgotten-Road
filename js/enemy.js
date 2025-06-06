@@ -11,7 +11,7 @@ const BEHAVIOR_STATES = {
 var DEBUG_turnOffEnemy_AI_ToAvoidFreeze = false;
 let globalUsedFlankTiles = new Set();
 
-function findPathForEnemy(startX, startY, endX, endY, collisionGrid, maxDistance = 8) {
+function findPathForEnemy(startX, startY, endX, endY, collisionGrid, maxDistance = 256) {
     return findPath(startX, startY, endX, endY, collisionGrid, "enemy", maxDistance);
 }
 

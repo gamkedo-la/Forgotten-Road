@@ -1,7 +1,7 @@
 // if openset is larger than this, assume pathfinding
 // is stuck in an infinite loop and exit
 const PATHFINDING_TOO_MANY_NODES = 25000;
-const MAX_PATH_DISTANCE = 15;
+const MAX_PATH_DISTANCE = 480; // pixels
 
 // GridElement Class for Pathfinding
 class GridElement {

@@ -47,7 +47,7 @@ const quests = {
     }
 };
 
-function findPathForNPC(startX, startY, endX, endY, collisionGrid, maxDistance = 12) {
+function findPathForNPC(startX, startY, endX, endY, collisionGrid, maxDistance = 640) {
     return findPath(startX, startY, endX, endY, collisionGrid, "npc", maxDistance);
 }
 
