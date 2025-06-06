@@ -72,8 +72,10 @@ class NPC extends Entity {
         this.targetY = null;
         this._schedulePhase = null;
         this.speed = 30;
-    }
+        this.path = []; 
+        this.nextMoveTimer = 0; 
 
+    }
 
     // Getter for dialogue
     get dialogue() {
@@ -92,14 +94,23 @@ class NPC extends Entity {
         if (!phase) return;
 
         this.dialogueSet = phase.dialogueSet ?? "default";
+        this._schedulePhase = phase;
 
         if (phase.destination) {
+            const startTileX = Math.floor(this.x / TILE_W);
+            const startTileY = Math.floor(this.y / TILE_H);
+            const endTileX = Math.floor(phase.destination.x / TILE_W);
+            const endTileY = Math.floor(phase.destination.y / TILE_H);
+
+            this.path = findPath(startTileX, startTileY, endTileX, endTileY, collisionGrid);
             this.targetX = phase.destination.x;
             this.targetY = phase.destination.y;
-            this.active = true; // Active while walking
+            this.active = true;
+        } else {
+            this.path = [];
+            this.targetX = null;
+            this.targetY = null;
         }
-
-        this._schedulePhase = phase;
     }
 
     speak() {
@@ -328,28 +339,32 @@ class NPC extends Entity {
         this.applySchedule(timeOfDay);
 
         // Movement toward destination
-        if (this.targetX !== null && this.active) {
-            const dx = this.targetX - this.x;
-            const dy = this.targetY - this.y;
-            const dist = Math.hypot(dx, dy);
-
-            if (dist > 1) {
-                const moveAmount = (this.speed * deltaTime) / 1000;
-                this.x += (dx / dist) * moveAmount;
-                this.y += (dy / dist) * moveAmount;
-            } else {
-                // Arrived
-                this.x = this.targetX;
-                this.y = this.targetY;
-                this.targetX = null;
-                this.targetY = null;
-
-                // Deactivate if instructed by schedule
-                if (this._schedulePhase && this._schedulePhase.active === false) {
-                    this.active = false;
+        if (this.active && this.path.length > 0) {
+        this.nextMoveTimer -= deltaTime;
+            if (this.nextMoveTimer <= 0) {
+                const next = this.path.shift();
+                if (next) {
+                    this.x = next.x * TILE_W;
+                    this.y = next.y * TILE_H;
                 }
+
+                this.nextMoveTimer = 0.3; 
+            }
+        } else if (this.targetX !== null) {
+        const dx = this.targetX - this.x;
+        const dy = this.targetY - this.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 1) {
+            this.x = this.targetX;
+            this.y = this.targetY;
+            this.targetX = null;
+            this.targetY = null;
+
+            if (this._schedulePhase && this._schedulePhase.active === false) {
+                this.active = false;
             }
         }
+    }
 
         if (!this.active) return;
 

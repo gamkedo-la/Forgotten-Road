@@ -541,13 +541,13 @@ const TILE_ENTITY_MAP = {
     "We lost something out there..."
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x - 32, y: y + 96 }, dialogueSet: "night" } // near bench
+    night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
-  [TILE_NPC_BLACKSMITH]: ({ x, y }) => new NPC("Blacksmith", x, y, [
+  [TILE_NPC_BLACKSMITH]: ({ x, y }) => new NPC("Blac2ksmith", x, y, [
     "Need something forged?", "I can sharpen that blade.", "Strong arms make strong steel."
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x + 96, y: y + 32 }, dialogueSet: "night" } // side of forge
+    night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
   [TILE_NPC_ALCHEMIST]: ({ x, y }) => new NPC("Alchemist", x, y, [
     "Potions, elixirs, and ancient remedies!",
@@ -555,7 +555,7 @@ const TILE_ENTITY_MAP = {
     "Knowledge is power... and danger."
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x - 64, y: y + 64 }, dialogueSet: "night" } // tucked near back room
+    night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
   [TILE_NPC_CHEF]: ({ x, y }) => new NPC("Chef Gormondo", x, y, [
     "Please help me make a royal omelette.",
@@ -564,7 +564,7 @@ const TILE_ENTITY_MAP = {
     "All I need are eggs and mushrooms.",
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x + 64, y: y + 96 }, dialogueSet: "night" } // behind the inn
+      night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
   [TILE_NPC_CHUCK]: ({ x, y }) => new NPC("Chuck", x, y, [
     "I miss the days of adventuring.",
@@ -572,31 +572,32 @@ const TILE_ENTITY_MAP = {
     "I can't believe I lost my sword.",
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x - 96, y: y + 32 }, dialogueSet: "night" } // next to guard house
+    night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
   [TILE_NPC_MICK]: ({ x, y }) => new NPC("Mick", x, y, [
     "A hard day's work on the farm.",
     "I wish I had mushrooms for Chef",
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x + 96, y: y + 64 }, dialogueSet: "night" } // barn/home edge
+      night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
   [TILE_NPC_DOSDOCTORA]: ({ x, y }) => new NPC("First Doctor", x, y, [
     "The melody of the cosmos speaks to me.",
     "If only I could sing it.",
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x, y: y + 64 }, dialogueSet: "night" } // bottom of lab
+    night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
   [TILE_NPC_DOSDOCTORB]: ({ x, y }) => new NPC("Second Doctor", x, y, [
     "We had to know the inner workings.",
     "It didn't feel a thing.",
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
-    night: { active: false, destination: { x: x + 64, y: y + 64 }, dialogueSet: "night" } // back of lab
+    night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
 };
 
+const toXY = (col, row) => ({ x: col * TILE_W, y: row * TILE_H })
 
 function spawnEntitiesFromTiles() {
   const grid = backgroundGrid;
