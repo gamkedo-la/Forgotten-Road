@@ -47,6 +47,9 @@ const quests = {
     }
 };
 
+function findPathForNPC(startX, startY, endX, endY, collisionGrid, maxDistance = 12) {
+    return findPath(startX, startY, endX, endY, collisionGrid, "npc", maxDistance);
+}
 
 class NPC extends Entity {
     constructor(name, x, y, dialogue, hoverText = null, schedule = null) {

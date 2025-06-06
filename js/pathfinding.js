@@ -1,6 +1,7 @@
 // if openset is larger than this, assume pathfinding
 // is stuck in an infinite loop and exit
-const PATHFINDING_TOO_MANY_NODES = 25000; 
+const PATHFINDING_TOO_MANY_NODES = 25000;
+const MAX_PATH_DISTANCE = 15;
 
 // GridElement Class for Pathfinding
 class GridElement {
@@ -16,8 +17,8 @@ class GridElement {
 }
 
 // A* Pathfinding Algorithm
-function findPath(startX, startY, endX, endY, collisionGrid) {
- // console.log("starting pathfinding from "+startX+","+startY+" to "+endX+","+endY);
+function findPath(startX, startY, endX, endY, collisionGrid, caller="unknown", maxDistance=MAX_PATH_DISTANCE) {
+  // console.log("starting pathfinding from "+startX+","+startY+" to "+endX+","+endY);
   let openSet = [];
   let closedSet = [];
   let startNode = new GridElement(startX, startY, true);
@@ -26,6 +27,12 @@ function findPath(startX, startY, endX, endY, collisionGrid) {
   if (!startNode) { console.error("PATHFINDING ERROR: no start node!"); return []; }
   if (!endNode) { console.error("PATHFINDING ERROR: no end node!"); return []; }
   if (!collisionGrid) { console.error("PATHFINDING ERROR: no collisionGrid!"); return []; }
+
+   const distance = heuristic(startNode, endNode);
+   if (distance > maxDistance) {
+      console.log("Pathfinding distance " + distance + " exceeds maximum " + maxDistance + ", from " + caller);
+      return [];
+   }
 
   openSet.push(startNode);
 

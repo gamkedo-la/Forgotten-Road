@@ -11,6 +11,10 @@ const BEHAVIOR_STATES = {
 var DEBUG_turnOffEnemy_AI_ToAvoidFreeze = false;
 let globalUsedFlankTiles = new Set();
 
+function findPathForEnemy(startX, startY, endX, endY, collisionGrid, maxDistance = 8) {
+    return findPath(startX, startY, endX, endY, collisionGrid, "enemy", maxDistance);
+}
+
 function getFlankPosition(enemy, player, others, collisionGrid, usedFlankTiles = new Set()) {
     let px = Math.floor(player.x / TILE_W);
     let py = Math.floor(player.y / TILE_H);

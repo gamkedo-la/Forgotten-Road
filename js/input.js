@@ -24,6 +24,9 @@ var { x: worldX, y: worldY } = screenToWorld(mouse.x, mouse.y);
 var clickX = Math.floor(worldX / TILE_W);
 var clickY = Math.floor(worldY / TILE_H);
 
+function findPathForPlayer(startX, startY, endX, endY, collisionGrid, maxDistance = 20) {
+    return findPath(startX, startY, endX, endY, collisionGrid, "player", maxDistance);
+}
 
 gameCanvas.addEventListener("mousemove", (event) => {
   const rect = gameCanvas.getBoundingClientRect();
