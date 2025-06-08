@@ -868,6 +868,9 @@ function handleInventoryInput() {
   if (!keys.inventory) {
     inventoryPressed = false;
   }
+  if (inventoryOpen) {
+    player.cancelPath();
+  }
 }
 
 

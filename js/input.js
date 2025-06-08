@@ -99,7 +99,7 @@ gameCanvas.addEventListener("click", (event) => {
 player.cancelPath();
 
 // If not clicking on NPC, default click-to-move
-if (!npcClicked && !player.isMoving) {
+if (!npcClicked && !player.isMoving && !inventoryOpen) {
   const path = findPathForPlayer(playerX, playerY, clickX, clickY, collisionGrid);
   if (path.length > 0) {
     console.log("Click path to:", clickX, clickY);
@@ -319,6 +319,8 @@ function movePlayer(dx, dy, direction) {
 }
 
 function canMoveTo(x, y, width, height) {
+  if (inventoryOpen) return;
+
   const corners = [
     { x: x, y: y },
     { x: x + width - 1, y: y },
