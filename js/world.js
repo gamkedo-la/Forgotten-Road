@@ -543,7 +543,7 @@ const TILE_ENTITY_MAP = {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },
     night: { active: false, destination: toXY(x, y), dialogueSet: "night" }
   }),
-  [TILE_NPC_BLACKSMITH]: ({ x, y }) => new NPC("Blac2ksmith", x, y, [
+  [TILE_NPC_BLACKSMITH]: ({ x, y }) => new NPC("Blacksmith", x, y, [
     "Need something forged?", "I can sharpen that blade.", "Strong arms make strong steel."
   ], null, {
     day: { active: true, destination: { x, y }, dialogueSet: "day" },

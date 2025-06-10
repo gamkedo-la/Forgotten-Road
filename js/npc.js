@@ -78,6 +78,16 @@ class NPC extends Entity {
         this.path = []; 
         this.nextMoveTimer = 0; 
         this.pathfindingRetryTimer = 0;
+        this.frameIndex = 0;
+        this.frameTimer = 0;
+        this.frameWidth = this.width;
+        this.frameHeight = this.height;
+        this.idleStartFrame = 6;
+        this.idleFrameCount = 5;
+        this.idleFrameSpeed = 0.15; // seconds per frame
+        this.supportsIdleAnimation = true;
+        this.idleCooldown = 0;
+        this.idleWaiting = false;
     }
 
     // Getter for dialogue
@@ -395,75 +405,124 @@ class NPC extends Entity {
 
 
     draw(deltaTime) {
-    this.bubbleBobTimer += deltaTime;
-    const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
+        this.bubbleBobTimer += deltaTime;
+        const bobOffset = Math.sin(this.bubbleBobTimer * 3) * 2;
 
-    // Choose NPC image
-    let npcImage = oldManPic;
-    this.portraitSX = 64 * 2;
+        // Choose NPC image
+        let npcImage = oldManPic;
+        this.portraitSX = 64 * 2;
 
-    if (this.name === "Blacksmith") {
-        npcImage = blacksmithPic;
-        this.portraitSX = 64 * 1;
-    } else if (this.name === "Alchemist") {
-        npcImage = alchemistPic;
-        this.portraitSX = 64 * 0;
-    } else if (this.name === "Chef Gormondo") {
-        npcImage = chefPic;
-        this.portraitSX = 64 * 0;
-    } else if (this.name === "Chuck") {
-        npcImage = chuckPic;
-        this.portraitSX = 64 * 0;
-    } else if (this.name === "Mick") {
-        npcImage = mickPic;
-        this.portraitSX = 64 * 3;
-    }
-
-    this.drawShadow();
-    ctx.drawImage(npcImage, 0, 0, 32, 34, this.x, this.y, 32, 34);
-
-    // Draw Zzz if inactive
-    if (!this.active) {
-        ctx.font = "bold 14px Arial";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.fillText("Zzz", this.x + this.width / 2, this.y - 10 + bobOffset);
-    }
-
-    // Draw dialogue bubble
-    if (this.dialogue && this.active) {
-        let bubblePadding = 6;
-        ctx.font = "12px Arial";
-        let textWidth = ctx.measureText(this.dialogue).width;
-        let bubbleWidth = textWidth + bubblePadding * 2;
-        let bubbleHeight = 20;
-
-        let bubbleX = this.x + this.width / 2 - bubbleWidth / 2;
-        let bubbleY = this.y - bubbleHeight - 10 + bobOffset;
-
-        if (FADE_BUBBLES) ctx.globalAlpha = Math.min(1.0, Math.min(this.bubbleBobTimer, this.dialogueCooldown));
-        ctx.drawImage(portraitPic, this.portraitSX, 0, 64, 64, bubbleX - 37, bubbleY - 5, 32, 32);
-        colorRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "white");
-        outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");
-        drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14, "black", "12px Arial", "center");
-        if (FADE_BUBBLES) ctx.globalAlpha = 1;
-    }
-
-    // Quest marker (! or ?)
-    ctx.font = "bold 20px Arial";
-    ctx.textAlign = "center";
-
-    const quest = this.associatedQuest;
-    if (quest && !dialoguePrompt) {
-        if (!quests[quest].started) {
-        ctx.fillStyle = "gold";
-        ctx.fillText("!", this.x + this.width / 2, this.y - 10);
-        } else if (quests[quest].completed) {
-        ctx.fillStyle = "cyan";
-        ctx.fillText("?", this.x + this.width / 2, this.y - 10);
+        if (this.name === "Blacksmith") {
+            npcImage = blacksmithPic;
+            this.portraitSX = 64 * 1;
+            this.supportsIdleAnimation = true;
+        } else if (this.name === "Alchemist") {
+            npcImage = alchemistPic;
+            this.portraitSX = 64 * 0;
+            this.supportsIdleAnimation = true;
+        } else if (this.name === "Chef Gormondo") {
+            npcImage = chefPic;
+            this.portraitSX = 64 * 0;
+            this.supportsIdleAnimation = false;
+        } else if (this.name === "Chuck") {
+            npcImage = chuckPic;
+            this.portraitSX = 64 * 0;
+            this.supportsIdleAnimation = false;
+        } else if (this.name === "Mick") {
+            npcImage = mickPic;
+            this.portraitSX = 64 * 3;
+            this.supportsIdleAnimation = false;
+        } else if (this.name === "Old Man") {
+            npcImage = oldManPic;
+            this.portraitSX = 64 * 2;
+            this.supportsIdleAnimation = true;
         }
-    } // last if (quest...)
-  } // END draw()
+
+        //which Frame State
+        let frame = 0;
+        const maxFrames = Math.floor(npcImage.width / this.frameWidth);
+        const lastIdleFrame = this.idleStartFrame + this.idleFrameCount - 1;
+        const canIdleAnimate = this.supportsIdleAnimation && maxFrames > lastIdleFrame;
+
+        const isIdle = !this.active || this.path.length === 0;
+
+        if (canIdleAnimate && isIdle) {
+            if (this.idleWaiting) {
+                // Waiting cooldown
+                this.idleCooldown -= deltaTime;
+                if (this.idleCooldown <= 0) {
+                    this.idleWaiting = false;
+                    this.frameIndex = 0; // Restart animation
+                }
+            } else {
+                // Playing animation once
+                this.frameTimer += deltaTime;
+                if (this.frameTimer > this.idleFrameSpeed) {
+                    this.frameTimer = 0;
+                    this.frameIndex++;
+                    if (this.frameIndex >= this.idleFrameCount) {
+                        // Done animating — start cooldown
+                        this.frameIndex = this.idleFrameCount - 1; // hold last frame
+                        this.idleWaiting = true;
+                        this.idleCooldown = 5 + Math.random() * 5; // 5–10 sec
+                    }
+                }
+            }
+            frame = this.idleStartFrame + this.frameIndex;
+        } else {
+            this.frameIndex = 0;
+            this.frameTimer = 0;
+            frame = 0;
+        }
+
+
+        this.drawShadow();
+        const sx = this.frameWidth * frame;
+        const sy = 0; // assuming one row
+        ctx.drawImage(npcImage, sx, sy, this.frameWidth, this.frameHeight, this.x, this.y, this.frameWidth, this.frameHeight);
+
+        // Draw Zzz if inactive
+        if (!this.active) {
+            ctx.font = "bold 14px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.fillText("Zzz", this.x + this.width / 2, this.y - 10 + bobOffset);
+        }
+
+        // Draw dialogue bubble
+        if (this.dialogue && this.active) {
+            let bubblePadding = 6;
+            ctx.font = "12px Arial";
+            let textWidth = ctx.measureText(this.dialogue).width;
+            let bubbleWidth = textWidth + bubblePadding * 2;
+            let bubbleHeight = 20;
+
+            let bubbleX = this.x + this.width / 2 - bubbleWidth / 2;
+            let bubbleY = this.y - bubbleHeight - 10 + bobOffset;
+
+            if (FADE_BUBBLES) ctx.globalAlpha = Math.min(1.0, Math.min(this.bubbleBobTimer, this.dialogueCooldown));
+            ctx.drawImage(portraitPic, this.portraitSX, 0, 64, 64, bubbleX - 37, bubbleY - 5, 32, 32);
+            colorRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "white");
+            outlineRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, "black");
+            drawTextWithShadow(this.dialogue, this.x + this.width / 2, bubbleY + 14, "black", "12px Arial", "center");
+            if (FADE_BUBBLES) ctx.globalAlpha = 1;
+        }
+
+        // Quest marker (! or ?)
+        ctx.font = "bold 20px Arial";
+        ctx.textAlign = "center";
+
+        const quest = this.associatedQuest;
+        if (quest && !dialoguePrompt) {
+            if (!quests[quest].started) {
+            ctx.fillStyle = "gold";
+            ctx.fillText("!", this.x + this.width / 2, this.y - 10);
+            } else if (quests[quest].completed) {
+            ctx.fillStyle = "cyan";
+            ctx.fillText("?", this.x + this.width / 2, this.y - 10);
+            }
+        } // last if (quest...)
+    } // END draw()
 } // END class NPC
 
 
