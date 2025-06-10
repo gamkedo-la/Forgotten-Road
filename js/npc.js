@@ -77,7 +77,7 @@ class NPC extends Entity {
         this.speed = 30;
         this.path = []; 
         this.nextMoveTimer = 0; 
-
+        this.pathfindingRetryTimer = 0;
     }
 
     // Getter for dialogue
@@ -89,7 +89,7 @@ class NPC extends Entity {
     set dialogue(newDialogue) {
         this._dialogue = newDialogue;
     }
-
+    
     applySchedule(timeOfDay) {
         if (!this.schedule) return;
 
@@ -100,20 +100,39 @@ class NPC extends Entity {
         this._schedulePhase = phase;
 
         if (phase.destination) {
-            const startTileX = Math.floor(this.x / TILE_W);
-            const startTileY = Math.floor(this.y / TILE_H);
             const endTileX = Math.floor(phase.destination.x / TILE_W);
             const endTileY = Math.floor(phase.destination.y / TILE_H);
-
-            this.path = findPathForNPC(startTileX, startTileY, endTileX, endTileY, collisionGrid);
+            this.attemptPathfindingIfReady(endTileX, endTileY, collisionGrid);
             this.targetX = phase.destination.x;
             this.targetY = phase.destination.y;
             this.active = true;
-        } else {
-            this.path = [];
-            this.targetX = null;
-            this.targetY = null;
         }
+    }
+
+    attemptPathfindingIfReady(endTileX, endTileY, collisionGrid) {
+        this.pathfindingRetryTimer -= 1;
+        if (this.pathfindingRetryTimer > 0) return;
+
+        const startTileX = Math.floor(this.x / TILE_W);
+        const startTileY = Math.floor(this.y / TILE_H);
+        const maxSteps = 5;
+
+        let path = findPathForNPC(startTileX, startTileY, endTileX, endTileY, collisionGrid);
+        if (path.length === 0) {
+            let dx = endTileX - startTileX;
+            let dy = endTileY - startTileY;
+            let waypointX = startTileX + Math.sign(dx) * maxSteps;
+            let waypointY = startTileY + Math.sign(dy) * maxSteps;
+            waypointX = Math.max(0, Math.min(TILE_COLS - 1, waypointX));
+            waypointY = Math.max(0, Math.min(TILE_ROWS - 1, waypointY));
+            path = findPathForNPC(startTileX, startTileY, waypointX, waypointY, collisionGrid);
+        }
+
+        if (path.length > 0) {
+            this.path = path;
+        }
+
+        this.pathfindingRetryTimer = 180; // Retry in ~3 seconds (60fps)
     }
 
     speak() {
@@ -475,8 +494,6 @@ function drawDialoguePrompt() {
     drawTextWithShadow(dialoguePrompt, x + 20, y + 30, "white", "16px Arial", "left");
     drawTextWithShadow("[Y]es   [N]o", x + 20, y + 80, "gray", "14px Arial", "left");
     ctx.drawImage(portraitPic, dialoguePortraitSX, 0, 64, 64, x - 85, y + 17, 64, 64);
-    console.log("Draw Portrait")
-
 }
 
 function spawnGraveyardMystery() {

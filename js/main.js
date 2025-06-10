@@ -31,7 +31,7 @@ let timeOfDay = "day";
 let dayNightTimer = 0;
 const DAY_DURATION = 300;   
 const NIGHT_DURATION = 180; 
-
+let frameCount = 0;
 
 //Initialize the world items arrays for each screen
 Object.keys(WORLD_MAPS).forEach((key) => {
@@ -171,6 +171,7 @@ function imageLoadingDoneSoStartGame() {
 
 // Game Loop Functions
 function drawGameFrame(currentTime) {
+  frameCount++;
   var deltaTime = (currentTime - lastFrameTime) / 1000;
   lastFrameTime = currentTime;
 
@@ -320,7 +321,12 @@ function updateGameState(deltaTime) {
     player.fireProjectile();
   }  
   player.regenStamina(deltaTime);
-  npcs.forEach((npc) => npc.update && npc.update(deltaTime, timeOfDay));
+  npcs.forEach((npc, index) => {
+    // Spread pathfinding over time: only update 1 out of 3 NPCs per frame
+    if ((frameCount + index) % 3 === 0) {
+      npc.update(deltaTime, timeOfDay);
+    }
+  });
   handleQuickUseKeys();
   globalUsedFlankTiles.clear();
   updateEnemiesAndProjectiles(deltaTime);

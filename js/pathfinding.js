@@ -30,7 +30,7 @@ function findPath(startX, startY, endX, endY, collisionGrid, caller="unknown", m
 
    const distance = heuristic(startNode, endNode);
    if (distance > maxDistance) {
-      console.log("Pathfinding distance " + distance + " exceeds maximum " + maxDistance + ", from " + caller);
+      //console.log("Pathfinding distance " + distance + " exceeds maximum " + maxDistance + ", from " + caller);
       return [];
    }
 
@@ -38,7 +38,7 @@ function findPath(startX, startY, endX, endY, collisionGrid, caller="unknown", m
 
   while (openSet.length > 0) {
       if (openSet.length>PATHFINDING_TOO_MANY_NODES) { // sanity check to avoid infinite hangs
-          console.log("ERROR: openSet.length="+openSet.length+" is so big we must be stuck in an infinite loop.\npathfinding failed.");
+          //console.log("ERROR: openSet.length="+openSet.length+" is so big we must be stuck in an infinite loop.\npathfinding failed.");
           return [];
       }
       let lowestIndex = 0;
