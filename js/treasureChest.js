@@ -20,9 +20,16 @@ class TreasureChest extends Entity {
         if (!this.isOpen) { 
             console.log("opening a treasure cheat!");
             this.isOpen = true;
-            pickupSound.play();
+            openChestSound.play();
             // FIXME: spawn some gold coins as pickups
-            player.gold += 10;
+            // player.gold += 10;
+            let numGold = Math.ceil(Math.random() * 15);
+            for (let n=0; n<numGold; n++) {
+                let x = this.x + Math.round(Math.random()*64-32);
+                let y = this.y + 32 + Math.round(Math.random()*32);
+                let c = new Coin(x,y);
+                npcs.push(c); // FIXME: this is not really an NPC
+            }
         }
     }
 

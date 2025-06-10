@@ -73,6 +73,6 @@ function spawnRandomChickens() {
     // a few eggs to start us off, too
     for (let n=0; n<NUM_EGGS; n++) {
         let e = new Egg(Math.round(Math.random()*1000),Math.round(Math.random()*550));
-        npcs.push(e);
+        npcs.push(e); // FIXME: this is not really an NPC
     }
 }
