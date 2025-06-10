@@ -22,6 +22,8 @@ const TILE_CRYPT_GATE = 13;
 const TILE_FENCE = 14;
 const TILE_LAMP = 15;
 
+const TILE_TREASURECHEST = 88;
+
 const TILE_GOBLIN_SPAWN = 90;
 const TILE_ORC_SPAWN = 91;
 const TILE_KOBOLD_SPAWN = 92;
@@ -94,11 +96,11 @@ const WORLD_MAPS = {
     [4, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0],
     [0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0],
-    [0, 1, 3, 3, 1, 1, 1, 0, 15,0, 4, 2, 2, 0, 0, 0, 0, 0, 1, 3,3,  3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0],
+    [0, 1, 3, 3, 1, 1, 1, 0, 15,0, 4, 2, 2, 0,88, 0, 0, 0, 1, 3,3,  3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0],
     [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1, 1, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,104, 0, 0, 0, 0],
-    [0, 0,101, 0, 0, 0, 4, 0, 0, 0, 0,0, 2, 0, 0, 4, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0,101,0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 4, 0, 0, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 4, 4, 0, 0, 7, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2,102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0,0, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,15,0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -331,6 +333,20 @@ function getMonsterSpawnTiles() {
   return spawns;
 }
 
+function checkTileTypeForEntitySpawners(tileType, col, row) {
+    if (tileType === TILE_TREASURECHEST) {
+        let x = col * TILE_W;
+        let y = row * TILE_H;
+        console.log("spawning a treasure chest at "+x+","+y);
+        // spawn an entity here!
+        let e = new TreasureChest(x,y);
+        npcs.push(e); // fixme: this isn't really an NPC but it works
+        // replace this ground tile with grass
+        tileType = TILE_GRASS; 
+    }
+    return tileType;
+}
+
 function precomputeBackground() {
   cachedBackgroundGrid = [];
 
@@ -338,7 +354,13 @@ function precomputeBackground() {
     cachedBackgroundGrid[row] = [];
 
     for (let col = 0; col < TILE_COLS; col++) {
-      const tileType = backgroundGrid[row][col];
+      let tileType = backgroundGrid[row][col];
+      
+      // spawn entities (such as treasure) and
+      // then transform in a regular TILE_GRASS tile
+      tileType = checkTileTypeForEntitySpawners(tileType, col, row);
+      
+      // used to select which sprite to use for roads, etc
       const result =
         checkTileTypeForConnectors(tileType, col, row) ||
         checkTileTypeForRandomization(tileType) ||
