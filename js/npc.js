@@ -427,7 +427,7 @@ class NPC extends Entity {
         } else if (this.name === "Chuck") {
             npcImage = chuckPic;
             this.portraitSX = 64 * 0;
-            this.supportsIdleAnimation = false;
+            this.supportsIdleAnimation = true;
         } else if (this.name === "Mick") {
             npcImage = mickPic;
             this.portraitSX = 64 * 3;
