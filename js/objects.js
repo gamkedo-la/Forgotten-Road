@@ -115,6 +115,7 @@ function isCrateOnPlate(plateCol, plateRow) {
 function updatePressurePlates() {
   for (let row = 0; row < TILE_ROWS; row++) {
     for (let col = 0; col < TILE_COLS; col++) {
+      // this next line can bug out if there's missing data in the array
       if (backgroundGrid[row][col] === TILE_PRESSURE_PLATE) {
         const isOnPlate = pushableBlocks.some(block => block.x === col && block.y === row);
 

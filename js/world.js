@@ -41,7 +41,7 @@ const TILE_NPC_MICK = 105;
 const TILE_NPC_DOSDOCTORA = 106; // not implemented
 const TILE_NPC_DOSDOCTORB = 107; // not implemented
 
-const MAP_DATA = {
+var MAP_DATA = {
   fallDale: {
     buildings: {
       blacksmithShop: {
@@ -266,8 +266,10 @@ const WORLD_MAPS = {
   ]
 };
 
+
 var currentMapKey = "fallDale";
 var backgroundGrid = WORLD_MAPS[currentMapKey];
+fillInMissingMapdata(); // NOW!!! before game starts
 
 var collisionGrid = [];
 let pathfindingGrid = Array.from({ length: GRID_HEIGHT }, () =>
@@ -278,7 +280,10 @@ let backgroundNeedsUpdate = true;
 let cachedBackgroundGrid = [];
 
 function SetupCollisionGridFromBackground() {
-  if (!backgroundGrid || backgroundGrid.length === 0) return;
+  if (!backgroundGrid || backgroundGrid.length === 0 || backgroundGrid[0].length === 0 ) {
+    console.log("ERROR: backgroundGrid is broken:",backgroundGrid);
+    return;
+  }
 
   collisionGrid = new Array(TILE_ROWS)
     .fill(null)
@@ -298,7 +303,12 @@ function SetupCollisionGridFromBackground() {
   for (let row = 0; row < TILE_ROWS; row++) {
     for (let col = 0; col < TILE_COLS; col++) {
       const idxHere = tileCoordToIndex(col, row);
-      const tileType = backgroundGrid[row][col];
+      let tileType = 0; // default if data is missing
+      if (!backgroundGrid[row] || backgroundGrid[row][col]) {
+        console.log("ERROR - missing data for backgroundGrid["+row+","+col+"] - filling with zeroes");
+      } else {
+        tileType = backgroundGrid[row][col];
+      }
 
       collisionGrid[row][col] = new GridElement();
       collisionGrid[row][col].name = `${col},${row}`;
@@ -354,7 +364,12 @@ function precomputeBackground() {
     cachedBackgroundGrid[row] = [];
 
     for (let col = 0; col < TILE_COLS; col++) {
-      let tileType = backgroundGrid[row][col];
+      let tileType = 0; // default
+      if (!backgroundGrid[row] || !backgroundGrid[row][col]) {
+        console.log("missing backgroundGrid data - ignoring...");
+      } else {
+        tileType = backgroundGrid[row][col];
+      }
       
       // spawn entities (such as treasure) and
       // then transform in a regular TILE_GRASS tile
@@ -655,4 +670,28 @@ function unlockCryptGate() {
     }
   }
   console.log("Crypt gate opened!");
+}
+
+// some of the arrays are the wrong size: this ensures that code
+// which iterates through map data doesn't encounter any undefineds
+function fillInMissingMapdata() {
+
+    for (r=0; r<TILE_ROWS; r++) {
+        
+        // missing row?
+        if (WORLD_MAPS.fallDale[r]==undefined) WORLD_MAPS.fallDale[r] = [];
+        if (WORLD_MAPS.eastFields[r]==undefined) WORLD_MAPS.eastFields[r] = [];
+        if (WORLD_MAPS.graveYard[r]==undefined) WORLD_MAPS.graveYard[r] = [];
+        if (WORLD_MAPS.southForest[r]==undefined) WORLD_MAPS.southForest[r] = [];
+        
+        for (c=0; c<TILE_COLS; c++) {
+
+            // missing col?
+            if (WORLD_MAPS.fallDale[r][c]==undefined) WORLD_MAPS.fallDale[r][c] = 0;
+            if (WORLD_MAPS.eastFields[r][c]==undefined) WORLD_MAPS.eastFields[r][c] = 0;
+            if (WORLD_MAPS.graveYard[r][c]==undefined) WORLD_MAPS.graveYard[r][c] = 0;
+            if (WORLD_MAPS.southForest[r][c]==undefined) WORLD_MAPS.southForest[r][c] = 0;
+
+        }
+    }
 }

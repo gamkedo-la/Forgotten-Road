@@ -270,6 +270,7 @@ function checkForMapEdgeTransition() {
 }
 
 function switchToMap(newMapKey, playerCol, playerRow) {
+  console.log("SWITCHING TO NEW MAP: "+newMapKey);
   if (!WORLD_MAPS[newMapKey]) return;
 
   currentMapKey = newMapKey;
