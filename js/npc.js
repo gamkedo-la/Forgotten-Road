@@ -88,6 +88,8 @@ class NPC extends Entity {
         this.supportsIdleAnimation = true;
         this.idleCooldown = 0;
         this.idleWaiting = false;
+        this.moveTarget = null; // {x, y}
+        this.moveSpeed = 100; 
     }
 
     // Getter for dialogue
@@ -370,39 +372,57 @@ class NPC extends Entity {
     update(deltaTime, timeOfDay = "day") {
         this.applySchedule(timeOfDay);
 
-        // Movement toward destination
-        if (this.active && this.path.length > 0) {
-        this.nextMoveTimer -= deltaTime;
-            if (this.nextMoveTimer <= 0) {
-                const next = this.path.shift();
-                if (next) {
-                    this.x = next.x * TILE_W;
-                    this.y = next.y * TILE_H;
-                }
-
-                this.nextMoveTimer = 0.3; 
-            }
-        } else if (this.targetX !== null) {
-        const dx = this.targetX - this.x;
-        const dy = this.targetY - this.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist < 1) {
-            this.x = this.targetX;
-            this.y = this.targetY;
-            this.targetX = null;
-            this.targetY = null;
-
-            if (this._schedulePhase && this._schedulePhase.active === false) {
-                this.active = false;
-            }
-        }
-    }
+        // Dialogue cooldown
+        this.dialogueCooldown -= deltaTime * 1000;
 
         if (!this.active) return;
 
-        this.dialogueCooldown -= deltaTime * 1000;
-    }
+        // Smooth pixel-based movement toward current target
+        if (this.moveTarget) {
+            const dx = this.moveTarget.x - this.x;
+            const dy = this.moveTarget.y - this.y;
+            const dist = Math.hypot(dx, dy);
+            const step = this.speed * deltaTime; // speed in pixels/sec
 
+            if (dist <= step) {
+                // Snap to target and clear
+                this.x = this.moveTarget.x;
+                this.y = this.moveTarget.y;
+                this.moveTarget = null;
+            } else {
+                this.x += (dx / dist) * step;
+                this.y += (dy / dist) * step;
+            }
+        }
+
+        // Get new movement target if path exists
+        if (!this.moveTarget && this.path.length > 0) {
+            const nextTile = this.path.shift();
+            if (nextTile) {
+                this.moveTarget = {
+                    x: nextTile.x * TILE_W,
+                    y: nextTile.y * TILE_H
+                };
+            }
+        }
+
+        // Arrived at destination
+        if (this.path.length === 0 && !this.moveTarget && this.targetX !== null) {
+            const dx = this.targetX - this.x;
+            const dy = this.targetY - this.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 1) {
+                this.x = this.targetX;
+                this.y = this.targetY;
+                this.targetX = null;
+                this.targetY = null;
+
+                if (this._schedulePhase && this._schedulePhase.active === false) {
+                    this.active = false;
+                }
+            }
+        }
+    }
 
     draw(deltaTime) {
         this.bubbleBobTimer += deltaTime;
