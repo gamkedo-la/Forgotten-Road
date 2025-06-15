@@ -177,10 +177,10 @@ document.addEventListener("keydown", (event) => {
   }
 
   // Movement
-  if (event.key === "ArrowUp" || event.key === "w") keys.up = true;
-  if (event.key === "ArrowDown" || event.key === "s") keys.down = true;
-  if (event.key === "ArrowLeft" || event.key === "a") keys.left = true;
-  if (event.key === "ArrowRight" || event.key === "d") keys.right = true;
+  if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") keys.up = true;
+  if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") keys.down = true;
+  if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") keys.left = true;
+  if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") keys.right = true;
 
   // Cancel pathfinding navigation on movement key presses
   if (keys.up || keys.down || keys.left || keys.right) player.cancelPath();
@@ -259,10 +259,10 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("keyup", (event) => {
-  if (event.key === "ArrowUp" || event.key === "w") keys.up = false;
-  if (event.key === "ArrowDown" || event.key === "s") keys.down = false;
-  if (event.key === "ArrowLeft" || event.key === "a") keys.left = false;
-  if (event.key === "ArrowRight" || event.key === "d") keys.right = false;
+  if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") keys.up = false;
+  if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") keys.down = false;
+  if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") keys.left = false;
+  if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") keys.right = false;
 
   if (
     event.key === " " ||
