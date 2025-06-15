@@ -116,6 +116,10 @@ function screenToWorld(x, y) {
   };
 }
 
+window.addEventListener("beforeunload", function (e) {
+  e.preventDefault();
+});
+
 // Key listeners
 document.addEventListener("keydown", (event) => {
   if (player.state === "dead") return;
