@@ -120,6 +120,18 @@ window.addEventListener("beforeunload", function (e) {
   e.preventDefault();
 });
 
+window.addEventListener("blur", () => {
+  Object.keys(keys).forEach(k => keys[k] = false);
+  player.cancelPath();
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    Object.keys(keys).forEach(k => keys[k] = false);
+    player.cancelPath();
+  }
+});
+
 // Key listeners
 document.addEventListener("keydown", (event) => {
   if (player.state === "dead") return;
