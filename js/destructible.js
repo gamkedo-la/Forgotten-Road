@@ -1,6 +1,3 @@
-// note: weapons need this to be in the enemies[] array
-// so the entity class damage+die+loot routines get run
-
 class Destructible extends Entity {
     
     // default is a fragile barrel with nothing inside it
