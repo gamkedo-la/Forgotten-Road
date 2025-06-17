@@ -22,6 +22,7 @@ const TILE_CRYPT_GATE = 13;
 const TILE_FENCE = 14;
 const TILE_LAMP = 15;
 
+const TILE_BARREL = 77;
 const TILE_TREASURECHEST = 88;
 
 const TILE_GOBLIN_SPAWN = 90;
@@ -108,9 +109,9 @@ const WORLD_MAPS = {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 3, 3, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 3, 3, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 2, 0, 1, 1, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0,11,11,11,11,11,11,11,11, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0,77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0,77, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0,77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0,11,11,11,11,11,11,11,11, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 0,11,11,11,11,11,11,11,11, 0, 1, 1, 1, 1, 1,0, 2, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 2, 0, 1, 3, 3, 3, 3, 3, 1, 0,11,11,11,11,11,11,11,11, 0, 1, 3, 3, 3, 1,0, 2, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 0, 1, 3, 3, 3, 3, 3, 1, 0,11,11,11,11,11,11,11,11, 0, 1, 3, 3, 3, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -344,16 +345,25 @@ function getMonsterSpawnTiles() {
 }
 
 function checkTileTypeForEntitySpawners(tileType, col, row) {
+
+    let x = col * TILE_W;
+    let y = row * TILE_H;
+
     if (tileType === TILE_TREASURECHEST) {
-        let x = col * TILE_W;
-        let y = row * TILE_H;
+
         console.log("spawning a treasure chest at "+x+","+y);
-        // spawn an entity here!
         let e = new TreasureChest(x,y);
         npcs.push(e); // fixme: this isn't really an NPC but it works
-        // replace this ground tile with grass
-        tileType = TILE_GRASS; 
+        tileType = TILE_GRASS; // fill the empty tile with grass
+
+    } else if (tileType === TILE_BARREL) {
+
+    console.log("spawning a barrel at "+x+","+y);
+        let e = new Destructible("Barrel",x,y); // add loot array here
+        destructibles.push(e);
+        tileType = TILE_GRASS;  // fill the empty tile with grass
     }
+
     return tileType;
 }
 

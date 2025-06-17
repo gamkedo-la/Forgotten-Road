@@ -176,5 +176,13 @@ function updateProjectiles(deltaTime) {
         projectiles.splice(i, 1);
       }
     });
+
+    destructibles.forEach((e) => {
+      if (p.owner === player && !e.isDead && dist(p.x, p.y, e.x, e.y) < 20) {
+        e.takeDamage(10); // or p.damage
+        projectiles.splice(i, 1);
+      }
+    });
+    
   }
 }

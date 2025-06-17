@@ -139,6 +139,7 @@ class Entity {
   }
 
   dropLoot() {
+    // FIXME: this should use the Monster's .loot() if any
     const drops = [{ ...basicStaff }, { ...leatherArmor }, { ...healthPotion }, {...boltPickUp}];
     const randomDrop = drops[Math.floor(Math.random() * drops.length)];
 

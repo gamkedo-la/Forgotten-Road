@@ -176,7 +176,22 @@ class Player extends Entity {
       width: TILE_W,
       height: TILE_H
     };
-    
+
+    destructibles.forEach((barrel) => {
+        if (barrel.isDead) return;
+        let bBox = {
+            x: barrel.x,
+            y: barrel.y,
+            width: barrel.width,
+            height: barrel.height
+        };
+        if (rectsOverlap(swingBox, bBox)) {
+            let weapon = this.equipment.weapon;
+            let { damage, isCrit } = this.calculateWeaponDamage(weapon, bonusDamage);
+            barrel.takeDamage(damage);
+        }
+    });
+
     enemies.forEach((enemy) => {
       if (enemy.isDead) return;
     

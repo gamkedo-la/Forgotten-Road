@@ -1,6 +1,7 @@
 var canvas, ctx, collisionCanvas, collisionCtx;
 var playState = "playing";
 const enemies = [];
+const destructibles = [];
 const temp_ui_elements = [];
 //const PLAYER_MOVE_SPEED = 4;
 let lastFrameTime = performance.now();
@@ -441,6 +442,9 @@ function renderGameWorld(deltaTime) {
     );
   });
   
+  // barrels, etc
+  destructibles.forEach((p) => p.draw(ctx));
+  
   // arrows
   projectiles.forEach((p) => p.draw(ctx));
   
@@ -656,6 +660,7 @@ function updateEnemiesAndProjectiles(deltaTime) {
     e.fireAtPlayerIfInRange(player, projectiles, collisionGrid)
   );
   projectiles.forEach((p) => p.update(collisionGrid, enemies));
+  projectiles.forEach((p) => p.update(collisionGrid, destructibles));
   projectiles = projectiles.filter((p) => p.isActive);
 }
 
