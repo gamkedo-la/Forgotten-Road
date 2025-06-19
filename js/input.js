@@ -1,5 +1,6 @@
 var pathfinderGrid = [];
 let pressedInteract = false;
+const DISPLAY_POPUP_BEFORE_RELOAD = false; // interferes with dev
 
 const keys = {
   up: false,
@@ -116,9 +117,11 @@ function screenToWorld(x, y) {
   };
 }
 
-window.addEventListener("beforeunload", function (e) {
-  e.preventDefault();
-});
+if (DISPLAY_POPUP_BEFORE_RELOAD) {
+    window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    });
+}
 
 window.addEventListener("blur", () => {
   Object.keys(keys).forEach(k => keys[k] = false);

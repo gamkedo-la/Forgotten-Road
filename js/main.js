@@ -803,11 +803,35 @@ function drawWorldItem(item) {
 }
 
 function drawBuildings() {
+  drawVillagerHouses();
   for (let key in buildings) {
     const b = buildings[key];
     ctx.drawImage(b.image, b.sX, b.sY, b.sW, b.sH, b.x, b.y, b.width, b.height);
   }
 }
+
+// placeholder extra houses of varying size
+// all using the same image (nine-slice style)
+function drawVillagerHouses(){
+   if (currentMapKey == "fallDale") {
+     drawAnyHouse(14,13,8,5);
+     drawAnyHouse(14,21,7,7);
+     drawAnyHouse(31,21,5,7);
+     drawAnyHouse(36,2,6,6);
+   }
+}
+
+function drawAnyHouse(x,y,w,h) {
+   let s=32;
+   // top left
+   ctx.drawImage(villagerHousesPic,0*s,0*s,w*s,h*s,x*s,y*s,w*s,h*s);
+   // bottom left
+   ctx.drawImage(villagerHousesPic,0*s,6*s,w*s,2*s,x*s,y*s+(h-2)*s,w*s,2*s);
+   // top right
+   ctx.drawImage(villagerHousesPic,7*s,0*s,1*s,h*s,x*s+(w-1)*s,y*s,1*s,h*s);
+   // bottom right
+   ctx.drawImage(villagerHousesPic,7*s,6*s,1*s,2*s,x*s+(w-1)*s,y*s+(h-2)*s,1*s,2*s);
+ }
 
 function drawStaminaBar() {
   let barColor = "rgba(0,100,0,1)";
