@@ -33,6 +33,7 @@ let dayNightTimer = 0;
 const DAY_DURATION = 300;   
 const NIGHT_DURATION = 180; 
 let frameCount = 0;
+const TEST_MODE = true;
 
 //Initialize the world items arrays for each screen
 Object.keys(WORLD_MAPS).forEach((key) => {

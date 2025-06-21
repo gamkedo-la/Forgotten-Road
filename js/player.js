@@ -189,6 +189,7 @@ class Player extends Entity {
             let weapon = this.equipment.weapon;
             let { damage, isCrit } = this.calculateWeaponDamage(weapon, bonusDamage);
             barrel.takeDamage(damage);
+            attacked = true;
         }
     });
 
@@ -435,7 +436,6 @@ class Player extends Entity {
     }
   }
   
-
   drawHearts() {
     var guix = 5;
     var guiy = 5;
