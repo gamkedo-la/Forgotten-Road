@@ -154,6 +154,9 @@ const TEXT_CONFIG = Object.seal({
   lineHeight: 16,
   wrapMode: TEXT_WRAP_MODE.WRAP_NONE,
   textAlignment: TEXT_ALIGNMENT.LEFT,
+  text: "",
+  wrappedLines: 0,
+  preferredDimensions: { ...DIMENSIONS },
 });
 
 const IMAGE_CONFIG = Object.seal({
@@ -201,6 +204,16 @@ const SHARED_ELEMENT_CONFIG = Object.seal({
 const ELEMENT_CONFIG = Object.seal({
   type: ELEMENT_TYPE.NONE,
   config: {},
+});
+
+const MEASURE_TEXT_CACHE_ITEM = Object.seal({
+  containsNewLines: false,
+  measuredWordsStartIndex: 0,
+});
+
+const WRAPPED_TEXT_LINE = Object.seal({
+  dimenensions: { ...DIMENSIONS },
+  line: "",
 });
 
 // -- MODELS
@@ -260,6 +273,13 @@ const UIElement = (type = ELEMENT_TYPE.NONE, customConfig = {}) => {
   }
 
   return newElement;
+};
+
+const wrappedTextLine = (dimenensions = DIMENSIONS, line = "") => {
+  const newWrappedTextLine = JSON.parse(JSON.stringify(WRAPPED_TEXT_LINE));
+  newWrappedTextLine.dimenensions = dimenensions;
+  newWrappedTextLine.line = line;
+  return newWrappedTextLine;
 };
 
 // CONSTANTS
@@ -368,6 +388,11 @@ const LAYOUT_ELEMENTS = [];
 const OPEN_LAYOUT_ELEMENTS = [];
 const LAYOUT_ELEMENT_TREE_ROOTS = [];
 const LAYOUT_ELEMENT_CHILDREN_BUFFER = [];
+const TEXT_ELEMENTS = [];
+const IMAGE_ELEMENTS = [];
+const WRAPPED_TEXT_LINES = [];
+const WRAPPED_TEXT_LINES_CAPACITY = 10;
+const MEASURED_WORDS = [];
 
 const SizeContainersAlongAxis = (xAxis = true) => {
   const BFS_BUFFER = LAYOUT_ELEMENT_CHILDREN_BUFFER;
@@ -810,6 +835,10 @@ const populateLayoutElements = (root) => {
 
   root.minDimensions.width = root.layout.sizing.width.size.minMax.min;
   root.minDimensions.height = root.layout.sizing.height.size.minMax.min;
+
+  if (root.elementConfig.type == ELEMENT_TYPE.TEXT) {
+    TEXT_ELEMENTS.push(elementIndex);
+  }
 
   LAYOUT_ELEMENTS.push(root);
   root?.children?.forEach((child) => {
