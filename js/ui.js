@@ -840,6 +840,10 @@ const populateLayoutElements = (root) => {
     TEXT_ELEMENTS.push(elementIndex);
   }
 
+  if (root.elementConfig.type == ELEMENT_TYPE.IMAGE) {
+    IMAGE_ELEMENTS.push(elementIndex);
+  }
+
   LAYOUT_ELEMENTS.push(root);
   root?.children?.forEach((child) => {
     child.parentIndex = root.elementIndex;
@@ -852,6 +856,16 @@ const readDrawCommands = () => {};
 const CalculateFinalLayout = () => {
   // Sizing Pass
   SizeContainersAlongAxis(true);
+
+  // Scale vertical image heights according to aspect ratio
+  for (var i = 0; i < IMAGE_ELEMENTS.length; ++i) {
+    const imageElement = LAYOUT_ELEMENTS[i];
+    const imageConfig = imageElement.elementConfig;
+    imageElement.dimensions.height =
+      (imageConfig.sourceDimensions.height /
+        Math.max(imageConfig.sourceDimensions.width, 1)) *
+      imageElement.dimensions.width;
+  }
 
   // Text Wrap Pass
   // Positioning
