@@ -21,6 +21,7 @@ class Egg extends Entity {
             // TODO:
             // player.inventory.pickup("egg");
             pickupSound.play();
+            pickupFX(this.x,this.y);
             // quest item
             // if (quests.yesYourEggcellence.started) 
                 quests.yesYourEggcellence.eggsFound++;

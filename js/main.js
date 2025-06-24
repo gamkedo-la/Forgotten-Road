@@ -33,7 +33,6 @@ let dayNightTimer = 0;
 const DAY_DURATION = 300;   
 const NIGHT_DURATION = 180; 
 let frameCount = 0;
-const TEST_MODE = true;
 
 //Initialize the world items arrays for each screen
 Object.keys(WORLD_MAPS).forEach((key) => {
@@ -330,6 +329,7 @@ function updateGameState(deltaTime) {
       npc.update(deltaTime, timeOfDay);
     }
   });
+  anims.forEach((a) => a.update(deltaTime));
   handleQuickUseKeys();
   globalUsedFlankTiles.clear();
   updateEnemiesAndProjectiles(deltaTime);
@@ -449,6 +449,9 @@ function renderGameWorld(deltaTime) {
   // arrows
   projectiles.forEach((p) => p.draw(ctx));
   
+  // spritesheetAnimations
+  anims.forEach((a) => a.draw(ctx));
+
   // Re-draw the Blacksmith in front of the interior if we're inside
   if (insidebuilding) {
     npcs.forEach(npc => {

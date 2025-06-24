@@ -19,6 +19,7 @@ class Mushroom extends Entity {
             // TODO:
             // player.inventory.pickup("mushroom");
             pickupSound.play();
+            pickupFX(this.x,this.y);
             // quest item
             //if (quests.yesYourEggcellence.started) 
                 quests.yesYourEggcellence.mushroomsFound++;

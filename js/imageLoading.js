@@ -43,6 +43,7 @@ var snowPic = document.createElement("img");
 var treasureChestPic = document.createElement("img");
 var barrelPic = document.createElement("img");
 var villagerHousesPic = document.createElement("img");
+var animsPic = document.createElement("img");
 
 //var titlepagePic = document.createElement("img");
 var tilePics = [];
@@ -113,6 +114,7 @@ function loadImages() {
         {varName: treasureChestPic, theFile: "treasureChest.png"},
         {varName: barrelPic, theFile: "barrel.png"},
         {varName: villagerHousesPic, theFile: "villagerHouses.png"},
+        {varName: animsPic, theFile: "anims.png"},
 
         {tileType: TILE_GRASS, theFile: "grass.png", sX: "0", sY: "0", options: 4},
         {tileType: TILE_CRYPT_GATE, theFile: "cryptGate.png", sX: "0", sY: "0", options: 4},

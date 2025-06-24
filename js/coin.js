@@ -14,6 +14,7 @@ class Coin extends Entity {
         
         if (this.distanceFromPlayer()<COIN_PICKUP_RANGE) {
             pickupCoinSound.play();
+            pickupFX(this.x,this.y);
             // getting richer by the minute!
             player.gold++; 
             // remove from world

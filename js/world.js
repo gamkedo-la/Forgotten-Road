@@ -1,3 +1,5 @@
+const TEST_MODE = true;
+
 const TILE_W = 32;
 const TILE_H = 32;
 const TILE_COLS = 45;
