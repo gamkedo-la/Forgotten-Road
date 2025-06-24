@@ -53,3 +53,8 @@ function pickupFX(x,y) {
     let a = new spritesheetAnimation(x-8,y-8);
     anims.push(a);
 }
+
+function hitFX(x,y) {
+    let a = new spritesheetAnimation(x,y+8,1);
+    anims.push(a);
+}

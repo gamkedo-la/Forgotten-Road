@@ -81,6 +81,8 @@ class Entity {
     this.isFlashing = true;
     this.lastHitTime = Date.now();
 
+    hitFX(this.x,this.y);
+
     console.log(`${this.name} has ${this.currentHP} HP left.`);
 
     // Spawn floating damage number
