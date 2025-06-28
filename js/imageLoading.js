@@ -130,6 +130,16 @@ function loadImages() {
         {tileType: TILE_CLIFF, theFile: "cliff.png", sX: "64", sY: "96",options: 0},
         {tileType: TILE_PRESSURE_PLATE, theFile: "grass.png", sX: "96", sY: "128",options: 0},
         {tileType: TILE_DIRT, theFile: "dirt.png", sX: "32", sY: "32",options: 0},
+        {tileType: TILE_DUNGEON_WALL_TOP, theFile: "wall.png", sX: 0, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_BOTTOM, theFile: "wall.png", sX: 32, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_LEFT, theFile: "wall.png", sX: 64, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_RIGHT, theFile: "wall.png", sX: 96, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_TL, theFile: "wall.png", sX: 0, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_TR, theFile: "wall.png", sX: 32, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_BL, theFile: "wall.png", sX: 64, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_BR, theFile: "wall.png", sX: 96, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CENTER, theFile: "wall.png", sX: 128, sY: 32, options: 0},
+
 
         // this is so NPCs have grass underneath them
         {tileType: TILE_NPC_ALCHEMIST, theFile: "grass.png", sX: "0", sY: "0", options: 4},
