@@ -63,9 +63,16 @@ function beginLoadingImage(imgVar, fileName) {
 	imgVar.src = "images/" + fileName;
 }
 
-function loadImageForRoomCode(tileCode, fileName)  {
-	tilePics[tileCode] = document.createElement("img");
-	beginLoadingImage(tilePics[tileCode], fileName);	
+function loadImageForRoomCode(tileCode, fileName, sX = 0, sY = 0, sW = TILE_W, sH = TILE_H) {
+  const img = document.createElement("img");
+  img.onload = countLoadedImagesAndLaunchIfReady;
+  img.src = "images/" + fileName;
+  img.sX = sX;
+  img.sY = sY;
+  img.sW = sW;
+  img.sH = sH;
+
+  tilePics[tileCode] = img;
 }
 
 function loadImages() {	
@@ -130,15 +137,23 @@ function loadImages() {
         {tileType: TILE_CLIFF, theFile: "cliff.png", sX: "64", sY: "96",options: 0},
         {tileType: TILE_PRESSURE_PLATE, theFile: "grass.png", sX: "96", sY: "128",options: 0},
         {tileType: TILE_DIRT, theFile: "dirt.png", sX: "32", sY: "32",options: 0},
-        {tileType: TILE_DUNGEON_WALL_TOP, theFile: "wall.png", sX: 0, sY: 0, options: 0},
-        {tileType: TILE_DUNGEON_WALL_BOTTOM, theFile: "wall.png", sX: 32, sY: 0, options: 0},
-        {tileType: TILE_DUNGEON_WALL_LEFT, theFile: "wall.png", sX: 64, sY: 0, options: 0},
-        {tileType: TILE_DUNGEON_WALL_RIGHT, theFile: "wall.png", sX: 96, sY: 0, options: 0},
-        {tileType: TILE_DUNGEON_WALL_CORNER_TL, theFile: "wall.png", sX: 0, sY: 32, options: 0},
-        {tileType: TILE_DUNGEON_WALL_CORNER_TR, theFile: "wall.png", sX: 32, sY: 32, options: 0},
-        {tileType: TILE_DUNGEON_WALL_CORNER_BL, theFile: "wall.png", sX: 64, sY: 32, options: 0},
-        {tileType: TILE_DUNGEON_WALL_CORNER_BR, theFile: "wall.png", sX: 96, sY: 32, options: 0},
-        {tileType: TILE_DUNGEON_WALL_CENTER, theFile: "wall.png", sX: 128, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_TOP, theFile: "wall.png", sX: 128, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_BOTTOM, theFile: "wall.png", sX: 128, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_LEFT, theFile: "wall.png", sX: 96, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_RIGHT, theFile: "wall.png", sX: 160, sY: 32, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_TL, theFile: "wall.png", sX: 96, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_TR, theFile: "wall.png", sX: 160, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_BL, theFile: "wall.png", sX: 96, sY: 64, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CORNER_BR, theFile: "wall.png", sX: 160, sY: 64, options: 0},
+        {tileType: TILE_DUNGEON_WALL_CENTER, theFile: "wall.png", sX: 128, sY: 64, options: 0},
+        {tileType: TILE_ROAD_CORNER_TL, theFile: "road.png", sX: 0,   sY: 0 },
+        {tileType: TILE_ROAD_CORNER_TR, theFile: "road.png", sX: 32,  sY: 0 },
+        {tileType: TILE_ROAD_CORNER_BL, theFile: "road.png", sX: 0,   sY: 32 },
+        {tileType: TILE_ROAD_CORNER_BR, theFile: "road.png", sX: 32,  sY: 32 },
+        {tileType: TILE_ROAD_VERTICAL, theFile: "road.png", sX: 32,  sY: 0 },
+        {tileType: TILE_ROAD_HORIZONTAL, theFile: "road.png", sX: 32,  sY: 32 },
+        {tileType: TILE_ROAD_CROSS, theFile: "road.png", sX: 32, sY: 32 },
+
 
 
         // this is so NPCs have grass underneath them
@@ -152,11 +167,19 @@ function loadImages() {
     
     picsToLoad = imageList.length;
 
-    for(var i = 0; i < imageList.length; i++) {
-        if(imageList[i].tileType !== undefined) {
-            loadImageForRoomCode(imageList[i].tileType, imageList[i].theFile);
+    for (let i = 0; i < imageList.length; i++) {
+        const entry = imageList[i];
+
+        if (entry.tileType !== undefined) {
+            const sX = parseInt(entry.sX) || 0;
+            const sY = parseInt(entry.sY) || 0;
+            const sW = parseInt(entry.sW) || TILE_W;
+            const sH = parseInt(entry.sH) || TILE_H;
+
+            loadImageForRoomCode(entry.tileType, entry.theFile, sX, sY, sW, sH);
         } else {
-            beginLoadingImage(imageList[i].varName, imageList[i].theFile);
+            beginLoadingImage(entry.varName, entry.theFile);
         }
     }
+
 }
