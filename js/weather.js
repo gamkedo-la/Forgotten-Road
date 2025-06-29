@@ -40,7 +40,7 @@ class WeatherSystem {
     }
 
     // Remove off-screen
-    this.particles = this.particles.filter((p) => p.y < canvas.height);
+    this.particles = this.particles.filter((p) => p.y < GRID_HEIGHT);
 
     // Storm logic (lightning flash)
     if (this.type === "storm") {
