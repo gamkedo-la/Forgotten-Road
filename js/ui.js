@@ -867,7 +867,25 @@ const CalculateFinalLayout = () => {
       imageElement.dimensions.width;
   }
 
-  // Text Wrap Pass
+  // Calculate sizing along y-axis
+  SizeContainersAlongAxis(false);
+
+  // Sort by Z-index
+  let sortMax = LAYOUT_ELEMENT_TREE_ROOTS.length - 1;
+  while (sortMax > 0) {
+    for (var i = 0; i < sortMax; ++i) {
+      const current = LAYOUT_ELEMENT_TREE_ROOTS[i];
+      const next = LAYOUT_ELEMENT_TREE_ROOTS[i + 1];
+
+      if (next.zIndex < current.zIndex) {
+        LAYOUT_ELEMENT_TREE_ROOTS[i] = next;
+        LAYOUT_ELEMENT_TREE_ROOTS[i + 1] = current;
+      }
+    }
+    sortMax--;
+  }
+
   // Positioning
+
   // Draw commands
 };
