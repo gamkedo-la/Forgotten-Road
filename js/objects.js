@@ -16,8 +16,11 @@ function isTileOccupiedByPushBlock(tileX, tileY) {
 }  
 
 function tryPushBlock(player, dirX, dirY) {
-  const playerTileX = Math.floor(player.x / TILE_W);
-  const playerTileY = Math.floor(player.y / TILE_H);
+  const playerCenterX = player.x + player.width / 2;
+  const playerCenterY = player.y + player.height / 2;
+
+  const playerTileX = Math.floor(playerCenterX / TILE_W);
+  const playerTileY = Math.floor(playerCenterY / TILE_H);
 
   const nextX = playerTileX + dirX;
   const nextY = playerTileY + dirY;
