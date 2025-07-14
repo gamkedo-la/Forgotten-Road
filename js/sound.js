@@ -5,6 +5,9 @@ var intro_voiceover_4 = new Audio("sound/forgotten-road-voiceover-4.mp3");
 var pickupSound = new Audio("sound/pickup.mp3");
 var openChestSound = new Audio("sound/openChest.mp3");
 var pickupCoinSound = new Audio("sound/pickupCoin.mp3");
+var bossMusicSound = new Audio("sound/boss-prepare-to-be-destroyed-haha.mp3");
+var bossHaHaHaHaSound = new Audio("sound/boss-hahahaha.mp3");
+var bossChuckleSound = new Audio("sound/boss-chuckle.mp3");
 
 const FOOTSTEP_VOLUME = 1;
 var footstepSound = new Audio("sound/FootStepFaster.mp3");
