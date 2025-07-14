@@ -449,11 +449,22 @@ function updateBackground() {
   backgroundNeedsUpdate = true;
 }
 
+/*
+
+// NOTE: this function is no longer being used
+
 function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
   const tileImage = tilePics[tileType];
   if (!tileImage) return;
 
+  // ALWAYS draw grass underneath everything
+  // so that fences, trees, gravestones etc
+  // don't show a blue hole in the map
+  console.log("here"); // hmm this function is no longer being used????
+  context.drawImage(tilePics[TILE_GRASS],0,0,32,32,col*TILE_W,row*TILE_H,TILE_W,TILE_H);
+
   if(tileType === TILE_GRASS) decorateTile(col*TILE_W, row*TILE_H);
+
 
   // NOTE: these larger-than-tile-size special props
   // need to be offset left and up or else the next tile
@@ -506,6 +517,8 @@ function drawImageTile(col, row, sX, sY, tileType, context = ctx) {
     );
   }
 }
+
+*/
 
 function checkTileTypeForConnectors(tileType, x, y) {
   if (tileType === TILE_ROAD) {
