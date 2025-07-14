@@ -25,7 +25,10 @@ all_sounds = [
     intro_voiceover_3,
     intro_voiceover_4,
     music,
-    pickupSound
+    pickupSound,
+    bossMusicSound,
+    bossHaHaHaHaSound,
+    bossChuckleSound,
 ]
 
 function muteAllSounds() {
