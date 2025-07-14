@@ -324,9 +324,11 @@ function SetupCollisionGridFromBackground() {
   for (let row = 0; row < TILE_ROWS; row++) {
     for (let col = 0; col < TILE_COLS; col++) {
       const idxHere = tileCoordToIndex(col, row);
-      let tileType = 0; // default if data is missing
+      let tileType = TILE_GRASS; // default if data is missing
       if (!backgroundGrid[row] || backgroundGrid[row][col]) {
-        console.log("ERROR - missing data for backgroundGrid["+row+","+col+"] - filling with zeroes");
+        if (!backgroundGrid[row]) backgroundGrid[row] = [];
+        if (!backgroundGrid[row][col]) backgroundGrid[row][col] = TILE_GRASS; // FILL
+        console.log("ERROR - missing data for backgroundGrid["+row+","+col+"] filled with grass");
       } else {
         tileType = backgroundGrid[row][col];
       }
@@ -412,6 +414,7 @@ function precomputeBackground() {
         {};
       const { sX = 0, sY = 0 } = result;
       cachedBackgroundGrid[row][col] = { sX, sY, tileType };
+      backgroundGrid[row][col] = tileType; // update original tile if we spawned an entity it is now grass
     }
   }
 
@@ -428,8 +431,11 @@ function drawBackground(context = ctx) {
       const x = col * TILE_W;
       const y = row * TILE_H;
 
-      const img = tilePics[tile];
-      if (!img) continue;
+      var img = tilePics[tile];
+      
+      // if (!img) continue;
+      // if there is no tile image available, draw grass instead
+      if (!img) img = tilePics[TILE_GRASS]; // default
 
       const sX = img.sX || 0;
       const sY = img.sY || 0;

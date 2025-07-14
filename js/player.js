@@ -354,7 +354,7 @@ class Player extends Entity {
     }
   
     const moveSpeed = this.currentSpeed / 2;
-    console.log(moveSpeed);
+    //console.log(moveSpeed);
     if (Math.abs(dx) <= moveSpeed && Math.abs(dy) <= moveSpeed) {
       this.x = this.moveTarget.x;
       this.y = this.moveTarget.y;

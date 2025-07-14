@@ -393,8 +393,8 @@ function renderGameWorld(deltaTime) {
   
   // clear using the same shade of green as our grass tile
   // just in case we can see past the map edges
-  // ctx.fillStyle="rgba(137,140,34,1)"; // grass green
-  ctx.fillStyle="rgba(60,103,140,1)"; // water blue
+  ctx.fillStyle="rgba(137,140,34,1)"; // grass green
+  //ctx.fillStyle="rgba(60,103,140,1)"; // water blue
   ctx.fillRect(0,0,4000,4000); // if we use canvas.width and height it's too small due to scrolling
 
   // debug only
