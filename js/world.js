@@ -372,19 +372,17 @@ function checkTileTypeForEntitySpawners(tileType, col, row) {
     let y = row * TILE_H;
 
     if (tileType === TILE_TREASURECHEST) {
-
         console.log("spawning a treasure chest at "+x+","+y);
         let e = new TreasureChest(x,y);
         npcs.push(e); // fixme: this isn't really an NPC but it works
         tileType = TILE_GRASS; // fill the empty tile with grass
 
     } else if (tileType === TILE_BARREL) {
-
-    console.log("spawning a barrel at "+x+","+y);
+        console.log("spawning a barrel at "+x+","+y);
         let e = new Destructible("Barrel",x,y); // add loot array here
         destructibles.push(e);
         tileType = TILE_GRASS;  // fill the empty tile with grass
-    }
+    } 
 
     return tileType;
 }
