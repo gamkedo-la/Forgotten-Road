@@ -153,8 +153,14 @@ function loadImages() {
         {tileType: TILE_ROAD_VERTICAL, theFile: "road.png", sX: 32,  sY: 0 },
         {tileType: TILE_ROAD_HORIZONTAL, theFile: "road.png", sX: 32,  sY: 32 },
         {tileType: TILE_ROAD_CROSS, theFile: "road.png", sX: 32, sY: 32 },
-
-
+        {tileType: TILE_TREE1_TL, theFile: "bigTree.png", sX: 0, sY: 0 },
+        {tileType: TILE_TREE1_TR, theFile: "bigTree.png", sX: 32, sY: 0 },
+        {tileType: TILE_TREE1_BL, theFile: "bigTree.png", sX: 0, sY: 32 },
+        {tileType: TILE_TREE1_BR, theFile: "bigTree.png", sX: 32, sY: 32 },
+        {tileType: TILE_TREE2_TL, theFile: "bigTree.png", sX: 64, sY: 0 },
+        {tileType: TILE_TREE2_TR, theFile: "bigTree.png", sX: 96, sY: 0 },
+        {tileType: TILE_TREE2_BL, theFile: "bigTree.png", sX: 64, sY: 32 },
+        {tileType: TILE_TREE2_BR, theFile: "bigTree.png", sX: 96, sY: 32 },
 
         // this is so NPCs have grass underneath them
         {tileType: TILE_NPC_ALCHEMIST, theFile: "grass.png", sX: "0", sY: "0", options: 4},
