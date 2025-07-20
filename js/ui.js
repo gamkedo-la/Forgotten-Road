@@ -889,3 +889,16 @@ const CalculateFinalLayout = () => {
 
   // Draw commands
 };
+
+// FONT LOADING
+const myFont = new FontFace(
+  "FantasyFont",
+  "url(/fonts/AncientModernTales-a7Po.ttf)"
+);
+
+myFont
+  .load()
+  .then((loadedFont) => document.fonts.add(loadedFont))
+  .catch((err) => {
+    console.error("Font loading failed:", err);
+  });

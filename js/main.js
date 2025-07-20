@@ -793,8 +793,12 @@ function drawArrowCount() {
 function drawPauseOverlay() {
   colorRect(0, 0, canvas.width, canvas.height, "#000000AA");
   ctx.textAlign = "center";
-  colorText("PAUSED", canvas.width / 2, canvas.height / 2, "white", 16);
-  ctx.textAlign = "start";
+  let x = canvas.width/2;
+  let y = canvas.height/2;
+  let shadow_offset_x = 2;
+  let shadow_offset_y = 2;
+  colorText("PAUSED", x+shadow_offset_x, y+shadow_offset_y, "orange", 32, "FantasyFont");
+  colorText("PAUSED", x, y, "yellow", 32, "FantasyFont");
 }
 
 function drawWorldItem(item) {
