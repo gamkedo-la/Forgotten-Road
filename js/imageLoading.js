@@ -139,6 +139,7 @@ function loadImages() {
         {tileType: TILE_CLIFF, theFile: "cliff.png", sX: "64", sY: "96",options: 0},
         {tileType: TILE_PRESSURE_PLATE, theFile: "grass.png", sX: "96", sY: "128",options: 0},
         {tileType: TILE_DIRT, theFile: "dirt.png", sX: "32", sY: "32",options: 0},
+        {tileType: TILE_DUNGEON_ENTRANCE, theFile: "wall.png", sX: 0, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_TOP, theFile: "wall.png", sX: 128, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_BOTTOM, theFile: "wall.png", sX: 128, sY: 32, options: 0},
         {tileType: TILE_DUNGEON_WALL_LEFT, theFile: "wall.png", sX: 96, sY: 32, options: 0},

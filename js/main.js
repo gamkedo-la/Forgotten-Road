@@ -278,6 +278,7 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   backgroundGrid = WORLD_MAPS[newMapKey];
   SetupCollisionGridFromBackground();
   updateBackground();
+  drawBackground(); 
 
   spawnEntitiesFromTiles(); 
   spawnRandomChickens();
@@ -289,7 +290,8 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   buildings = MAP_DATA[newMapKey]?.buildings || {};
   console.log(`Switched to ${newMapKey}`);
   console.log("Player moved to", player.x, player.y, "on map", newMapKey);
-
+  console.log("backgroundGrid after switch:", backgroundGrid);
+  console.log("Map key exists:", !!WORLD_MAPS[newMapKey]);
 }
 
 
@@ -370,6 +372,7 @@ function updateGameState(deltaTime) {
   }
   updatePressurePlates();
   checkForMapEdgeTransition();
+  checkForTileBasedMapTransition();
 }
 
 function spawnPendantInForest() {
@@ -390,17 +393,16 @@ function spawnPendantInForest() {
 }
 
 function renderGameWorld(deltaTime) {
+
+  console.log("RENDER: currentMapKey =", currentMapKey);
+  console.log("RENDER: backgroundGrid[0][0] =", backgroundGrid?.[0]?.[0]);
+
   
   // clear using the same shade of green as our grass tile
   // just in case we can see past the map edges
   ctx.fillStyle="rgba(137,140,34,1)"; // grass green
   //ctx.fillStyle="rgba(60,103,140,1)"; // water blue
   ctx.fillRect(0,0,4000,4000); // if we use canvas.width and height it's too small due to scrolling
-
-  // debug only
-  // console.log("boxPic", boxPic);
-  // console.log("shadowPic", shadowPic);
-  // console.log("player.sprite", player.sprite);
 
   // ground
   drawBackground();

@@ -151,7 +151,7 @@ function drawBackpackUI(ctx, player) {
         const labelX = equipStartX + slotSize + 10;
         colorText(slot.charAt(0).toUpperCase() + slot.slice(1), labelX, boxY + 20, "white", 12);
     
-        // ▶ Stat Details
+        // Stat Details
         if (equipped) {
             let detail = "";
             if (slot === "weapon" && equipped.damage) {
