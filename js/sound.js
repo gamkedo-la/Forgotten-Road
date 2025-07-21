@@ -29,6 +29,7 @@ all_sounds = [
     bossMusicSound,
     bossHaHaHaHaSound,
     bossChuckleSound,
+    footstepSound,
 ]
 
 function muteAllSounds() {
@@ -39,7 +40,7 @@ function muteAllSounds() {
 
 function unmuteAllSounds() {
     all_sounds.forEach(element => {
-        element.volume = 1.0;
+        element.volume = 1.0; // FIXME: remember previous volume
     });
     music.volume = MUSIC_VOLUME;
 }
