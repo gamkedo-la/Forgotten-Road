@@ -18,6 +18,30 @@
             height: 100vh;
             position: relative; /* Ensure proper positioning for absolute elements */
         }
+        #intro1, #intro2 {
+            position:absolute;
+            display:block;
+            color:white;
+            cursor: pointer;
+            top:50%;
+            left:50%;
+            padding-left:8px;
+            padding-right:8px;
+            border:1px solid black;
+            border-radius: 8px;
+            margin-left:240px;
+            margin-top:278px;
+            background:rgba(0,0,0,0.25);
+            font-family:arial;
+            font-size: 14px;
+        }
+        #intro2 {
+            margin-left:320px;
+        }
+        #intro1:hover, #intro2:hover {
+            background:rgba(0,0,0,1);
+            color:green;
+        }
     </style>
     
 </head>
@@ -57,5 +81,8 @@
     <script src="js/gameOver.js"></script>
     <script src="js/objects.js"></script>
     <script src="js/main.js"></script>
+
+    <div id="intro1" onClick="startIntro()">Play Intro</div>
+    <div id="intro2" onClick="skipIntro()">Skip Intro</div>
 </body>
 </html>

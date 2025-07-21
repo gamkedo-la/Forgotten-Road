@@ -37,7 +37,7 @@ gameCanvas.addEventListener("mousemove", (event) => {
 
 gameCanvas.addEventListener("mousedown", (event) => {
   mouse.clicked = true;
-  if (music!=null && music.currentTime == 0) startIntro();
+  if (music!=null && music.currentTime == 0) music.play();
 });
 
 gameCanvas.addEventListener("click", (event) => {
@@ -142,7 +142,7 @@ document.addEventListener("keydown", (event) => {
   // skip intro voiceovers
   console.log("keypress:"+event.key);
   if (event.key=='Escape') { 
-    skip_intro(); 
+    skipIntro(); 
     keys.cancel = true;
   }
 

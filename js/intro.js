@@ -1,4 +1,4 @@
-const DEBUG_NEVER_PLAY_INTRO = true; // set to false on release
+const DEBUG_NEVER_PLAY_INTRO = false; // set to false on release
 
 var please_skip_intro = false;
 var current_intro_text = "";
@@ -61,22 +61,25 @@ function drawIntroText() {
         }
     }
     // note that you can hit Esc
-    drawTextWithShadow("[Esc] Skip Intro",790,598,"rgba(255,255,255,0.5)","14px Arial","right");
+    //drawTextWithShadow("[Esc] Skip Intro",790,598,"rgba(255,255,255,0.5)","14px Arial","right");
 }
 
-function skip_intro() {
+function skipIntro() {
     please_skip_intro = true; // skip any future setTimeout calls
     intro_voiceover_1.pause();
     intro_voiceover_2.pause();
     intro_voiceover_3.pause();
     intro_voiceover_4.pause();
+    document.getElementById("intro1").style.display="none";
+    document.getElementById("intro2").style.display="none";
 }
 
 function startIntro() {
     console.log("playing music and queueing up intro voiceovers");
-    music.play();
+    document.getElementById("intro1").style.display="none";
+    if (music!=null && music.currentTime == 0) music.play();
     if (!DEBUG_NEVER_PLAY_INTRO) {
-        var delay = 4000;
+        var delay = 0;//4000;
         setTimeout(() => intro1(), delay);
         setTimeout(() => intro2(), delay + 26000);
         setTimeout(() => intro3(), delay + 46000);
