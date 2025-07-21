@@ -186,9 +186,13 @@ function drawGameFrame(currentTime) {
     renderParticles(deltaTime);
     weather?.update(deltaTime);
   ctx.restore();
-  ctx.save(); 
-    weather?.render(ctx, timeOfDay);
-  ctx.restore();  
+
+  if (currentMapKey == "fallDale") { // no rain in dungeons etc
+    ctx.save(); 
+      weather?.render(ctx, timeOfDay);
+    ctx.restore(); 
+  }
+
   renderUI();                
   requestAnimationFrame(drawGameFrame);
 
@@ -276,7 +280,7 @@ function switchToMap(newMapKey, playerCol, playerRow) {
     console.log("ERROR: unknown map.");
     return;
   }
-  
+
   currentMapKey = newMapKey;
   backgroundGrid = WORLD_MAPS[newMapKey];
   SetupCollisionGridFromBackground();
@@ -284,8 +288,11 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   drawBackground(); 
 
   spawnEntitiesFromTiles(); 
-  spawnRandomChickens();
-  spawnRandomMushrooms();
+  
+  if (newMapKey == "fallDale") {
+    spawnRandomChickens();
+    spawnRandomMushrooms();
+  }
 
   player.x = playerCol * TILE_W;
   player.y = playerRow * TILE_H;
