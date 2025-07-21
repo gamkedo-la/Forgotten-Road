@@ -291,8 +291,8 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   
   if (newMapKey == "fallDale") {
     spawnRandomChickens();
-    spawnRandomMushrooms();
   }
+  spawnRandomMushrooms();
 
   player.x = playerCol * TILE_W;
   player.y = playerRow * TILE_H;
