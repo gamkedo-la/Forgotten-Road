@@ -146,6 +146,11 @@ document.addEventListener("keydown", (event) => {
     keys.cancel = true;
   }
 
+  // debug map switch
+  if (event.key=='k') { 
+    switchToMap("SkeletonKingLair", 5, 5);
+  }
+
   // Handle active prompt
   if (dialoguePrompt && pendingQuest) {
     if (event.key.toLowerCase() === "y") {

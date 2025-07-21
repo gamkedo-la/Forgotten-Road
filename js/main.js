@@ -272,8 +272,11 @@ function checkForMapEdgeTransition() {
 
 function switchToMap(newMapKey, playerCol, playerRow) {
   console.log("SWITCHING TO NEW MAP: "+newMapKey);
-  if (!WORLD_MAPS[newMapKey]) return;
-
+  if (!WORLD_MAPS[newMapKey]) {
+    console.log("ERROR: unknown map.");
+    return;
+  }
+  
   currentMapKey = newMapKey;
   backgroundGrid = WORLD_MAPS[newMapKey];
   SetupCollisionGridFromBackground();
@@ -394,8 +397,8 @@ function spawnPendantInForest() {
 
 function renderGameWorld(deltaTime) {
 
-  console.log("RENDER: currentMapKey =", currentMapKey);
-  console.log("RENDER: backgroundGrid[0][0] =", backgroundGrid?.[0]?.[0]);
+  // console.log("RENDER: currentMapKey =", currentMapKey);
+  // console.log("RENDER: backgroundGrid[0][0] =", backgroundGrid?.[0]?.[0]);
 
   
   // clear using the same shade of green as our grass tile
