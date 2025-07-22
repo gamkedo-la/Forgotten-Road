@@ -17,6 +17,7 @@ var goblinPic = document.createElement("img");
 var koboldPic = document.createElement("img");
 var ghoulPic = document.createElement('img');
 var skeletonPic = document.createElement("img");
+var skeletonKingPic = document.createElement("img");
 var orcPic = document.createElement("img");
 var wraithPic = document.createElement("img"); 
 var oldManPic = document.createElement("img");
@@ -84,6 +85,7 @@ function loadImages() {
         {varName: goblinPic, theFile: "goblin.png"},
         {varName: koboldPic, theFile: "Kobald.png"},
         {varName: skeletonPic, theFile: "skeleton.png"},
+        {varName: skeletonKingPic, theFile: "skeletonKing.png"},
         {varName: ghoulPic, theFile: "Ghoul.png"},
         {varName: orcPic, theFile: "orc.png"},
         {varName: wraithPic, theFile: "Wraith.png"},

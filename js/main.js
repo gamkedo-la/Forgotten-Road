@@ -123,6 +123,18 @@ function spawnMonstersFromMap() {
         state: BEHAVIOR_STATES.PATROL,
         extra: { canResurrect: true, isUndead: true, immuneToRanged: true },
       });
+    } else if (tile === TILE_SKELETON_KING_SPAWN) {
+      monster = createMonster({
+        name: "Skeleton King",
+        x,
+        y,
+        damage: 2,
+        maxHealth: 200,
+        type: "melee",
+        size: 40,
+        state: BEHAVIOR_STATES.PATROL,
+        extra: { canResurrect: true, isUndead: true, immuneToRanged: true },
+      });
     } else if (tile === TILE_WRAITH_SPAWN) {
       monster = createMonster({
         name: "Wraith",

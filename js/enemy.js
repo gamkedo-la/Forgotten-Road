@@ -124,9 +124,9 @@ class Monster extends Entity {
             this.currentHP = 20;
             this.speed = 0.4; 
             this.isMindless = true;
-        } else if (name === "Skeleton Champion") {
+        } else if (name === "Skeleton King") {
             this.behavior = "elite";
-            this.image = skeletonPic; // reuse your existing skeleton sprite
+            this.image = skeletonKingPic; 
             this.maxHP = 80;
             this.currentHP = 80;
             this.width = 32;
