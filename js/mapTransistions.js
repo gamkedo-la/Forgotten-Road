@@ -34,7 +34,7 @@ function checkForTileBasedMapTransition() {
     const now = performance.now();
     if (now - lastMapSwitchTime < MAP_SWITCH_COOLDOWN) return;
 
-    switchToMap("SkeletonKingLair", 5, 5); 
+    switchToMap("SkeletonKingLair", 21, 31); 
     lastMapSwitchTime = now;
   }
 }

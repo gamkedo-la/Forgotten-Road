@@ -298,10 +298,10 @@ function switchToMap(newMapKey, playerCol, playerRow) {
   player.y = playerRow * TILE_H;
 
   buildings = MAP_DATA[newMapKey]?.buildings || {};
-  console.log(`Switched to ${newMapKey}`);
+ /* console.log(`Switched to ${newMapKey}`);
   console.log("Player moved to", player.x, player.y, "on map", newMapKey);
   console.log("backgroundGrid after switch:", backgroundGrid);
-  console.log("Map key exists:", !!WORLD_MAPS[newMapKey]);
+  console.log("Map key exists:", !!WORLD_MAPS[newMapKey]); */
 }
 
 
