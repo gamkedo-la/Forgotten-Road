@@ -26,10 +26,30 @@ function saveGameData() {
             damage: enemy.damage
         })),
         playState: playState,
+        currentMapKey: typeof currentMapKey !== 'undefined' ? currentMapKey : null,
         destructibles: destructibles,
         worldItems: worldItems,
-        npcs: npcs,
-        buildings: buildings,
+        // Only save persistent/important NPCs 
+        npcs: npcs
+            .filter(npc => [
+                "Blacksmith",
+                "Alchemist",
+                "Chef Gormondo",
+                "Chuck",
+                "Mick",
+                "Old Man",
+                "First Doctor",
+                "Second Doctor"
+            ].includes(npc.name))
+            .map(npc => ({
+                name: npc.name,
+                x: npc.x,
+                y: npc.y,
+                dialogueLines: npc.dialogueLines,
+                hoverText: npc.hoverText,
+                schedule: npc.schedule
+            })),
+
         dialoguePrompt: dialoguePrompt,
         pendingQuest: pendingQuest,
         lastMapSwitchTime: lastMapSwitchTime,

@@ -269,6 +269,11 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "/") {
     saveGameData();
   }
+
+  // Load game
+  if (event.key === ".") {
+    loadGameData();
+  }
 });
 
 document.addEventListener("keyup", (event) => {
