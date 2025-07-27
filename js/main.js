@@ -9,6 +9,8 @@ const HUD_BAR_WIDTH = 195;
 
 let paused = false;
 let pressedPause = false;
+let pauseOverlayAlpha = 0;
+let pauseAlphaChangeRate = 0.14;
 let muted = false;
 let pressedMute = false;
 let turnPathFindingDrawingOn = false;
@@ -534,7 +536,12 @@ function renderTopStatsBar() {
 function renderUI() {
   drawBackpackUI(ctx, player);
   temp_ui_elements.forEach((ui) => ui.draw());
-  if (paused) drawPauseOverlay();
+  if (paused) {
+    drawPauseOverlay();
+    pauseOverlayAlpha = lerp(pauseOverlayAlpha, 1, pauseAlphaChangeRate);
+  } else {
+    pauseOverlayAlpha = 0;
+  }
   renderTopStatsBar(); 
   drawQuestTracker();
   drawDialoguePrompt();
@@ -815,6 +822,7 @@ function drawArrowCount() {
 
 
 function drawPauseOverlay() {
+  ctx.globalAlpha = pauseOverlayAlpha;
   colorRect(0, 0, canvas.width, canvas.height, "#000000AA");
   ctx.textAlign = "center";
   let x = canvas.width/2;
@@ -823,6 +831,7 @@ function drawPauseOverlay() {
   let shadow_offset_y = 2;
   colorText("PAUSED", x+shadow_offset_x, y+shadow_offset_y, "orange", 32, "FantasyFont");
   colorText("PAUSED", x, y, "yellow", 32, "FantasyFont");
+  ctx.globalAlpha = 1;
 }
 
 function drawWorldItem(item) {
