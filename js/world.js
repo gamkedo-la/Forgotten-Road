@@ -372,28 +372,49 @@ function SetupCollisionGridFromBackground() {
     .fill(null)
     .map(() => new Array(TILE_COLS).fill(null));
 
-  const unwalkableTiles = [
-    TILE_WALL,
-    TILE_CRYPT_GATE,
-    TILE_CLIFF,
-    TILE_TREE,
-    TILE_TREE2,
-    TILE_WATER,
-    TILE_WATER_1,
-    TILE_WATER_2,
-  ];
+    const unwalkableTiles = [
+      // Nature
+      TILE_TREE, TILE_TREE2,
+      TILE_TREE1_TL, TILE_TREE1_TR, TILE_TREE1_BL, TILE_TREE1_BR,
+      TILE_TREE2_TL, TILE_TREE2_TR, TILE_TREE2_BL, TILE_TREE2_BR,
+      TILE_BUSH1, TILE_BUSH2,
+      
+      // Water
+      TILE_WATER, TILE_WATER_1, TILE_WATER_2,
+
+      // Walls & Cliffs
+      TILE_WALL, TILE_CLIFF, TILE_CRYPT_GATE,
+
+      // Dungeon Walls
+      TILE_DUNGEON_WALL_TOP, TILE_DUNGEON_WALL_BOTTOM,
+      TILE_DUNGEON_WALL_LEFT, TILE_DUNGEON_WALL_RIGHT,
+      TILE_DUNGEON_WALL_CORNER_TL, TILE_DUNGEON_WALL_CORNER_TR,
+      TILE_DUNGEON_WALL_CORNER_BL, TILE_DUNGEON_WALL_CORNER_BR,
+
+      // Dungeon Doors (optional — if you want them locked)
+      TILE_DUNGEON_DOOR_TL, TILE_DUNGEON_DOOR_TC, TILE_DUNGEON_DOOR_TR,
+      TILE_DUNGEON_DOOR_BL, TILE_DUNGEON_DOOR_BC, TILE_DUNGEON_DOOR_BR,
+
+      // Other
+      TILE_FENCE,
+      TILE_GRAVES, // if you don't want players/enemies walking over gravestones
+];
+
 
   for (let row = 0; row < TILE_ROWS; row++) {
     for (let col = 0; col < TILE_COLS; col++) {
       const idxHere = tileCoordToIndex(col, row);
       let tileType = TILE_GRASS; // default if data is missing
-      if (!backgroundGrid[row] || backgroundGrid[row][col]) {
-        if (!backgroundGrid[row]) backgroundGrid[row] = [];
-        if (!backgroundGrid[row][col]) backgroundGrid[row][col] = TILE_GRASS; // FILL
-        // console.log("ERROR - missing data for backgroundGrid["+row+","+col+"] filled with grass");
-      } else {
-        tileType = backgroundGrid[row][col];
+
+      if (!backgroundGrid[row]) {
+        backgroundGrid[row] = [];
       }
+      if (backgroundGrid[row][col] === undefined) {
+        backgroundGrid[row][col] = TILE_GRASS;
+      }
+
+      tileType = backgroundGrid[row][col];
+
 
       collisionGrid[row][col] = new GridElement();
       collisionGrid[row][col].name = `${col},${row}`;

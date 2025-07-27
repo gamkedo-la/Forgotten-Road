@@ -3,6 +3,9 @@
 const PATHFINDING_TOO_MANY_NODES = 25000;
 const MAX_PATH_DISTANCE = 480; // pixels
 
+
+
+
 // GridElement Class for Pathfinding
 class GridElement {
   constructor(x, y, walkable) {
