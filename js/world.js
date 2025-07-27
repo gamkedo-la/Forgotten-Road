@@ -434,14 +434,17 @@ function getMonsterSpawnTiles() {
       if (
         tile === TILE_GOBLIN_SPAWN ||
         tile === TILE_ORC_SPAWN ||
-        tile === TILE_KOBOLD_SPAWN ||
+        tile === TILE_KOBOLD_SPAWN ) 
+      {
+        spawns.push({ tile, col, row });
+        backgroundGrid[row][col] = TILE_GRASS;
+      } else if (
         tile === TILE_SKELETON_SPAWN ||
         tile === TILE_WRAITH_SPAWN ||
         tile === TILE_GHOUL_SPAWN
-      ) {
-        spawns.push({ tile, col, row });
-        backgroundGrid[row][col] = TILE_GRASS;
-      }
+      ){
+        spawns.push({ tile, col, row }); 
+        backgroundGrid[row][col] = TILE_DUNGEON_WALL_CENTER;
     }
   }
 
