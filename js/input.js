@@ -126,6 +126,7 @@ if (DISPLAY_POPUP_BEFORE_RELOAD) {
 window.addEventListener("blur", () => {
   Object.keys(keys).forEach(k => keys[k] = false);
   player.cancelPath();
+  paused = true;
 });
 
 document.addEventListener("visibilitychange", () => {
