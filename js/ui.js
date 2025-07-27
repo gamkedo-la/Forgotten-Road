@@ -890,6 +890,11 @@ const CalculateFinalLayout = () => {
   // Draw commands
 };
 
+// ANIMATION UTILS
+const lerp = (a, b, t) => {
+  return a + (b - a) * t;
+};
+
 // FONT LOADING
 const myFont = new FontFace(
   "FantasyFont",
