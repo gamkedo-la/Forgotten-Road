@@ -242,6 +242,7 @@ document.addEventListener("keydown", (event) => {
 
   // Sprint
   if (event.key === "h") {
+    if (paused) return;
     if (player.isSprinting) {
       player.currentSpeed = player.baseSpeed;
       player.isSprinting = false;
