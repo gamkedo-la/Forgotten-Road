@@ -104,6 +104,7 @@ if (!npcClicked && !player.isMoving && !inventoryOpen) {
   const path = findPathForPlayer(playerX, playerY, clickX, clickY, collisionGrid);
   if (path.length > 0) {
     console.log("Click path to:", clickX, clickY);
+    if (paused) return;
     player.setPath(path);
   }
 }
