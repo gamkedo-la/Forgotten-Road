@@ -11,6 +11,8 @@ let paused = false;
 let pressedPause = false;
 let pauseOverlayAlpha = 0;
 let pauseAlphaChangeRate = 0.14;
+let pauseTextMovementFrequency = 0.09;
+let pauseTextMovementAmplitude = 2;
 let muted = false;
 let pressedMute = false;
 let turnPathFindingDrawingOn = false;
@@ -825,12 +827,13 @@ function drawPauseOverlay() {
   ctx.globalAlpha = pauseOverlayAlpha;
   colorRect(0, 0, canvas.width, canvas.height, "#000000AA");
   ctx.textAlign = "center";
+  let movement_offset = Math.sin(frameCount * (pauseTextMovementFrequency)) * pauseTextMovementAmplitude;
   let x = canvas.width/2;
   let y = canvas.height/2;
   let shadow_offset_x = 2;
   let shadow_offset_y = 2;
-  colorText("PAUSED", x+shadow_offset_x, y+shadow_offset_y, "orange", 32, "FantasyFont");
-  colorText("PAUSED", x, y, "yellow", 32, "FantasyFont");
+  colorText("PAUSED", x+shadow_offset_x, y+shadow_offset_y + movement_offset, "orange", 32, "FantasyFont");
+  colorText("PAUSED", x, y + movement_offset, "yellow", 32, "FantasyFont");
   ctx.globalAlpha = 1;
 }
 
