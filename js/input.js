@@ -108,7 +108,7 @@ if (!npcClicked && !player.isMoving && !inventoryOpen) {
     if (paused) return;
     player.setPath(path);
   } else {
-    console.log("No path possible to "+clickX+","+clickY);
+    console.log("No path possible from "+playerX+","+playerY+" to "+clickX+","+clickY);
   }
 }
 

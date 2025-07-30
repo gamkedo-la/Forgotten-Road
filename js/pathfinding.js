@@ -47,7 +47,7 @@ function findPath(startX, startY, endX, endY, collisionGrid, caller="unknown", m
 
   while (openSet.length > 0) {
       if (openSet.length>PATHFINDING_TOO_MANY_NODES) { // sanity check to avoid infinite hangs
-          console.log("ERROR: openSet.length="+openSet.length+" is so big we must be stuck in an infinite loop.\npathfinding failed.");
+          console.log("ERROR: pathfinding infinite loop! Giving up.");
           return [];
       }
       let lowestIndex = 0;
