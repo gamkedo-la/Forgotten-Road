@@ -1,7 +1,10 @@
 // if openset is larger than this, assume pathfinding
 // is stuck in an infinite loop and exit
-const PATHFINDING_TOO_MANY_NODES = 25000;
-const MAX_PATH_DISTANCE = 480; // pixels
+const PATHFINDING_TOO_MANY_NODES = 10000;
+
+// max pixels between points to ignore the click
+// this caused perfectly valid clicks to be ignored
+const MAX_PATH_DISTANCE = 999999; // 480; 
 
 
 
@@ -44,7 +47,7 @@ function findPath(startX, startY, endX, endY, collisionGrid, caller="unknown", m
 
   while (openSet.length > 0) {
       if (openSet.length>PATHFINDING_TOO_MANY_NODES) { // sanity check to avoid infinite hangs
-          //console.log("ERROR: openSet.length="+openSet.length+" is so big we must be stuck in an infinite loop.\npathfinding failed.");
+          console.log("ERROR: openSet.length="+openSet.length+" is so big we must be stuck in an infinite loop.\npathfinding failed.");
           return [];
       }
       let lowestIndex = 0;
