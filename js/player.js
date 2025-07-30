@@ -39,6 +39,7 @@ class Player extends Entity {
     this.facing = "down";
     this.state = "idle";
     this.attackTimer = 0;
+    this.shootingProjectile = false;
     this.currentAttackFrame = 0;
     this.walkTimer = 0;
     this.currentWalkFrame = 0;
@@ -134,8 +135,6 @@ class Player extends Entity {
     };
   }
   
-
-
   staffAttack(enemies) {
     if (this.isAttacking || this.isMoving) return;
 
@@ -227,7 +226,9 @@ class Player extends Entity {
     }
 
     setTimeout(() => {
-      this.isAttacking = false;
+      if (this.state === "shooting") {
+        this.state = "idle";
+      }
     }, 300);
   }
 
@@ -246,9 +247,11 @@ class Player extends Entity {
     }
   
     this.useStamina(STAMINA_COST);
-    this.arrows--; // 🏹 Use an arrow
-    this.isAttacking = true;
-  
+    this.arrows--; // Use an arrow
+    this.state = "shooting";
+    this.currentAttackFrame = 0;
+    this.attackTimer = 0;
+
     let weapon = this.equipment.weapon;
     let bonusDamage = this.getEquippedBonusDamage();
     let { damage, isCrit } = this.calculateWeaponDamage(weapon, bonusDamage);
@@ -468,24 +471,41 @@ class Player extends Entity {
     
     let frameWidth, srcX, srcY;
 
-    if (this.state === "attacking") {
-      this.attackTimer += deltaTime;
-      if (this.attackTimer > frameDuration) {
-        this.attackTimer = 0;
-        this.currentAttackFrame++;
+   if (this.state === "attacking") {
+    this.attackTimer += deltaTime;
+    if (this.attackTimer > frameDuration) {
+      this.attackTimer = 0;
+      this.currentAttackFrame++;
 
-        if (this.currentAttackFrame >= FRAMES_PER_ANIMATION) {
-          this.currentAttackFrame = 0;
-          this.state = "idle";
-        }
+      if (this.currentAttackFrame >= FRAMES_PER_ANIMATION) {
+        this.currentAttackFrame = 0;
+        this.state = "idle";
+      }
+    }
+
+    frameWidth = FRAME_ATTACK_WIDTH;
+    srcX =
+      32 +
+      FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION +
+      this.currentAttackFrame * frameWidth;
+    srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+
+      } else if (this.state === "shooting") {
+        this.attackTimer += deltaTime;
+        if (this.attackTimer > frameDuration) {
+          this.attackTimer = 0;
+          this.currentAttackFrame++;
+
+          if (this.currentAttackFrame >= FRAMES_PER_ANIMATION) {
+            this.currentAttackFrame = 0;
+            this.state = "idle";
+          }
       }
 
-      frameWidth = FRAME_ATTACK_WIDTH;
-      srcX =
-        32 +
-        FRAME_WALK_WIDTH * FRAMES_PER_ANIMATION +
-        this.currentAttackFrame * frameWidth;
+      frameWidth = 32;
+      srcX = 310 + this.currentAttackFrame * frameWidth;
       srcY = this.getDirectionIndex() * FRAME_HEIGHT;
+
     } else if (this.state === "dead") {
       this.deathTimer += deltaTime;
       if (this.deathTimer > frameDuration) {
