@@ -1,6 +1,7 @@
 var pathfinderGrid = [];
 let pressedInteract = false;
 const DISPLAY_POPUP_BEFORE_RELOAD = false; // interferes with dev
+const PAUSE_GAME_IF_MOUSE_LEAVES_WINDOW = false; // interefers with dev
 
 const keys = {
   up: false,
@@ -124,11 +125,14 @@ if (DISPLAY_POPUP_BEFORE_RELOAD) {
     });
 }
 
-window.addEventListener("blur", () => {
-  Object.keys(keys).forEach(k => keys[k] = false);
-  player.cancelPath();
-  paused = true;
-});
+// this makes debugging very tricky - turned off during dev
+if (PAUSE_GAME_IF_MOUSE_LEAVES_WINDOW) {
+    window.addEventListener("blur", () => {
+    Object.keys(keys).forEach(k => keys[k] = false);
+    player.cancelPath();
+    paused = true;
+    });
+}
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
