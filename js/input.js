@@ -126,20 +126,28 @@ if (DISPLAY_POPUP_BEFORE_RELOAD) {
 }
 
 // this makes debugging very tricky - turned off during dev
+// FIXME / TODO: unpause when window regains focus
 if (PAUSE_GAME_IF_MOUSE_LEAVES_WINDOW) {
+
+    // pause the game if the mouse clicks any other window
+    // or the game is minimized etc
     window.addEventListener("blur", () => {
-    Object.keys(keys).forEach(k => keys[k] = false);
-    player.cancelPath();
-    paused = true;
+      Object.keys(keys).forEach(k => keys[k] = false);
+      player.cancelPath();
+      paused = true;
     });
+
+    // FIXME: is this necessary? might cause problems
+    // as it neglects to consider paused state etc?
+    document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        Object.keys(keys).forEach(k => keys[k] = false);
+        player.cancelPath();
+    }
+    });
+
 }
 
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    Object.keys(keys).forEach(k => keys[k] = false);
-    player.cancelPath();
-  }
-});
 
 // Key listeners
 document.addEventListener("keydown", (event) => {
