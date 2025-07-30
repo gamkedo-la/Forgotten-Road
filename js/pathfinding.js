@@ -33,7 +33,10 @@ function findPath(startX, startY, endX, endY, collisionGrid, caller="unknown", m
 
    const distance = heuristic(startNode, endNode);
    if (distance > maxDistance) {
-      //console.log("Pathfinding distance " + distance + " exceeds maximum " + maxDistance + ", from " + caller);
+      console.log("IGNORING MOVE: Pathfinding distance " + distance + " exceeds maximum " + maxDistance + ", from " + caller);
+      // FIXME: pick a new target location
+      // that goes only as far as allowed
+      // (you should always move if you click a valid location)
       return [];
    }
 

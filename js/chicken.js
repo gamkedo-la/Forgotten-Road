@@ -29,7 +29,7 @@ class Chicken extends Entity {
     layEgg() {
         let x = this.x + 4;
         let y = this.y + 4;
-        console.log("laying an egg at "+x+","+y);
+        //console.log("laying an egg at "+x+","+y);
         let e = new Egg(x,y);
         npcs.push(e);
     }

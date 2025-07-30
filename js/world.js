@@ -739,8 +739,8 @@ function spawnEntitiesFromTiles() {
     for (let col = 0; col < grid[row].length; col++) {
       const tile = grid[row][col];
       const spawnFunc = TILE_ENTITY_MAP[tile];
-       console.log("spawnFun: " + spawnFunc)
       if (spawnFunc) {
+        //console.log("spawnFunc: ",spawnFunc);
         const x = col * TILE_W;
         const y = row * TILE_H;
         const entity = spawnFunc({ x, y });
