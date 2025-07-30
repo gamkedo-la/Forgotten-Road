@@ -13,10 +13,13 @@ function drawGameOverScreen() {
 
 function restartGame() {
 
+    // quick fix: reload the game by hitting refresh on the browser
+    location.reload();
+    
+    // buggy version:
     // FIXME: we need to reload the map
     // and respawn enemies and NPCs etc
     // and perhaps auto-load the savegame
-
     playState = "playing";
     player.currentHP = player.maxHP;
     player.state = "idle";
@@ -26,9 +29,7 @@ function restartGame() {
     player.moveTarget = null;
     player.inventory = [];
     player.gold = 0;
-
     enemies.length = 0;
-
     console.log("Game restarted.");
 }
 
