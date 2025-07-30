@@ -12,6 +12,11 @@ function drawGameOverScreen() {
 }
 
 function restartGame() {
+
+    // FIXME: we need to reload the map
+    // and respawn enemies and NPCs etc
+    // and perhaps auto-load the savegame
+
     playState = "playing";
     player.currentHP = player.maxHP;
     player.state = "idle";

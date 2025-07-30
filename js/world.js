@@ -392,8 +392,12 @@ function SetupCollisionGridFromBackground() {
       TILE_DUNGEON_WALL_CORNER_BL, TILE_DUNGEON_WALL_CORNER_BR,
 
       // Dungeon Doors (optional — if you want them locked)
-      TILE_DUNGEON_DOOR_TL, TILE_DUNGEON_DOOR_TC, TILE_DUNGEON_DOOR_TR,
-      TILE_DUNGEON_DOOR_BL, TILE_DUNGEON_DOOR_BC, TILE_DUNGEON_DOOR_BR,
+      TILE_DUNGEON_DOOR_TL, 
+      //TILE_DUNGEON_DOOR_TC, // allowed for now
+      TILE_DUNGEON_DOOR_TR,
+      TILE_DUNGEON_DOOR_BL,
+      //TILE_DUNGEON_DOOR_BC, // allowed for now
+      TILE_DUNGEON_DOOR_BR,
 
       // Other
       TILE_FENCE,
