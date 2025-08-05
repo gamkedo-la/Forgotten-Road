@@ -98,7 +98,7 @@ const TILE_DUNGEON_WALL_CORNER_TL = 204;
 const TILE_DUNGEON_WALL_CORNER_TR = 205;
 const TILE_DUNGEON_WALL_CORNER_BL = 206;
 const TILE_DUNGEON_WALL_CORNER_BR = 207;
-const TILE_DUNGEON_WALL_CENTER = 208;
+const TILE_DUNGEON_WALL_CENTER = 208; // wrong name: actually a floor tile
 const TILE_DUNGEON_DOOR_TL = 209;
 const TILE_DUNGEON_DOOR_TC = 210;
 const TILE_DUNGEON_DOOR_TR = 211;
@@ -779,6 +779,13 @@ function spawnEntitiesFromTiles() {
 
         if (entity instanceof Monster) {
           enemies.push(entity);
+          // fill empty space with proper tile
+          if (currentMapKey == "SkeletonKingLair") {
+            // this const has the wrong name: it is actually a floor tile
+            grid[row][col] = TILE_DUNGEON_WALL_CENTER; 
+          } else {
+            grid[row][col] = TILE_GRASS;
+          }
         } else if (entity instanceof NPC) {
           npcs.push(entity);
         }

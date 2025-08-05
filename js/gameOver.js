@@ -16,7 +16,8 @@ function restartGame() {
     // quick fix: reload the game by hitting refresh on the browser
     location.reload();
     
-    // buggy version:
+    /*
+    // incomplete version:
     // FIXME: we need to reload the map
     // and respawn enemies and NPCs etc
     // and perhaps auto-load the savegame
@@ -31,5 +32,6 @@ function restartGame() {
     player.gold = 0;
     enemies.length = 0;
     console.log("Game restarted.");
+    */
 }
 
