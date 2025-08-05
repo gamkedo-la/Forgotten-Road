@@ -143,6 +143,8 @@ function loadImages() {
         {tileType: TILE_DIRT, theFile: "dirt.png", sX: "32", sY: "32",options: 0},
         {tileType: TILE_DUNGEON_ENTRANCE, theFile: "wall.png", sX: 0, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_TOP, theFile: "wall.png", sX: 128, sY: 0, options: 0},
+        // same as above but used as a floor tile:
+        {tileType: TILE_DUNGEON_DOOR_CEILING, theFile: "wall.png", sX: 128, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_BOTTOM, theFile: "wall.png", sX: 128, sY: 32, options: 0},
         {tileType: TILE_DUNGEON_WALL_LEFT, theFile: "wall.png", sX: 96, sY: 32, options: 0},
         {tileType: TILE_DUNGEON_WALL_RIGHT, theFile: "wall.png", sX: 160, sY: 32, options: 0},
