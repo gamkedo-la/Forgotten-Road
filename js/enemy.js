@@ -1,3 +1,21 @@
+var NEXT_ENEMY_ID = (typeof NEXT_ENEMY_ID !== 'undefined') ? NEXT_ENEMY_ID : 1;
+var enemiesById = (typeof enemiesById !== 'undefined') ? enemiesById : new Map();
+
+function registerEnemy(enemy, explicitId) {
+    enemy.id = (explicitId != null) ? explicitId : NEXT_ENEMY_ID++;
+    enemiesById.set(enemy.id, enemy);
+    return enemy.id;
+}
+
+function getEnemyById(id) {
+    return enemiesById.get(id) || null;
+}
+
+function getEnemiesByType(name) {
+    // relies on your global `enemies` array
+    return (typeof enemies !== 'undefined') ? enemies.filter(e => e.name === name) : [];
+}
+
 const BEHAVIOR_STATES = {
     IDLE: "idle",
     PATROL: "patrol",
@@ -18,36 +36,50 @@ function findPathForEnemy(startX, startY, endX, endY, collisionGrid, maxDistance
 function getFlankPosition(enemy, player, others, collisionGrid, usedFlankTiles = new Set()) {
     let px = Math.floor(player.x / TILE_W);
     let py = Math.floor(player.y / TILE_H);
-  
-    const flankOffsets = [
-        { x: 1, y: 0 },   // East
-        { x: -1, y: 0 },  // West
-        { x: 0, y: 1 },   // South
-        { x: 0, y: -1 }   // North
+
+    const flankOffsets = [{
+            x: 1,
+            y: 0
+        }, // East
+        {
+            x: -1,
+            y: 0
+        }, // West
+        {
+            x: 0,
+            y: 1
+        }, // South
+        {
+            x: 0,
+            y: -1
+        } // North
     ];
-      
+
     let shuffled = flankOffsets.sort(() => 0.5 - Math.random());
-  
+
     for (let offset of shuffled) {
-      let tx = px + offset.x;
-      let ty = py + offset.y;
-      let key = `${tx},${ty}`;
-  
-      if (
-        tx >= 0 && ty >= 0 &&
-        tx < TILE_COLS && ty < TILE_ROWS &&
-        collisionGrid[ty][tx] &&
-        collisionGrid[ty][tx].isWalkable &&
-        !usedFlankTiles.has(key)
-      ) {
-        usedFlankTiles.add(key);
-        return { x: tx, y: ty };
-      }
+        let tx = px + offset.x;
+        let ty = py + offset.y;
+        let key = `${tx},${ty}`;
+
+        if (
+            tx >= 0 && ty >= 0 &&
+            tx < TILE_COLS && ty < TILE_ROWS &&
+            collisionGrid[ty][tx] &&
+            collisionGrid[ty][tx].isWalkable &&
+            !usedFlankTiles.has(key)
+        ) {
+            usedFlankTiles.add(key);
+            return {
+                x: tx,
+                y: ty
+            };
+        }
     }
-  
+
     return null;
 }
-  
+
 
 class Monster extends Entity {
     constructor(name, x, y, health, damage, loot, combatType = "melee") {
@@ -71,7 +103,7 @@ class Monster extends Entity {
         this.combatType = combatType;
         this.isDying = false;
         this.deathFrame = 0;
-        this.maxDeathFrames = 8; 
+        this.maxDeathFrames = 8;
         this.removalStarted = false;
         this.isMindless = false;
         this.flankTarget = null;
@@ -102,7 +134,7 @@ class Monster extends Entity {
             this.currentHP = 40;
             this.width = 40;
             this.height = 40;
-            this.speed = 0.8; 
+            this.speed = 0.8;
             this.minDamage = 6;
             this.maxDamage = 12;
             this.critChance = 0.2;
@@ -122,11 +154,11 @@ class Monster extends Entity {
             this.image = ghoulPic;
             this.maxHP = 20;
             this.currentHP = 20;
-            this.speed = 0.4; 
+            this.speed = 0.4;
             this.isMindless = true;
         } else if (name === "Skeleton King") {
             this.behavior = "elite";
-            this.image = skeletonKingPic; 
+            this.image = skeletonKingPic;
             this.maxHP = 80;
             this.currentHP = 80;
             this.width = 32;
@@ -141,15 +173,42 @@ class Monster extends Entity {
             this.lastSpecialAttack = 0;
         }
 
-        this.patrolPath = [
-            { x: Math.floor(this.x / TILE_W) + 1, y: Math.floor(this.y / TILE_H) },
-            { x: Math.floor(this.x / TILE_W), y: Math.floor(this.y / TILE_H) + 1 },
-            { x: Math.floor(this.x / TILE_W) - 1, y: Math.floor(this.y / TILE_H) },
-            { x: Math.floor(this.x / TILE_W), y: Math.floor(this.y / TILE_H) - 1 },
+        this.patrolPath = [{
+                x: Math.floor(this.x / TILE_W) + 1,
+                y: Math.floor(this.y / TILE_H)
+            },
+            {
+                x: Math.floor(this.x / TILE_W),
+                y: Math.floor(this.y / TILE_H) + 1
+            },
+            {
+                x: Math.floor(this.x / TILE_W) - 1,
+                y: Math.floor(this.y / TILE_H)
+            },
+            {
+                x: Math.floor(this.x / TILE_W),
+                y: Math.floor(this.y / TILE_H) - 1
+            },
         ];
+
+        // If no patrolPath, fall back to patrol area behavior
+        if (!this.patrolPath || this.patrolPath.length === 0) {
+            const startCol = Math.floor(this.x / TILE_W);
+            const startRow = Math.floor(this.y / TILE_H);
+            this.patrolCenter = {
+                x: startCol,
+                y: startRow
+            };
+            this.patrolRadius = 5; // tiles to wander
+            this.patrolWaitMinMs = 400;
+            this.patrolWaitMaxMs = 1200;
+            this._patrolWaitUntil = 0;
+        }
     }
 
-    get loot() { return this._loot; }
+    get loot() {
+        return this._loot;
+    }
 
     calculateAttackDamage(bonus = 0) {
         const min = this.minDamage ?? this._damage ?? 1;
@@ -163,7 +222,7 @@ class Monster extends Entity {
             isCrit
         };
     }
-    
+
     attack(target) {
         if (target instanceof Player) {
             target.health -= this.damage;
@@ -205,7 +264,10 @@ class Monster extends Entity {
                 const distance = Math.sqrt(distX * distX + distY * distY);
 
                 if (distance >= minDistanceFromPlayer) {
-                    validSpawnPositions.push({ col, row });
+                    validSpawnPositions.push({
+                        col,
+                        row
+                    });
                 }
             }
         }
@@ -251,42 +313,42 @@ class Monster extends Entity {
         const dx = player.x - this.x;
         const dy = player.y - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-    
+
         if (dist > visionRadius * TILE_W) {
             return false; // out of range
         }
-    
+
         const steps = Math.ceil(dist / TILE_W);
         for (let i = 1; i < steps; i++) {
             const checkX = Math.floor(this.x + (dx * i) / steps);
             const checkY = Math.floor(this.y + (dy * i) / steps);
-    
+
             const tileCol = Math.floor(checkX / TILE_W);
             const tileRow = Math.floor(checkY / TILE_H);
-    
+
             if (collisionGrid[tileRow]?.[tileCol] === TILE_WALL) {
                 return false; // blocked by wall
             }
         }
-    
+
         return true; // no obstructions
     }
-    
+
     moveAwayFrom(target) {
         const dx = this.x - target.x;
         const dy = this.y - target.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-    
+
         if (dist > 0) {
-            this.facing = Math.abs(dx) > Math.abs(dy)
-                ? (dx > 0 ? "right" : "left")
-                : (dy > 0 ? "down" : "up");
-    
+            this.facing = Math.abs(dx) > Math.abs(dy) ?
+                (dx > 0 ? "right" : "left") :
+                (dy > 0 ? "down" : "up");
+
             this.x += (dx / dist) * this.speed;
             this.y += (dy / dist) * this.speed;
         }
     }
-    
+
     setPath(path) {
         this.path = path;
         if (this.path.length > 0) {
@@ -321,22 +383,22 @@ class Monster extends Entity {
 
     followPath() {
         if (!this.path || this.path.length === 0) {
-       //     console.warn(`${this.name} has no path to follow`);
+            //     console.warn(`${this.name} has no path to follow`);
             return;
         }
-    
+
         const next = this.path[0];
         const dx = next.x * TILE_W - this.x;
         const dy = next.y * TILE_H - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const speed = this.speed;
-    
+
         if (Math.abs(dx) > Math.abs(dy)) {
             this.facing = dx > 0 ? "right" : "left";
         } else {
             this.facing = dy > 0 ? "down" : "up";
         }
-    
+
         if (dist < 0.5) {
             this.x = Math.round(next.x * TILE_W);
             this.y = Math.round(next.y * TILE_H);
@@ -345,10 +407,10 @@ class Monster extends Entity {
             this.x += (dx / dist) * speed;
             this.y += (dy / dist) * speed;
         }
-    
-      //  console.log(`${this.name} is following path, ${this.path.length} steps remaining`);
+
+        //  console.log(`${this.name} is following path, ${this.path.length} steps remaining`);
     }
-    
+
     followPatrolPath() {
         if (!this.patrolPath) return;
         if (!this.path || this.path.length === 0) {
@@ -382,11 +444,16 @@ class Monster extends Entity {
 
     getDirectionIndex() {
         switch (this.facing) {
-            case "up": return 0;
-            case "left": return 3;
-            case "right": return 1;
-            case "down": return 2;
-            default: return 2;
+            case "up":
+                return 0;
+            case "left":
+                return 3;
+            case "right":
+                return 1;
+            case "down":
+                return 2;
+            default:
+                return 2;
         }
     }
 
@@ -404,29 +471,29 @@ class Monster extends Entity {
     draw(deltaTime) {
         let frameWidth = this.width;
         let srcX, srcY;
-    
+
         const isGhost = this.behavior === "ghost";
-    
+
         if (isGhost) ctx.save(); // ✅ Save before changing opacity
         if (isGhost) ctx.globalAlpha = this.opacity;
-    
+
         // Skeleton dying animation
         if (this.isDying && this.sprite === "dying") {
             this.deathTimer += deltaTime;
-    
+
             if (this.deathFrame < this.maxDeathFrames) {
                 if (this.deathTimer > frameDuration) {
                     this.deathTimer = 0;
                     this.deathFrame++;
                 }
             }
-    
+
             const frame = Math.min(this.deathFrame, this.maxDeathFrames - 1);
             srcX = frame * frameWidth;
             srcY = 4 * this.height;
-    
+
             ctx.drawImage(this.image, srcX, srcY, this.width, this.height, this.x, this.y, this.width, this.height);
-    
+
             if (this.deathFrame === this.maxDeathFrames && !this.removalStarted) {
                 this.removalStarted = true;
                 this.dropLoot();
@@ -435,40 +502,41 @@ class Monster extends Entity {
                     quests.restlessBones.skeletonsDefeated++;
                     console.log(`Skeleton defeated. Progress: ${quests.restlessBones.skeletonsDefeated}/${quests.restlessBones.skeletonsNeeded}`);
                 }
-                
+
                 setTimeout(() => {
                     const index = enemies.indexOf(this);
                     if (index !== -1) {
                         enemies.splice(index, 1);
                         console.log(`${this.name} (skeleton) removed after animation.`);
+                        enemiesById.delete(this.id);
                     }
                 }, 3000);
             }
-    
+
             if (isGhost) ctx.restore(); // ✅ Restore opacity after drawing
             return;
         }
-    
+
         // Normal walking / idle rendering
         this.walkTimer += deltaTime;
         if (this.walkTimer > frameDuration) {
             this.walkTimer = 0;
             this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
         }
-    
+
         srcX = this.currentWalkFrame * frameWidth;
         srcY = this.getDirectionIndex() * this.height;
-    
+
         this.drawShadow();
         ctx.drawImage(this.image, srcX, srcY, this.width, this.height, this.x, this.y, this.width, this.height);
-    
+
         if (this.isDead && !this.isDying) {
             colorText("Dead", this.x, this.y + 22, "white", 12);
         }
-    
+
         if (isGhost) ctx.restore(); // ✅ Ensure it's always reset
     }
-    
+
 }
 
 function updateEnemy(enemy, player) {
@@ -508,7 +576,10 @@ function updateEnemy(enemy, player) {
         if (dist < TILE_W) {
             const now = performance.now();
             if (now - enemy.lastAttackTime > enemy.cooldownTime) {
-                const { value: damage, isCrit } = enemy.calculateAttackDamage();
+                const {
+                    value: damage,
+                    isCrit
+                } = enemy.calculateAttackDamage();
                 player.takeDamage(damage);
                 enemy.lastAttackTime = now;
                 console.log(`Ghoul bites for ${damage} damage${isCrit ? " (CRIT!)" : ""}`);
@@ -530,33 +601,74 @@ function updateEnemy(enemy, player) {
             }
             break;
 
-        case BEHAVIOR_STATES.PATROL:
-            if (!enemy.path || enemy.path.length === 0) {
-                const target = enemy.patrolPath[enemy.pathIndex];
-                const startX = Math.floor(enemy.x / TILE_W);
-                const startY = Math.floor(enemy.y / TILE_H);
-                const endX = target.x;
-                const endY = target.y;
+        case BEHAVIOR_STATES.PATROL: {
+            const now = performance.now();
 
-                if (collisionGrid[endY]?.[endX] !== TILE_WALL) {
-                    enemy.path = findPathForEnemy(startX, startY, endX, endY, collisionGrid);
+            // Path-based patrol (your existing behavior)
+            if (enemy.patrolPath && enemy.patrolPath.length > 0) {
+                if (!enemy.path || enemy.path.length === 0) {
+                    enemy.followPatrolPath(collisionGrid); // your existing function
+                } else {
+                    enemy.followPath();
                 }
-
-                enemy.pathIndex = (enemy.pathIndex + 1) % enemy.patrolPath.length;
-            } else {
-                enemy.followPath();
+            }
+            // Area patrol for enemies without patrolPath
+            else if (enemy.patrolCenter) {
+                if (enemy._patrolWaitUntil && now < enemy._patrolWaitUntil) {
+                    break; // still waiting
+                }
+                if (!enemy.path || enemy.path.length === 0) {
+                    const goal = enemy.getRandomPatrolTile(collisionGrid);
+                    if (goal) {
+                        const sx = Math.floor(enemy.x / TILE_W),
+                            sy = Math.floor(enemy.y / TILE_H);
+                        const path = findPathForEnemy(sx, sy, goal.x, goal.y, collisionGrid);
+                        if (path && path.length) enemy.setPath(path);
+                    }
+                    enemy._patrolWaitUntil = now + (enemy.patrolWaitMinMs + Math.random() * (enemy.patrolWaitMaxMs - enemy.patrolWaitMinMs));
+                } else {
+                    enemy.followPath();
+                }
             }
 
+            // Aggro if player in sight
             if (enemy.canSeePlayer(player)) {
-                console.log(`${enemy.name} sees the player!`);
                 enemy.state = BEHAVIOR_STATES.CHASE;
+                enemy.chooseNewPath(player, collisionGrid);
             }
             break;
+        }
 
         case BEHAVIOR_STATES.CHASE: {
             if (dist < TILE_W * 1.5 && enemy.combatType === "melee") {
                 enemy.state = BEHAVIOR_STATES.KITE;
                 break;
+            }
+
+            if (enemy.canSeePlayer(player)) {
+                enemy.chooseNewPath(player, collisionGrid);
+            }
+
+            enemy.followPath();
+
+            const dx = player.x - enemy.x,
+                dy = player.y - enemy.y;
+            const tilesAway = Math.abs(Math.floor(dx / TILE_W)) + Math.abs(Math.floor(dy / TILE_H));
+            const sees = enemy.canSeePlayer(player);
+
+            const loseSightTiles = 8;
+            const maxChaseTiles = 18;
+
+            if ((!sees && tilesAway > loseSightTiles) || tilesAway > maxChaseTiles) {
+                // Back to start
+                if (enemy.patrolCenter) {
+                    const sx = Math.floor(enemy.x / TILE_W),
+                        sy = Math.floor(enemy.y / TILE_H);
+                    const goal = enemy.patrolCenter;
+                    const path = findPathForEnemy(sx, sy, goal.x, goal.y, collisionGrid);
+                    if (path && path.length) enemy.setPath(path);
+                }
+                enemy.state = BEHAVIOR_STATES.PATROL;
             }
 
             if (enemy.name === "Goblin") {
@@ -621,7 +733,10 @@ function updateEnemy(enemy, player) {
                     const now = performance.now();
                     if (now - enemy.lastAttackTime > enemy.cooldownTime) {
                         enemy.faceToward(player);
-                        const { value: damage, isCrit } = enemy.calculateAttackDamage();
+                        const {
+                            value: damage,
+                            isCrit
+                        } = enemy.calculateAttackDamage();
                         player.takeDamage(damage);
                         enemy.lastAttackTime = now;
                         console.log(`${enemy.name} strikes ${player.name} for ${damage} damage${isCrit ? " (CRIT!)" : ""}`);
@@ -688,20 +803,31 @@ function updateEnemy(enemy, player) {
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-  }
-  
+}
+
 function assignDefaultPatrol(enemy) {
     const tileX = Math.floor(enemy.x / TILE_W);
     const tileY = Math.floor(enemy.y / TILE_H);
-    const path = [
-        { x: tileX + 1, y: tileY },
-        { x: tileX, y: tileY + 1 },
-        { x: tileX - 1, y: tileY },
-        { x: tileX, y: tileY - 1 },
+    const path = [{
+            x: tileX + 1,
+            y: tileY
+        },
+        {
+            x: tileX,
+            y: tileY + 1
+        },
+        {
+            x: tileX - 1,
+            y: tileY
+        },
+        {
+            x: tileX,
+            y: tileY - 1
+        },
     ];
     enemy.patrolPath = shuffle(path);
 }
@@ -711,3 +837,23 @@ function getDistance(x1, y1, x2, y2) {
     const dy = y2 - y1;
     return Math.sqrt(dx * dx + dy * dy);
 }
+
+Monster.prototype.getRandomPatrolTile = function(collisionGrid) {
+    if (!this.patrolCenter) return null;
+
+    for (let tries = 0; tries < 25; tries++) {
+        const tx = this.patrolCenter.x + (Math.floor(Math.random() * (2 * this.patrolRadius + 1)) - this.patrolRadius);
+        const ty = this.patrolCenter.y + (Math.floor(Math.random() * (2 * this.patrolRadius + 1)) - this.patrolRadius);
+
+        if (tx < 0 || ty < 0 || tx >= TILE_COLS || ty >= TILE_ROWS) continue;
+
+        const cell = collisionGrid?.[ty]?.[tx];
+        if (!cell || cell === TILE_WALL || cell.isWalkable === false) continue;
+
+        return {
+            x: tx,
+            y: ty
+        };
+    }
+    return null;
+};
