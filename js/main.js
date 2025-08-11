@@ -216,6 +216,11 @@ function drawGameFrame(currentTime) {
   if (!keys.up && !keys.down && !keys.left && !keys.right && player.path.length === 0) {
     player.isMoving = false;
   }
+
+
+    if (titleScreenSecondsLeft>0) drawTitlescreen(deltaTime);
+
+
 }
 
 function drawQuestTracker() {

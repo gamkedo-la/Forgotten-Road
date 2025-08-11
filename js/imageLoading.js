@@ -1,3 +1,4 @@
+var logoPic = document.createElement("img");
 var wizardPic = document.createElement("img");
 var warriorPic = document.createElement("img");
 var portraitPic = document.createElement("img");
@@ -78,6 +79,7 @@ function loadImageForRoomCode(tileCode, fileName, sX = 0, sY = 0, sW = TILE_W, s
 
 function loadImages() {	
     var imageList = [
+        {varName: logoPic, theFile: "logo.png"},
         {varName: townMapPic, theFile: "townMap.png"},
         {varName: wizardPic, theFile: "wizard.png"},
         {varName: warriorPic, theFile: "warrior.png"},
