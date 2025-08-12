@@ -271,6 +271,7 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.key === "q") {
     player.isBlocking = true;
+    raiseShieldSound.play();
   }  
   if (event.key === 'i'){
     keys.inventory = true;

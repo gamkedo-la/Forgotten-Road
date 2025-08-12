@@ -141,8 +141,10 @@ class Player extends Entity {
     const STAMINA_COST = 15;
     if (!this.canPerformAction(STAMINA_COST)) {
       console.log("Too exhausted to swing!");
+      noStaminaSound.play();
       return;
     }
+    staffAttackSound.play();
     this.useStamina(STAMINA_COST);
     this.isAttacking = true;
 
@@ -212,6 +214,8 @@ class Player extends Entity {
         const critText = isCrit ? " (CRIT!)" : "";
         console.log(`You hit ${enemy.name} for ${damage} damage${critText}`);
       
+        enemyDamagedSound.play();
+
         attacked = true;
         const dx = enemy.x - this.x;
         const dy = enemy.y - this.y;
@@ -251,6 +255,8 @@ class Player extends Entity {
     this.state = "shooting";
     this.currentAttackFrame = 0;
     this.attackTimer = 0;
+
+    bowAttackSound.play();
 
     let weapon = this.equipment.weapon;
     let bonusDamage = this.getEquippedBonusDamage();
@@ -306,6 +312,8 @@ class Player extends Entity {
     if (item.use === "heal" && this.currentHP < this.maxHP) {
       this.currentHP = Math.min(this.maxHP, this.currentHP + item.amount);
       console.log(`Healed for ${item.amount}. HP: ${this.currentHP}`);
+      
+      playerHealSound.play();
 
       if (item.stackable) {
         item.quantity--;
@@ -419,6 +427,7 @@ class Player extends Entity {
         this.useStamina(staminaBlockCost);
         this.blockCooldown = this.blockCooldownTime;
         console.log(`${this.name} blocks the attack with stamina!`);
+        blockSound.play();
         return; 
       } else {
         console.log(`${this.name} tried to block but was too exhausted!`);
@@ -434,8 +443,11 @@ class Player extends Entity {
     console.log(`${this.name} takes ${amount} damage! HP: ${this.currentHP}`);
   
     if (this.currentHP <= 0 && this.state !== "dead") {
+      playerDieSound.play();
       this.state = "dead";
       playState = "gameover";
+    } else {
+      playerDamagedSound.play();
     }
   }
   

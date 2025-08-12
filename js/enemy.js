@@ -226,6 +226,7 @@ class Monster extends Entity {
     attack(target) {
         if (target instanceof Player) {
             target.health -= this.damage;
+            playerDamagedSound.play();
         }
     }
 
@@ -243,6 +244,7 @@ class Monster extends Entity {
                 player.x += (dx / dist) * TILE_W;
                 player.y += (dy / dist) * TILE_H;
                 console.log("Skeleton Champion used Shield Bash!");
+                playerDamagedSound.play();
             }
         }
     };
@@ -307,6 +309,7 @@ class Monster extends Entity {
         projectiles.push(bolt);
         this.lastAttackTime = now;
         console.log(`${this.name} fires a bolt at ${player.name}`);
+        bowAttackSound.play();
     }
 
     canSeePlayer(player, visionRadius = 6) {

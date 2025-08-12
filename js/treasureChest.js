@@ -18,7 +18,7 @@ class TreasureChest extends Entity {
 
     openSesame() {
         if (!this.isOpen) { 
-            console.log("opening a treasure cheat!");
+            console.log("opening a treasure chest!");
             this.isOpen = true;
             openChestSound.play();
             // FIXME: spawn some gold coins as pickups

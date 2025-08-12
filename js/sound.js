@@ -9,6 +9,18 @@ var bossMusicSound = new Audio("sound/boss-prepare-to-be-destroyed-haha.mp3");
 var bossHaHaHaHaSound = new Audio("sound/boss-hahahaha.mp3");
 var bossChuckleSound = new Audio("sound/boss-chuckle.mp3");
 
+var noStaminaSound = new Audio("sound/no-stamina.wav");
+var raiseShieldSound = new Audio("sound/raise-shield.wav");
+raiseShieldSound.volume = 0.2;
+var blockSound = new Audio("sound/block.wav");
+var staffAttackSound = new Audio("sound/attack-staff.wav");
+var bowAttackSound = new Audio("sound/attack-bow.wav");
+var playerDamagedSound = new Audio("sound/player-damaged.wav");
+var playerDieSound = new Audio("sound/player-die.wav");
+var playerHealSound = new Audio("sound/player-heal.wav");
+var enemyDamagedSound = new Audio("sound/enemy-damaged.wav");
+var enemyDieSound = new Audio("sound/enemy-die.wav");
+
 const FOOTSTEP_VOLUME = 1;
 var footstepSound = new Audio("sound/FootStepFaster.mp3");
 footstepSound.loop = true;

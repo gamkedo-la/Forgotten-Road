@@ -64,6 +64,8 @@ class Entity {
     this.currentHP -= amount;
     if (this.currentHP < 0) this.currentHP = 0;
 
+    enemyDamagedSound.play();
+
     console.log(`${this.name} takes ${amount} damage!`);
 
     // Resurrection logic (only for skeletons)
@@ -113,6 +115,8 @@ class Entity {
 
   die() {
     if (this.isDead) return;
+
+    enemyDieSound.play();
 
     this.isDead = true;
     this.deathTime = Date.now();

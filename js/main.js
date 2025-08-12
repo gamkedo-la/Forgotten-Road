@@ -210,16 +210,15 @@ function drawGameFrame(currentTime) {
   }
 
   renderUI();                
-  requestAnimationFrame(drawGameFrame);
 
   mouse.clicked = false;
   if (!keys.up && !keys.down && !keys.left && !keys.right && player.path.length === 0) {
     player.isMoving = false;
   }
 
+  if (titleScreenSecondsLeft>0) drawTitlescreen(deltaTime);
 
-    if (titleScreenSecondsLeft>0) drawTitlescreen(deltaTime);
-
+  requestAnimationFrame(drawGameFrame);
 
 }
 
