@@ -283,6 +283,17 @@ document.addEventListener("keydown", (event) => {
     keys.b = true;
   }
 
+  if(event.key === "e"){
+    let col = Math.floor(player.x / TILE_W);
+    let row = Math.floor(player.y / TILE_H);
+
+    // Try adjacent tiles
+    player.tryUnlockDoor(col + 1, row);
+    player.tryUnlockDoor(col - 1, row);
+    player.tryUnlockDoor(col, row + 1);
+    player.tryUnlockDoor(col, row - 1);
+  }
+
   // Save game
   if (event.key === "/") {
     saveGameData();

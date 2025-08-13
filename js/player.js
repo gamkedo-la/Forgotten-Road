@@ -6,6 +6,13 @@ const frameDuration = 0.1; // seconds (100 ms)
 const STAMINA_COST_PUSH = 5;
 const STAMINA_COST_PULL = 7;
 
+const KEY_ITEMS = {
+  id: "silver_key",
+  name: "Silver Key",
+  type: "quest",
+  stackable: false,
+};
+
 var STARTING_GOLD = Math.round(Math.random()*50); // just for testing!
 
 class Player extends Entity {
@@ -134,7 +141,33 @@ class Player extends Entity {
       isCrit
     };
   }
-  
+
+  checkForKeyPickup() {
+    const col = Math.floor(player.x / TILE_W);
+    const row = Math.floor(player.y / TILE_H);
+    if (backgroundGrid[row][col] === TILE_KEY) {
+      player.addItemToInventory(keyItem);
+      backgroundGrid[row][col] = TILE_GRASS; // Clear tile
+      console.log("You picked up a key!");
+    }
+  }
+
+  tryUnlockDoor(col, row) {
+    const tile = backgroundGrid[row][col];
+    if (tile === TILE_LOCKED_DOOR) {
+      const hasKey = player.inventory.some((item) => item.id === "silver_key");
+      if (hasKey) {
+        backgroundGrid[row][col] = TILE_UNLOCKED_DOOR;
+        collisionGrid[row][col].isWalkable = true;
+        console.log("You unlocked the door!");
+
+        player.inventory = player.inventory.filter((item) => item.id !== "silver_key");
+      } else {
+        console.log("You need a key to unlock this door.");
+      }
+    }
+  }
+
   staffAttack(enemies) {
     if (this.isAttacking || this.isMoving) return;
 
@@ -353,6 +386,9 @@ class Player extends Entity {
   getEquippedBonusDamage() {
     return this.equipment.weapon ? this.equipment.weapon.damage : 0;
   }
+
+
+
 
   updateMovement() {
     if (!this.isMoving || !this.moveTarget || isBlockSliding || this.state == "dead") return;
