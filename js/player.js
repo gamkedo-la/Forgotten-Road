@@ -472,7 +472,9 @@ class Player extends Entity {
 
     const floatingDamageNumber = new TextEntity(`-${amount}`, this.x, this.y, "white", 0, -20, 10, "20px Arial");
     temp_ui_elements.push(floatingDamageNumber);
-  
+    
+    playerHitFX(this.x,this.y); // particles
+
     this.currentHP -= amount;
     if (this.currentHP < 0) this.currentHP = 0;
   

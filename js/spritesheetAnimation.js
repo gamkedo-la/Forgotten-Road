@@ -54,7 +54,17 @@ function pickupFX(x,y) {
     anims.push(a);
 }
 
+// called by entity.takeDamage (skeletons etc)
 function hitFX(x,y) {
-    let a = new spritesheetAnimation(x,y+8,1);
+    let a = new spritesheetAnimation(x+Math.random()*16-8,y+8+Math.random()*16-8,1);
     anims.push(a);
+}
+
+// called by player.takeDamage
+function playerHitFX(x,y) {
+    // spawn a bunch of them!
+    for (let i=0; i<5; i++) {
+        let a = new spritesheetAnimation(x+Math.random()*32-16,y+8+Math.random()*32-16,1);
+        anims.push(a);
+    }
 }
