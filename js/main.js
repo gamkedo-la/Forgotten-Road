@@ -296,6 +296,11 @@ function checkForMapEdgeTransition() {
 
 function switchToMap(newMapKey, playerCol, playerRow) {
   console.log("SWITCHING TO NEW MAP: "+newMapKey);
+  
+  // clear any previous path on the player
+  // to prevent old movement to carry forward to new area
+  player.path = [];
+
   if (!WORLD_MAPS[newMapKey]) {
     console.log("ERROR: unknown map.");
     return;
