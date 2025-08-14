@@ -64,7 +64,7 @@ function hitFX(x,y) {
 function playerHitFX(x,y) {
     // spawn a bunch of them!
     for (let i=0; i<5; i++) {
-        let a = new spritesheetAnimation(x+Math.random()*32-16,y+8+Math.random()*32-16,1);
+        let a = new spritesheetAnimation(x+Math.random()*32-16,y+8+Math.random()*32-16,2);
         anims.push(a);
     }
 }
