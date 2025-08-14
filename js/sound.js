@@ -3,6 +3,7 @@ var intro_voiceover_2 = new Audio("sound/forgotten-road-voiceover-2.mp3");
 var intro_voiceover_3 = new Audio("sound/forgotten-road-voiceover-3.mp3");
 var intro_voiceover_4 = new Audio("sound/forgotten-road-voiceover-4.mp3");
 var pickupSound = new Audio("sound/pickup.mp3");
+pickupSound.volume = 0.05;
 var openChestSound = new Audio("sound/openChest.mp3");
 var pickupCoinSound = new Audio("sound/pickupCoin.mp3");
 var bossMusicSound = new Audio("sound/boss-prepare-to-be-destroyed-haha.mp3");
@@ -43,6 +44,17 @@ all_sounds = [
     bossHaHaHaHaSound,
     bossChuckleSound,
     footstepSound,
+    noStaminaSound,
+    raiseShieldSound,
+    blockSound,
+    staffAttackSound,
+    bowAttackSound,
+    playerDamagedSound,
+    playerDieSound,
+    playerHealSound,
+    enemyDamagedSound,
+    enemyDieSound,
+    unlockDoorSound,
 ]
 
 function muteAllSounds() {
