@@ -20,6 +20,7 @@ var playerDieSound = new Audio("sound/player-die.wav");
 var playerHealSound = new Audio("sound/player-heal.wav");
 var enemyDamagedSound = new Audio("sound/enemy-damaged.wav");
 var enemyDieSound = new Audio("sound/enemy-die.wav");
+var unlockDoorSound = new Audio("sound/unlock-door.wav");
 
 const FOOTSTEP_VOLUME = 1;
 var footstepSound = new Audio("sound/FootStepFaster.mp3");

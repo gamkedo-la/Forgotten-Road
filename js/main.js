@@ -925,9 +925,15 @@ function checkCollision(character, building, message) {
     character._y + character.height > building.y
   ) {
     building.sX = building.width;
+    
+    // play door opening sound if we just entered this frame
+    if (!building.insidebuilding) unlockDoorSound.play();
+    
     building.insidebuilding = true;
   } else {
     building.sX = 0;
+    // play door closing sound if we just exited this frame
+    if (building.insidebuilding) unlockDoorSound.play();
     building.insidebuilding = false;
   }
 }

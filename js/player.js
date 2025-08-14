@@ -160,7 +160,7 @@ class Player extends Entity {
         backgroundGrid[row][col] = TILE_UNLOCKED_DOOR;
         collisionGrid[row][col].isWalkable = true;
         console.log("You unlocked the door!");
-
+        unlockDoorSound.play();
         player.inventory = player.inventory.filter((item) => item.id !== "silver_key");
       } else {
         console.log("You need a key to unlock this door.");
