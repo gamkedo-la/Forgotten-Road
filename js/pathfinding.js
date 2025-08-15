@@ -146,8 +146,10 @@ function movePlayerAlongPath(player, path) {
   }
 }
 function isWalkable(row, col) {
-    return (
-        collisionGrid[row] &&
-        collisionGrid[row][col] !== TILE_WALL
-    );
+  return !!(
+    collisionGrid[row] &&
+    collisionGrid[row][col] &&
+    collisionGrid[row][col].isWalkable &&
+    !isTileOccupiedByPushBlock(col, row)
+  );
 }

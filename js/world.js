@@ -427,6 +427,7 @@ function SetupCollisionGridFromBackground() {
       TILE_DUNGEON_WALL_LEFT, TILE_DUNGEON_WALL_RIGHT,
       TILE_DUNGEON_WALL_CORNER_TL, TILE_DUNGEON_WALL_CORNER_TR,
       TILE_DUNGEON_WALL_CORNER_BL, TILE_DUNGEON_WALL_CORNER_BR,
+      TILE_DUNGEON_WALL_1, TILE_DUNGEON_WALL_2, TILE_DUNGEON_WALL_3,
 
       // Dungeon Doors (optional — if you want them locked)
       TILE_DUNGEON_DOOR_TL, 
@@ -832,6 +833,7 @@ function spawnEntitiesFromTiles() {
       if (tile === TILE_PUSHABLE_BOX) {
         const box = makePushableBox(col, row);
         pushableBlocks.push(box);
+        if (collisionGrid[row]?.[col]) collisionGrid[row][col].isWalkable = false;
 
         // Put correct floor under the box
         grid[row][col] = (currentMapKey === "SkeletonKingLair")
