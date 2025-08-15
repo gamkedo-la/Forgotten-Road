@@ -180,6 +180,9 @@ class Player extends Entity {
     staffAttackSound.play();
     this.useStamina(STAMINA_COST);
     this.isAttacking = true;
+    this.state = "attacking";
+    this.currentAttackFrame = 0;
+    this.attackTimer = 0;
 
     let bonusDamage = this.getEquippedBonusDamage();
     let attacked = false;
@@ -263,28 +266,25 @@ class Player extends Entity {
     }
 
     setTimeout(() => {
-      if (this.state === "shooting") {
+      this.isAttacking = false;                 
+      if (this.state === "attacking") {
         this.state = "idle";
       }
-    }, 300);
+    }, 350); // or FRAMES_PER_ANIMATION * frameDuration * 1000
   }
 
   fireProjectile() {
     if (this.isAttacking || this.isMoving) return;
-  
-    if (this.arrows <= 0) {
-      console.log("You're out of arrows!");
-      return;
-    }
-  
+
+    if (this.arrows <= 0) { console.log("You're out of arrows!"); return; }
+
     const STAMINA_COST = 10;
-    if (!this.canPerformAction(STAMINA_COST)) {
-      console.log("Too exhausted to shoot!");
-      return;
-    }
-  
+    if (!this.canPerformAction(STAMINA_COST)) { console.log("Too exhausted to shoot!"); return; }
+
+    this.cancelPath?.();
+    this.isAttacking = true;                 // <-- add this
     this.useStamina(STAMINA_COST);
-    this.arrows--; // Use an arrow
+    this.arrows--;
     this.state = "shooting";
     this.currentAttackFrame = 0;
     this.attackTimer = 0;
@@ -293,8 +293,8 @@ class Player extends Entity {
 
     let weapon = this.equipment.weapon;
     let bonusDamage = this.getEquippedBonusDamage();
-    let { damage, isCrit } = this.calculateWeaponDamage(weapon, bonusDamage);
-    
+    let { damage } = this.calculateWeaponDamage(weapon, bonusDamage);
+
     let bolt = new Projectile(
       this.x + this.width / 2,
       this.y + this.height / 2,
@@ -304,23 +304,14 @@ class Player extends Entity {
       this,
       damage
     );
-    
-    if (isCrit) {
-      console.log(`You fired a critical bolt for ${damage} damage!`);
-    } else {
-      console.log(`You fired a bolt for ${damage} damage.`);
-    }
-    
-  
     projectiles.push(bolt);
-    camera.applyShake(1, 100);
-  
+
     setTimeout(() => {
-      this.isAttacking = false;
+      this.isAttacking = false;              // <-- and release it
+      if (this.state === "shooting") this.state = "idle";
     }, 300);
   }
-  
-  
+
 
   addItemToInventory(item) {
     if (item.stackable) {
