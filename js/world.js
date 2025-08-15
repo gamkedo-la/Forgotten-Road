@@ -730,18 +730,6 @@ const TILE_ENTITY_MAP = {
     return e;
   },
 
-  /*[TILE_PUSHABLE_BOX]: ({ x, y }) => {
-    const col = Math.floor(x / TILE_W);
-    const row = Math.floor(y / TILE_H);
-    const box = new PushableBlock(col, row);
-    box.width = TILE_W;
-    box.height = TILE_H;
-    box.drawX = x;
-    box.drawY = y;
-    pushableBlocks.push(box);
-    return box;
-  }, */
-
   [TILE_GOBLIN_SPAWN]: ({ x, y }) => createMonster({
     name: "Goblin", x, y, damage: 5, maxHealth: 30, type: "melee"
   }),
@@ -828,57 +816,52 @@ const TILE_ENTITY_MAP = {
 
 const toXY = (col, row) => ({ x: col * TILE_W, y: row * TILE_H })
 
-// this is used when switching maps
 function spawnEntitiesFromTiles() {
-  const grid = backgroundGrid;
+  const grid = backgroundGrid; 
+
   enemies.length = 0;
   npcs.length = 0;
   destructibles.length = 0;
-  plateToDoorLinks = {};
   pushableBlocks.length = 0;
 
   for (let row = 0; row < grid.length; row++) {
     for (let col = 0; col < grid[row].length; col++) {
       const tile = grid[row][col];
-      const spawnFunc = TILE_ENTITY_MAP[tile];
-      if (spawnFunc) {
-        //console.log("spawnFunc: ",spawnFunc);
-        const x = col * TILE_W;
-        const y = row * TILE_H;
-        const entity = spawnFunc({ x, y });
 
-        if (entity instanceof TreasureChest) {
-            if (currentMapKey == "SkeletonKingLair") {
-                grid[row][col] = TILE_DUNGEON_WALL_CENTER; 
-            }
-        }
+      // 1) Pushable boxes spawn directly from tiles
+      if (tile === TILE_PUSHABLE_BOX) {
+        const box = makePushableBox(col, row);
+        pushableBlocks.push(box);
 
-        if (tile === TILE_PUSHABLE_BOX) {
-              const box = makePushableBox(col, row);
-              pushableBlocks.push(box);
-            //Replace the tile underneath with the correct floor tile
-              grid[row][col] = (currentMapKey === "SkeletonKingLair")
-                ? TILE_DUNGEON_WALL_CENTER  // (your dungeon floor)
-                : TILE_GRASS;
-            continue; // done with this cell
-        }
+        // Put correct floor under the box
+        grid[row][col] = (currentMapKey === "SkeletonKingLair")
+          ? TILE_DUNGEON_WALL_CENTER   // dungeon floor (tile 208)
+          : TILE_GRASS;                // overworld floor
+        continue; // done with this cell
+      }
 
-        if (entity instanceof Monster) {
-          enemies.push(entity);
-          // fill empty space with proper tile
-          if (currentMapKey == "SkeletonKingLair") {
-            // this const has the wrong name: it is actually a floor tile
-            grid[row][col] = TILE_DUNGEON_WALL_CENTER; 
-          } else {
-            grid[row][col] = TILE_GRASS;
-          }
-        } else if (entity instanceof NPC) {
-          npcs.push(entity);
-        } else if (entity instanceof Destructible) {
-          grid[row][col] = (currentMapKey === "SkeletonKingLair")
-              ? TILE_DUNGEON_WALL_CENTER
-              : TILE_GRASS;
+      // 2) Everything else via the entity map
+      const spawn = TILE_ENTITY_MAP[tile];
+      if (!spawn) continue;
+
+      const x = col * TILE_W, y = row * TILE_H;
+      const entity = spawn({ x, y });
+
+      if (entity instanceof Monster) {
+        enemies.push(entity);
+        grid[row][col] = (currentMapKey === "SkeletonKingLair")
+          ? TILE_DUNGEON_WALL_CENTER
+          : TILE_GRASS;
+      } else if (entity instanceof NPC) {
+        npcs.push(entity);
+      } else if (entity instanceof TreasureChest) {
+        if (currentMapKey === "SkeletonKingLair") {
+          grid[row][col] = TILE_DUNGEON_WALL_CENTER;
         }
+      } else if (entity instanceof Destructible) {
+        grid[row][col] = (currentMapKey === "SkeletonKingLair")
+          ? TILE_DUNGEON_WALL_CENTER
+          : TILE_GRASS;
       }
     }
   }

@@ -1,14 +1,4 @@
-const pushableBlocks = [
-  {
-    x: 8,
-    y: 10,
-    width: TILE_W,
-    height: TILE_H,
-    isMoving: false,
-    targetX: 8 * TILE_W,
-    targetY: 10 * TILE_H
-  }
-];
+const pushableBlocks = [];
 
 let plateToDoorLinks = {}; // "col,row" -> "doorCol,doorRow"
 
