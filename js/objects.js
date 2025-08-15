@@ -10,6 +10,24 @@ const pushableBlocks = [
   }
 ];
 
+let plateToDoorLinks = {}; // "col,row" -> "doorCol,doorRow"
+
+// Finds the nearest LOCKED/UNLOCKED door tile to a plate.
+// Prefers a LOCKED door (49) at link time.
+function findNearestDoorForPlate(plateCol, plateRow) {
+  let best = null, bestDist = Infinity;
+  for (let r = 0; r < TILE_ROWS; r++) {
+    for (let c = 0; c < TILE_COLS; c++) {
+      const t = backgroundGrid[r][c];
+      if (t === TILE_LOCKED_DOOR || t === TILE_UNLOCKED_DOOR) {
+        const d = Math.abs(c - plateCol) + Math.abs(r - plateRow);
+        const isBetter = d < bestDist || (d === bestDist && t === TILE_LOCKED_DOOR);
+        if (isBetter) { best = { c, r, t }; bestDist = d; }
+      }
+    }
+  }
+  return best; // {c, r, t} or null
+}
 
 function isTileOccupiedByPushBlock(tileX, tileY) {
   return pushableBlocks.some(block => block.x === tileX && block.y === tileY);
@@ -116,20 +134,49 @@ function isCrateOnPlate(plateCol, plateRow) {
 }
 
 function updatePressurePlates() {
-  for (let row = 0; row < TILE_ROWS; row++) {
-    for (let col = 0; col < TILE_COLS; col++) {
-      // this next line can bug out if there's missing data in the array
-      if (backgroundGrid[row][col] === TILE_PRESSURE_PLATE) {
-        const isOnPlate = pushableBlocks.some(block => block.x === col && block.y === row);
-
-        if (isOnPlate) {
-          backgroundGrid[1][12] = TILE_TREE;
-          console.log(`Pressure plate at (${col}, ${row}) is pressed.`);
+  // 1) Build links once per map: each plate -> nearest door
+  if (!Object.keys(plateToDoorLinks).length) {
+    for (let row = 0; row < TILE_ROWS; row++) {
+      for (let col = 0; col < TILE_COLS; col++) {
+        if (backgroundGrid[row][col] === TILE_PRESSURE_PLATE) {
+          const door = findNearestDoorForPlate(col, row);
+          if (door && door.t === TILE_LOCKED_DOOR) {
+            plateToDoorLinks[`${col},${row}`] = `${door.c},${door.r}`;
+          }
         }
       }
     }
   }
+
+  // 2) Determine which linked doors should be open this frame
+  const doorsToOpen = new Set();
+  for (const plateKey of Object.keys(plateToDoorLinks)) {
+    const [pCol, pRow] = plateKey.split(",").map(Number);
+    const pressed = pushableBlocks.some(b => b.x === pCol && b.y === pRow);
+    const doorKey = plateToDoorLinks[plateKey];
+    if (pressed) doorsToOpen.add(doorKey);
+  }
+
+  // 3) Apply open/close to linked doors
+  for (const plateKey of Object.keys(plateToDoorLinks)) {
+    const doorKey = plateToDoorLinks[plateKey];
+    const [dCol, dRow] = doorKey.split(",").map(Number);
+    const shouldOpen = doorsToOpen.has(doorKey);
+
+    if (shouldOpen) {
+      backgroundGrid[dRow][dCol] = TILE_UNLOCKED_DOOR;
+      if (collisionGrid[dRow] && collisionGrid[dRow][dCol]) {
+        collisionGrid[dRow][dCol].isWalkable = true;
+      }
+    } else {
+      backgroundGrid[dRow][dCol] = TILE_LOCKED_DOOR;
+      if (collisionGrid[dRow] && collisionGrid[dRow][dCol]) {
+        collisionGrid[dRow][dCol].isWalkable = false;
+      }
+    }
+  }
 }
+
 
 
 
