@@ -239,6 +239,7 @@ class Monster extends Entity {
             // Knockback
             const dx = player.x - this.x;
             const dy = player.y - this.y;
+            attackFX(this.x,this.y,dx,dy);
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < TILE_W * 2) {
                 player.x += (dx / dist) * TILE_W;
@@ -310,6 +311,7 @@ class Monster extends Entity {
         this.lastAttackTime = now;
         console.log(`${this.name} fires a bolt at ${player.name}`);
         bowAttackSound.play();
+        attackFX(this.x,this.y);
     }
 
     canSeePlayer(player, visionRadius = 6) {

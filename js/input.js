@@ -251,6 +251,7 @@ document.addEventListener("keydown", (event) => {
       player.state = "attacking";
       player.currentAttackFrame = 0;
       player.attackTimer = 0;
+      attackFX(player.x,player.y,0,0,player.facing);
     }
   }
 

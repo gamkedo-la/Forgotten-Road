@@ -290,6 +290,8 @@ class Player extends Entity {
     this.attackTimer = 0;
 
     bowAttackSound.play();
+    
+    attackFX(this.x,this.y,0,0,this.facing);
 
     let weapon = this.equipment.weapon;
     let bonusDamage = this.getEquippedBonusDamage();
