@@ -70,16 +70,43 @@ function playerHitFX(x,y) {
 }
 
 // a "slash" style curved woosh line effect
-// TODO: dx and dy are target delta - use to orient the sprite?
 function attackFX(x,y,dx,dy,facing) {
     const offset = 16;
     let ofsx = 0;
     let ofsy = 0;
     let column = 3;
+    if (!facing) { // if not set, use dx,dy to guess
+        facing = "left"; // default is at 0,0
+        if (dy<0) facing = "up";
+        if (dy>0) facing = "down";
+        if (dx<0) facing = "left";
+        if (dx>0) facing = "right";
+    }
     if (facing=="right") { ofsx = offset; column = 3; }
     if (facing=="left") { ofsx = -offset; column = 4; }
     if (facing=="up") { ofsy = -offset; column = 5; }
     if (facing=="down") { ofsy = offset; column = 6; }
+    let a = new spritesheetAnimation(x+ofsx,y+ofsy,column);
+    anims.push(a);
+}
+
+// a "muzzle flash" style burst
+function bowAttackFX(x,y,dx,dy,facing) {
+    const offset = 25;
+    let ofsx = 0;
+    let ofsy = 0;
+    let column = 7;
+    if (!facing) { // if not set, use dx,dy to guess
+        facing = "left"; // default is at 0,0
+        if (dy<0) facing = "up";
+        if (dy>0) facing = "down";
+        if (dx<0) facing = "left";
+        if (dx>0) facing = "right";
+    }
+    if (facing=="right") { ofsx = offset; column = 7; }
+    if (facing=="left") { ofsx = -offset; column = 8; }
+    if (facing=="up") { ofsy = -offset; column = 9; }
+    if (facing=="down") { ofsy = offset; column = 10; }
     let a = new spritesheetAnimation(x+ofsx,y+ofsy,column);
     anims.push(a);
 }
