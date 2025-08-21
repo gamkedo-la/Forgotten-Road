@@ -65,6 +65,14 @@ var boltPickUp = {
     quantity: 5
 };
 
+var keyItem = {
+  id: "silver_key",
+  name: "Silver Key",
+  type: "quest",
+  stackable: false,
+};
+
+
 var ringOfEnergy = {
   id: "ring_energy",
   name: "Ring of Energy",
