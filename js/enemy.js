@@ -523,13 +523,19 @@ class Monster extends Entity {
         }
 
         // Normal walking / idle rendering
-        this.walkTimer += deltaTime;
-        if (this.walkTimer > frameDuration) {
-            this.walkTimer = 0;
-            this.currentWalkFrame = (this.currentWalkFrame + 1) % FRAMES_PER_ANIMATION;
+        if (this.isMoving) {
+            this.walkTimer += deltaTime;
+            if (this.walkTimer > frameDuration) {
+                this.walkTimer = 0;
+                this.currentWalkFrame = (this.currentWalkFrame + 1) % 4; // cycle 0-3
+            }
+            
+            srcX = (this.currentWalkFrame + 1) * frameWidth;
+        } else {
+            this.currentWalkFrame = 0; // standstill frame
+            srcX = 0;
         }
 
-        srcX = this.currentWalkFrame * frameWidth;
         srcY = this.getDirectionIndex() * this.height;
 
         this.drawShadow();
