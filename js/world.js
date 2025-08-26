@@ -597,6 +597,33 @@ function drawBackground(context = ctx) {
   }
 }
 
+function drawCeilingTilesAbovePlayer() {
+  const rows = backgroundGrid.length;
+  const cols = backgroundGrid[0].length;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const tile = backgroundGrid[row][col];
+
+      // ALL KNOWN CEILING TILES:
+      if (tile==TILE_DUNGEON_DOOR_TC 
+        //|| tile==TILE_DUNGEON_DOOR_BC // the door itself we can draw on top of
+        || tile==TILE_DUNGEON_DOOR_CEILING) {
+
+            const x = col * TILE_W;
+            const y = row * TILE_H;
+            var img = tilePics[tile];
+            if (!img) continue;
+            const sX = img.sX || 0;
+            const sY = img.sY || 0;
+            const sW = img.sW || TILE_W;
+            const sH = img.sH || TILE_H;
+            ctx.drawImage(img, sX, sY, sW, sH, x, y, TILE_W, TILE_H);
+        }
+    }
+  }
+
+}
+
 function updateBackground() {
   backgroundNeedsUpdate = true;
 }

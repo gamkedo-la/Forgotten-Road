@@ -497,6 +497,9 @@ function renderGameWorld(deltaTime) {
       }
     });
   } 
+
+  drawCeilingTilesAbovePlayer(); // used by dungeon doorways
+
 }
 
 function renderTopStatsBar() {
