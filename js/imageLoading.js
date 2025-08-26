@@ -146,6 +146,7 @@ function loadImages() {
         {tileType: TILE_DUNGEON_ENTRANCE, theFile: "wall.png", sX: 0, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_TOP, theFile: "wall.png", sX: 128, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_DOOR_CEILING, theFile: "wall.png", sX: 128, sY: 0, options: 0},
+        {tileType: TILE_DUNGEON_WALL_TORCH, theFile: "wall.png", sX: 192, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_1, theFile: "wall.png", sX: 32, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_2, theFile: "wall.png", sX: 64, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_3, theFile: "wall.png", sX: 32, sY:32, options: 0},
