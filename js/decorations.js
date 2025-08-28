@@ -2,11 +2,11 @@
 // such as flowers, mushrooms, and rocks
 
 function decorateTile(x,y) {
-    const max = 3;
+    const max = 10;
     const sprcount = 10;
     const w = 8;
     const h = 8;
-    const range = 16; // scatter size
+    const range = 8; // scatter size
     // fake random based on location (same every time)
     var rnd = Math.cos(x*3456+y*1234)/2+0.5; 
     if (rnd < 0.99) return; // draw nothing on most of them

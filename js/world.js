@@ -590,6 +590,9 @@ function drawBackground(context = ctx) {
 
       context.drawImage(img, sX, sY, sW, sH, x, y, TILE_W, TILE_H);
 
+      // random flowers etc
+      if (tile==TILE_GRASS) decorateTile(x,y); 
+
       if (!img.sX && img.sX !== 0) {
         console.warn("Missing sX for tile", tile);
       }
