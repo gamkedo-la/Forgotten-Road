@@ -140,7 +140,11 @@ function loadImages() {
         {tileType: TILE_BUSH2, theFile: "wildBush2.png", sX: 0, sY: 0, options: 0},
         {tileType: TILE_LAMP, theFile: "lamp.png", sX: "0", sY: "0",options: 0},
         {tileType: TILE_WATER, theFile: "water.png", sX: "0", sY: "0",options: 0},
-        {tileType: TILE_CLIFF, theFile: "cliff.png", sX: "64", sY: "96",options: 0},
+        {tileType: TILE_WATER_FULL, theFile: "water.png", sX: "0", sY: "32",options: 0},
+        {tileType: TILE_WATER_SOUTH, theFile: "water.png", sX: "0", sY: "64",options: 0},
+        {tileType: TILE_WATER_NE, theFile: "water.png", sX: "32", sY: "0",options: 0},
+        {tileType: TILE_WATER_EAST, theFile: "water.png", sX: "32", sY: "32",options: 0},
+
         {tileType: TILE_PRESSURE_PLATE, theFile: "grass.png", sX: "64", sY: "32",options: 0},
         {tileType: TILE_DIRT, theFile: "dirt.png", sX: "32", sY: "32",options: 0},
         {tileType: TILE_DUNGEON_ENTRANCE, theFile: "wall.png", sX: 0, sY: 0, options: 0},
