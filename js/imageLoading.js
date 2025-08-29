@@ -161,7 +161,11 @@ function loadImages() {
         {tileType: TILE_DUNGEON_WALL_CORNER_TR, theFile: "wall.png", sX: 160, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_WALL_CORNER_BL, theFile: "wall.png", sX: 96, sY: 64, options: 0},
         {tileType: TILE_DUNGEON_WALL_CORNER_BR, theFile: "wall.png", sX: 160, sY: 64, options: 0},
-        {tileType: TILE_DUNGEON_WALL_CENTER, theFile: "wall.png", sX: 128, sY: 64, options: 0},
+        {tileType: TILE_DUNGEON_FLOOR, theFile: "wall.png", sX: 128, sY: 64, options: 0},
+        {tileType: TILE_DUNGEON_FLOOR_SKULL1, theFile: "wall.png", sX: 128, sY: 96, options: 0},
+        {tileType: TILE_DUNGEON_FLOOR_SKULL2, theFile: "wall.png", sX: 128, sY: 128, options: 0},
+        {tileType: TILE_DUNGEON_FLOOR_SKULL3, theFile: "wall.png", sX: 128, sY: 160, options: 0},
+        {tileType: TILE_DUNGEON_FLOOR_SKULL4, theFile: "wall.png", sX: 128, sY: 192, options: 0},
         {tileType: TILE_DUNGEON_DOOR_TL, theFile: "wall.png", sX: 224, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_DOOR_TC, theFile: "wall.png", sX: 256, sY: 0, options: 0},
         {tileType: TILE_DUNGEON_DOOR_TR, theFile: "wall.png", sX: 288, sY: 0, options: 0},
@@ -211,6 +215,8 @@ function loadImages() {
         {tileType: TILE_CRYPT_52, theFile: "SkeletonKingCrypt.png", sX: 64, sY: 128 },
         {tileType: TILE_CRYPT_53, theFile: "SkeletonKingCrypt.png", sX: 96, sY: 128 },
         {tileType: TILE_CRYPT_54, theFile: "SkeletonKingCrypt.png", sX: 128, sY: 128 },
+
+
 
         // this is so NPCs have grass underneath them
         {tileType: TILE_NPC_ALCHEMIST, theFile: "grass.png", sX: "0", sY: "0", options: 4},

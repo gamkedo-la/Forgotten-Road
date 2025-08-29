@@ -7,6 +7,12 @@ const PATHFINDING_TOO_MANY_NODES = 10000;
 const MAX_PATH_DISTANCE = 999999; // 480; 
 
 
+function inSetByXY(set, node) {
+  return set.some(n => n.x === node.x && n.y === node.y);
+}
+function findInSetByXY(set, node) {
+  return set.find(n => n.x === node.x && n.y === node.y);
+}
 
 
 // GridElement Class for Pathfinding
@@ -75,26 +81,25 @@ function findPath(startX, startY, endX, endY, collisionGrid, caller="unknown", m
       
       let neighbors = getNeighbors(currentNode, collisionGrid);
       for (let neighbor of neighbors) {
-          if (closedSet.includes(neighbor) || !neighbor.walkable) {
-              continue;
-          }
-          let tempG = currentNode.g + 1;
-          let newPath = false;
-          
-          if (!openSet.includes(neighbor)) {
-              openSet.push(neighbor);
-              newPath = true;
-          } else if (tempG < neighbor.g) {
-              newPath = true;
-          }
-          
-          if (newPath) {
-              neighbor.g = tempG;
-              neighbor.h = heuristic(neighbor, endNode);
-              neighbor.f = neighbor.g + neighbor.h;
-              neighbor.parent = currentNode;
-          }
-      } // loop neighbors
+        if (!neighbor.walkable) continue;
+        if (inSetByXY(closedSet, neighbor)) continue;
+
+        const tempG = currentNode.g + 1;
+        let existing = findInSetByXY(openSet, neighbor);
+
+        if (!existing) {
+          neighbor.g = tempG;
+          neighbor.h = heuristic(neighbor, endNode);
+          neighbor.f = neighbor.g + neighbor.h;
+          neighbor.parent = currentNode;
+          openSet.push(neighbor);
+        } else if (tempG < existing.g) {
+          existing.g = tempG;
+          existing.parent = currentNode;
+          existing.f = existing.g + existing.h;
+        }
+}
+
   } // repeat until openset is empty
   
   //console.log("Path not found from "+startX+","+startY+" to "+endX+","+endY);
