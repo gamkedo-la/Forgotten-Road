@@ -216,7 +216,7 @@ function drawGameFrame(currentTime) {
     player.isMoving = false;
   }
 
-  if (titleScreenSecondsLeft>0) drawTitlescreen(deltaTime);
+  //if (titleScreenSecondsLeft>0) drawTitlescreen(deltaTime);
 
   requestAnimationFrame(drawGameFrame);
 

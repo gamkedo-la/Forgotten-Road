@@ -6,17 +6,19 @@
     <title>The Forgotten Road</title>
     <style>
         canvas {
-            border: 1px solid black;
+            position:absolute;
+            width:800px;
+            height:600px;
+            top:50%;
+            left:50%;
+            margin-top:-320px;
+            margin-left:-400px;
         }
         body {
             overflow:hidden; /* no scrollbars */
             background:black;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            position: relative; /* Ensure proper positioning for absolute elements */
+            padding:0;
         }
         #intro1, #intro2 {
             position:absolute;
@@ -30,7 +32,7 @@
             border:1px solid black;
             border-radius: 8px;
             margin-left:240px;
-            margin-top:278px;
+            margin-top:284px;
             background:rgba(0,0,0,0.25);
             font-family:arial;
             font-size: 14px;
@@ -42,6 +44,74 @@
             background:rgba(0,0,0,1);
             color:green;
         }
+
+    #mainmenu {
+        display:block;
+        position:absolute;
+        margin:0;
+        width:640px;
+        height:640px;
+        top:50%;
+        left:50%;
+        margin-top:-320px;
+        margin-left:-320px;
+        /*
+        border:2px solid brown;
+        border-radius:4px;
+        */
+        background:url(images/logo.png);
+        background-repeat: no-repeat;
+        padding:16px;
+    }
+    
+    #startbutton, #creditsbutton, #hidecreditsbutton {
+        cursor: pointer;
+        position:absolute; display:block;
+        top:480px;
+        left:15%;
+        width:128px;
+        height:16px;
+        text-align:center;
+        color:white;
+        background:url(images/logo.png);
+        padding:16px; 
+        background-position: -64px -128px;
+        border:2px solid #2b1603;
+        border-radius:4px;
+    }
+    
+    #creditsbutton {
+        left:55%;
+    }
+    
+    #hidecreditsbutton {
+        top:420px;
+        left:50%;
+        margin-left:-80px;
+    }
+
+    #startbutton:hover, #creditsbutton:hover, #startbutton:hover, #hidecreditsbutton:hover {
+        color:red;
+        background:white;
+    }
+
+    #creditsScreen {
+        display:none;
+        position:absolute;
+        margin:0;
+        width:640px;
+        height:420px;
+        top:50%;
+        left:50%;
+        margin-top:-240px;
+        margin-left:-338px;
+        background:#e2b074;
+        color:#2b1603; padding:32px;
+        border:2px solid #2b1603;
+        border-radius:8px;
+        text-align:center;
+    }
+
     </style>
     <link rel="icon" type="image/x-icon" href="favicon.ico">    
 </head>
@@ -83,6 +153,21 @@
     <script src="js/gameOver.js"></script>
     <script src="js/objects.js"></script>
     <script src="js/main.js"></script>
+
+    <div id="mainmenu">
+        <div id="startbutton" onClick="startGame()">Play</div>
+        <div id="creditsbutton" onClick="showCredits()">Credits</div>
+    </div>
+
+    <div id="creditsScreen">
+    <b>Credits:</b><br><br>
+    Name:<br>Contributions<br><br>
+    Name:<br>Contributions<br><br>
+    Name:<br>Contributions<br><br>
+    Name:<br>Contributions<br><br>
+    Name:<br>Contributions<br><br>
+    <div id="hidecreditsbutton" onClick="hideCredits()">Main Menu</div>
+    </div>
 
     <div id="intro1" onClick="startIntro()">Play Intro</div>
     <div id="intro2" onClick="skipIntro()">Skip Intro</div>

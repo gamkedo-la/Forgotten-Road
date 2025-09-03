@@ -1,5 +1,22 @@
-var titleScreenSecondsLeft = 4;
 
+function startGame() {
+    document.getElementById("mainmenu").style.display = 'none';
+}
+
+function showCredits() {
+    document.getElementById("mainmenu").style.display = 'none';
+    document.getElementById("creditsScreen").style.display = 'block';
+}
+
+function hideCredits() { 
+    document.getElementById("mainmenu").style.display = 'block';
+    document.getElementById("creditsScreen").style.display = 'none';
+}
+
+
+// no longer used:
+// the logo is now part of the main menu
+var titleScreenSecondsLeft = 4;
 function drawTitlescreen(deltaTime) {
     titleScreenSecondsLeft -= deltaTime;
     if (titleScreenSecondsLeft<=0) return;
