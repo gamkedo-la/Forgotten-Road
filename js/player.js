@@ -1,3 +1,4 @@
+const PLAYER_IS_INVULNERABLE = false; // for debugging use only
 const FRAME_WALK_WIDTH = 32; // Each frame width (walking)
 const FRAME_ATTACK_WIDTH = 37; // Slightly wider to fit staff swing
 const FRAME_HEIGHT = 34; // Frame height is consistent
@@ -512,6 +513,9 @@ class Player extends Entity {
     }
 
     takeDamage(amount) {
+
+        if (PLAYER_IS_INVULNERABLE) return;
+
         if (this.isBlocking && this.blockCooldown <= 0) {
             const staminaBlockCost = 20;
             if (this.currentStamina >= staminaBlockCost) {

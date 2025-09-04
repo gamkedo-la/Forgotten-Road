@@ -1,5 +1,7 @@
 const TEST_MODE = true;
 
+const DOOR_OPEN_DISTANCE = 48; // how close to a dungeon door do we need to be for it to auto-open
+
 const TILE_W = 32;
 const TILE_H = 32;
 const TILE_COLS = 45;
@@ -593,8 +595,8 @@ function drawBackground(context = ctx) {
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       const tile = backgroundGrid[row][col];
-      const x = col * TILE_W;
-      const y = row * TILE_H;
+      let x = col * TILE_W;
+      let y = row * TILE_H;
 
       var img = tilePics[tile];
       
@@ -607,7 +609,28 @@ function drawBackground(context = ctx) {
       const sW = img.sW || TILE_W;
       const sH = img.sH || TILE_H;
 
-      context.drawImage(img, sX, sY, sW, sH, x, y, TILE_W, TILE_H);
+      let drawWidth = TILE_W;
+      let drawHeight = TILE_H;
+
+      // open and close doors
+      if (tile==TILE_DUNGEON_DOOR_BC) {
+        let px = player.x;//+16;
+        let py = player.y+32; // foot position
+        let dist = Math.sqrt(Math.pow((x-px),2)+Math.pow((y-py),2));
+        if (dist<DOOR_OPEN_DISTANCE) {
+            console.log("player is near a door! dist="+dist.toFixed(2));
+            
+            // draw dungeon tile behind it
+            context.drawImage(tilePics[TILE_DUNGEON_FLOOR], tilePics[TILE_DUNGEON_FLOOR].sX, tilePics[TILE_DUNGEON_FLOOR].sY, sW, sH, x, y, TILE_W, TILE_H);
+            
+            // get smaller the closer we get to it
+            // which fakes the perspective of it opening
+            drawWidth = TILE_W - (TILE_W*(1-(dist/DOOR_OPEN_DISTANCE)));
+            x += TILE_W - drawWidth; 
+        }
+      }
+
+      context.drawImage(img, sX, sY, sW, sH, x, y, drawWidth, drawHeight);
 
       // random flowers etc
       if (tile==TILE_GRASS) decorateTile(x,y); 
