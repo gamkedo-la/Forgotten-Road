@@ -1,3 +1,6 @@
+const STARTING_HEALTH = 80; // was 30
+const STARTING_DAMAGE = 10;
+const STARTING_LEVEL = 1;
 const PLAYER_IS_INVULNERABLE = false; // for debugging use only
 const FRAME_WALK_WIDTH = 32; // Each frame width (walking)
 const FRAME_ATTACK_WIDTH = 37; // Slightly wider to fit staff swing
@@ -553,8 +556,8 @@ class Player extends Entity {
         var guiy = 5;
         var guiw = HUD_BAR_WIDTH - 75;
         var guih = 30;
-        var heartSize = 24;
-        var spacing = 3;
+        var heartSize = 12; // was 24;
+        var spacing = 0; // was 3;
         var totalHearts = Math.ceil(this.maxHP / 10);
         var fullHearts = Math.floor(this.currentHP / 10);
         var hasHalfHeart = this.currentHP % 10 >= 5;
@@ -563,7 +566,7 @@ class Player extends Entity {
 
         for (let i = 0; i < totalHearts; i++) {
             let x = 10 + i * (heartSize + spacing);
-            let y = 8;
+            let y = 14; // was 8;
 
             if (i < fullHearts) {
                 ctx.drawImage(heartFullPic, x, y, heartSize, heartSize);

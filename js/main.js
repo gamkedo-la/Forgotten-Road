@@ -42,8 +42,9 @@ let frameCount = 0;
 Object.keys(WORLD_MAPS).forEach((key) => {
   worldItems[key] = [];
 });
+
 // Player
-const player = new Player("Hero", 300, 500, 30, 10, 1, STARTING_GOLD);
+const player = new Player("Hero", 300, 500, STARTING_HEALTH, STARTING_DAMAGE, STARTING_LEVEL, STARTING_GOLD);
 camera.followTarget = player;
 
 // Enemy Factory and Spawning
