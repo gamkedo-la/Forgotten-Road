@@ -618,11 +618,9 @@ function drawBackground(context = ctx) {
         let py = player.y+32; // foot position
         let dist = Math.sqrt(Math.pow((x-px),2)+Math.pow((y-py),2));
         if (dist<DOOR_OPEN_DISTANCE) {
-            console.log("player is near a door! dist="+dist.toFixed(2));
-            
+            //console.log("player is near a door! dist="+dist.toFixed(2));
             // draw dungeon tile behind it
             context.drawImage(tilePics[TILE_DUNGEON_FLOOR], tilePics[TILE_DUNGEON_FLOOR].sX, tilePics[TILE_DUNGEON_FLOOR].sY, sW, sH, x, y, TILE_W, TILE_H);
-            
             // get smaller the closer we get to it
             // which fakes the perspective of it opening
             drawWidth = TILE_W - (TILE_W*(1-(dist/DOOR_OPEN_DISTANCE)));
